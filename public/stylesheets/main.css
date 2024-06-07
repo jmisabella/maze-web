@@ -1,0 +1,68 @@
+@-webkit-keyframes fadeinout {
+  0%,100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+@keyframes fadeinout {
+  0%,100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+@-webkit-keyframes fadeout {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+
+@keyframes fadeout {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+
+@-webkit-keyframes run {
+  0% {
+    up: 0;
+  }
+  50% {
+    up: 100%;
+  }
+  100% {
+    up: 0;    
+  }
+}
+
+fade {
+  -webkit-animation: fadeout 3s linear forwards;
+  animation: fadeout 6s linear forwards;
+  animation-iteration-count: infinite !important; 
+}
+
+.fout * {
+  -webkit-animation: fadeout 2s linear forwards;
+  animation: fadeout 2s linear forwards;
+  animation-iteration-count: 1 !important; 
+}
+
+body {
+  overflow: hidden;
+  width:100%;
+  background-color: #014D43;
+}
+
+body.light-mode {
+  background-color: #014D43 !important;
+  color: #cecece;
+}
+body.dark-mode {
+  background-color: #353535!important;
+  color: #cecece;
+}
+
+body.dark-mode button,
+body.dark-mode select {
+  background-color: #111 !important;
+  color: #cecece !important;
+}
+
+

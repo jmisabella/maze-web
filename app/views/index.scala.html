@@ -1,16 +1,17 @@
 @()
 
-@main("Play WebSockets 101") {
+@main("MAZE") {
 
-    <h1 class="text-primary" style="font-size:24px;padding-bottom:1.5em;">Play WebSockets 101: <small>Send &amp; Receive JSON</small></h1>
+    <h1 class="text-primary" style="font-size:24px;padding-bottom:1.5em;">MAZE</h1>
 
     <!-- this is where the client and server output will be shown/appended -->
-    <div id="message-content" style="height:230px;overflow-y:auto !important;background-color:#fff;padding:1em;border-radius:10px;"></div>
+    <!-- <div id="message-content" style="height:230px;overflow-y:auto !important;background-color:#fff;padding:1em;border-radius:10px;"></div> -->
+    <div id="message-content" style="margin: 11px;" ></div>
 
     <form style="padding-top:1.5em;">
         <div class="form-group">
             <label for="message-input">Message:</label>
-            <textarea id="message-input" class="form-control" ></textarea>
+            <textarea id="message-input" class="form-control" style="width:75%; margin: 0 7%;"></textarea>
         </div>
         <button id="send-button" type="button" class="btn btn-primary">Send</button>
     </form>
