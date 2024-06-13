@@ -1,103 +1,201 @@
-var webSocket;
-var messageInput;
 
-function init() {
-    webSocket = new WebSocket("ws://localhost:9000/ws");
-    webSocket.onopen = onOpen;
-    webSocket.onclose = onClose;
-    webSocket.onmessage = onMessage;
-    webSocket.onerror = onError;
-    $("#message-input").focus();
+function head(lst) {
+  return lst[0];
 }
 
-function onOpen(event) {
-    consoleLog("CONNECTED");
+function tail(lst) {
+  return lst.slice(1);
 }
 
-function onClose(event) {
-    consoleLog("DISCONNECTED");
-    appendClientMessageToView(":", "DISCONNECTED");
+function concatenate(lst, delimiter) {
+  var result = ''
+  for (i = 0; i < lst.length; i++) {
+    if (result.length > 0) {
+      result += delimiter
+    }
+    result += lst[i];
+  }
+  return result;
 }
 
-function onError(event) {
-    consoleLog("ERROR: " + event.data);
-    consoleLog("ERROR: " + JSON.stringify(event));
+function wait(ms){
+  var start = new Date().getTime();
+  var end = start;
+  while(end < start + ms) {
+    end = new Date().getTime();
+  }
 }
 
-function onMessage(event) {
-    console.log(event.data);
-    let receivedData = JSON.parse(event.data);
-    console.log("New Data: ", receivedData);
-    // get the text from the "body" field of the json we
-    // receive from the server.
-    appendServerMessageToView("Server", receivedData.body);
+// get the nth index of pattern from given str string
+function nthIndex(str, pat, n) {
+  var length= str.length, i= -1;
+  while(n-- && i++<length) {
+      i= str.indexOf(pat, i);
+      if (i < 0) break;
+  }
+  return i;
 }
 
-function appendClientMessageToView(title, message) {
-    $("#message-content").append("<span>" + title + ": " + message + "<br /></span>");
+// Given string value and delimiter and optional number of skips, splits string into a 2-element array 
+// containing the 2 values resulting from splitting once.
+function splitOnce(str, delimiter, numberOfSkips = 0) {
+  if (numberOfSkips <= 0) {
+    var first = str.substring(0, str.indexOf(delimiter)) 
+    var second = str.substring(str.indexOf(delimiter)) 
+    return [first, second];
+  } else {
+    var index = nthIndex(str, delimiter, numberOfSkips + 1);
+    var first = str.substring(0, index);
+    var second = str.substring(index);
+    return [first, second];
+  }
 }
 
-function appendServerMessageToView(title, message) {
-    $("#message-content").append("<span>" + title + ": " + message + "<br /><br /></span>");
+function contains(lst, element) {
+  for (var i = 0; i < lst.length; i++) {
+    if (lst[i] == element) {
+      return true;
+    }
+  }
+  return false;
 }
 
-function consoleLog(message) {
-    console.log("New message: ", message);
-}
 
-window.addEventListener("load", init, false);
 
-$("#send-button").click(function (e) {
-    console.log("Sending ...");
-    getMessageAndSendToServer();
-    // put focus back in the textarea
-    $("#message-input").focus();
-});
+//////////////
 
-// send the message when the user presses the <enter> key while in the textarea
-$(window).on("keydown", function (e) {
-    if (e.which == 13) {
+$(document).ready(function() {
+  jQuery('.numbers').keyup(function () { 
+    this.value = this.value.replace(/[^0-9]/g,'');
+  }); 
+ 
+  $(document).on('keyup blur input propertychange', 'input[class="numbers"]', function(){$(this).val($(this).val().replace(/[^0-9]/g,''));});  
+
+  var webSocket;
+  var messageInput;
+
+  function init() {
+      var host = location.origin.replace(/^https/, 'wss').replace(/^http/, 'ws'); 
+      webSocket = new WebSocket(`${host}/ws`); 
+      // webSocket = new WebSocket("ws://localhost:9000/ws");
+      webSocket.onopen = onOpen;
+      webSocket.onclose = onClose;
+      webSocket.onmessage = onMessage;
+      webSocket.onerror = onError;
+      $("#message-input").focus();
+  }
+
+  function onOpen(event) {
+      consoleLog("CONNECTED");
+  }
+
+  function onClose(event) {
+      consoleLog("DISCONNECTED");
+      appendClientMessageToView(":", "DISCONNECTED");
+  }
+
+  function onError(event) {
+      consoleLog("ERROR: " + event.data);
+      consoleLog("ERROR: " + JSON.stringify(event));
+  }
+
+  function onMessage(event) {
+      console.log(event.data);
+      let receivedData = JSON.parse(event.data);
+      console.log("New Data: ", receivedData);
+      // get the text from the "body" field of the json we
+      // receive from the server.
+      appendServerMessageToView("Server", receivedData.body);
+  }
+
+  function appendClientMessageToView(title, message) {
+      $("#message-content").append("<span>" + title + ": " + message + "<br /></span>");
+  }
+
+  function appendServerMessageToView(title, message) {
+      $("#message-content").append("<span>" + title + ": " + message + "<br /><br /></span>");
+  }
+
+  function consoleLog(message) {
+      console.log("New message: ", message);
+  }
+
+  window.addEventListener("load", init, false);
+
+  $("#send-button").click(function (e) {
+      var width = $("#width").val();
+      var height = $("#height").val();
+      var algorithm = $("#select-generator").val();
+      if (width <= "0" && height <= "0") {
+        alert("width and height are required");
+      } else if (width <= "0") {
+        alert("width is required");
+      } else if (height <= "0") {
+        alert("height is required");
+      } else if (algorithm == "") {
+        alert("algorithm is required");
+      } else {
+        request = {
+          "width": width,
+          "height": height,
+          "algorithm": algorithm 
+        };
+       
+        var message = JSON.stringify(request);
+        // TODO: send this message to server
+        console.log("Sending ...");
         getMessageAndSendToServer();
-        return false;
-    }
+        // put focus back in the textarea
+        $("#message-input").focus();
+      }
+  });
+
+  // send the message when the user presses the <enter> key while in the textarea
+  $(window).on("keydown", function (e) {
+      if (e.which == 13) {
+          getMessageAndSendToServer();
+          return false;
+      }
+  });
+
+  // there’s a lot going on here:
+  // 1. get our message from the textarea.
+  // 2. append that message to our view/div.
+  // 3. create a json version of the message.
+  // 4. send the message to the server.
+  function getMessageAndSendToServer() {
+
+      // get the text from the textarea
+      messageInput = $("#message-input").val();
+
+      // clear the textarea
+      $("#message-input").val("");
+
+      // if the trimmed message was blank, return now
+      if ($.trim(messageInput) == "") {
+          return false;
+      }
+
+      // add the message to the view/div
+      appendClientMessageToView("Me", messageInput);
+
+      // create the message as json
+      let jsonMessage = {
+          message: messageInput
+      };
+
+      // send our json message to the server
+      sendToServer(jsonMessage);
+  }
+
+  // send the data to the server using the WebSocket
+  function sendToServer(jsonMessage) {
+      if(webSocket.readyState == WebSocket.OPEN) {
+          consoleLog("SENT: " + jsonMessage.message);
+          webSocket.send(JSON.stringify(jsonMessage));
+      } else {
+          consoleLog("Could not send data. Websocket is not open.");
+      }
+  }
+
 });
-
-// there’s a lot going on here:
-// 1. get our message from the textarea.
-// 2. append that message to our view/div.
-// 3. create a json version of the message.
-// 4. send the message to the server.
-function getMessageAndSendToServer() {
-
-    // get the text from the textarea
-    messageInput = $("#message-input").val();
-
-    // clear the textarea
-    $("#message-input").val("");
-
-    // if the trimmed message was blank, return now
-    if ($.trim(messageInput) == "") {
-        return false;
-    }
-
-    // add the message to the view/div
-    appendClientMessageToView("Me", messageInput);
-
-    // create the message as json
-    let jsonMessage = {
-        message: messageInput
-    };
-
-    // send our json message to the server
-    sendToServer(jsonMessage);
-}
-
-// send the data to the server using the WebSocket
-function sendToServer(jsonMessage) {
-    if(webSocket.readyState == WebSocket.OPEN) {
-        consoleLog("SENT: " + jsonMessage.message);
-        webSocket.send(JSON.stringify(jsonMessage));
-    } else {
-        consoleLog("Could not send data. Websocket is not open.");
-    }
-}

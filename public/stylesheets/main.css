@@ -64,5 +64,16 @@ body.dark-mode select {
   background-color: #111 !important;
   color: #cecece !important;
 }
+body.dark-mode input[type=text] {
+  /* background-color: #c0c0c0; */
+  background-color: #111;
+  color: #cecece;
+}
 
 
+/* input[type=text].numbers {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50px;
+} */
