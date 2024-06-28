@@ -68,7 +68,11 @@ $(document).ready(function() {
   if (webSocket == null) {
     init();
   }
-  
+ 
+  $(".menu-button").click(function() {
+    $(".menu-bar").toggleClass( "open" );
+  });
+
   jQuery('.numbers').keyup(function () { 
     this.value = this.value.replace(/[^0-9]/g,'');
   }); 
@@ -134,6 +138,12 @@ $(document).ready(function() {
     for (let i = 0; i < obj.body.rows.length; i++) {
       let row = obj.body.rows[i];
       for (let j = 0; j < row.length; j++) {
+        var cell = row[j];
+        var coords = cell.coords;
+        var neighbors = cell.neighbors;
+        var linked = cell.linked;
+        var value = cell.value;
+        var visited = cell.visited;
         let box = document.createElement("div");
         box.style.position = 'absolute';
         box.style.top = (BOX_HEIGHT * i) + "px";
@@ -141,12 +151,6 @@ $(document).ready(function() {
         box.style.display = 'block';
         box.style.width = BOX_WIDTH + "px";
         box.style.height = BOX_HEIGHT + "px";
-        var cell = row[j];
-        var coords = cell.coords;
-        var neighbors = cell.neighbors;
-        var linked = cell.linked;
-        var value = cell.value;
-        var visited = cell.visited;
         box.style.borderTop = linked.includes("north") ? EMPTY_WALL : SOLID_WALL;
         box.style.borderRight = linked.includes("east") ? EMPTY_WALL : SOLID_WALL;
         box.style.borderBottom = linked.includes("south") ? EMPTY_WALL : SOLID_WALL;
