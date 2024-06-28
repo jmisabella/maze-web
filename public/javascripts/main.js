@@ -128,12 +128,14 @@ $(document).ready(function() {
       return "";
     }
     let obj = JSON.parse(json.toString());
+    htmlParent.style.width = (obj.body.rows.length * BOX_WIDTH) + "px";
+    htmlParent.style.height = (head(obj.body.rows).length * BOX_HEIGHT) + "px";
+    $('body,html').css("height", (htmlParent.style.height + 200) + "px");
     for (let i = 0; i < obj.body.rows.length; i++) {
       let row = obj.body.rows[i];
       for (let j = 0; j < row.length; j++) {
         let box = document.createElement("div");
         box.style.position = 'absolute';
-        // box.style.position = 'fixed';
         box.style.top = (BOX_HEIGHT * i) + "px";
         box.style.left = (BOX_WIDTH * j) + "px";
         box.style.display = 'block';
