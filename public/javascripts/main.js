@@ -65,6 +65,10 @@ function contains(lst, element) {
 //////////////
 
 $(document).ready(function() {
+  if (webSocket == null) {
+    init();
+  }
+  
   jQuery('.numbers').keyup(function () { 
     this.value = this.value.replace(/[^0-9]/g,'');
   }); 
@@ -72,7 +76,7 @@ $(document).ready(function() {
   $(document).on('keyup blur input propertychange', 'input[class="numbers"]', function(){$(this).val($(this).val().replace(/[^0-9]/g,''));});  
 
   var webSocket;
-  var messageInput;
+  // var messageInput;
 
   function init() {
       var host = location.origin.replace(/^https/, 'wss').replace(/^http/, 'ws'); 
@@ -91,7 +95,7 @@ $(document).ready(function() {
 
   function onClose(event) {
       consoleLog("DISCONNECTED");
-      appendClientMessageToView(":", "DISCONNECTED");
+      init();
   }
 
   function onError(event) {
@@ -99,22 +103,67 @@ $(document).ready(function() {
       consoleLog("ERROR: " + JSON.stringify(event));
   }
 
+  const mazeDiv = document.getElementById("maze");
+  
   function onMessage(event) {
+      mazeDiv.innerHTML = ""; 
       console.log(event.data);
       let receivedData = JSON.parse(event.data);
       console.log("New Data: ", receivedData);
+      drawMaze(event.data, mazeDiv);
+
       // get the text from the "body" field of the json we
       // receive from the server.
-      appendServerMessageToView("Server", receivedData.body);
+      // appendServerMessageToView("Server", receivedData.body);
   }
 
-  function appendClientMessageToView(title, message) {
-      $("#message-content").append("<span>" + title + ": " + message + "<br /></span>");
+
+  function drawMaze(json, htmlParent) {
+    const BORDER_SIZE = 1;
+    const BOX_WIDTH = 10;
+    const BOX_HEIGHT = 10;
+    const EMPTY_WALL = BORDER_SIZE + "px solid transparent"; 
+    const SOLID_WALL = BORDER_SIZE + "px solid black"; 
+    if (json == null || json.toString() == "") {
+      return "";
+    }
+    let obj = JSON.parse(json.toString());
+    for (let i = 0; i < obj.body.rows.length; i++) {
+      let row = obj.body.rows[i];
+      for (let j = 0; j < row.length; j++) {
+        let box = document.createElement("div");
+        box.style.position = 'absolute';
+        // box.style.position = 'fixed';
+        box.style.top = (BOX_HEIGHT * i) + "px";
+        box.style.left = (BOX_WIDTH * j) + "px";
+        box.style.display = 'block';
+        box.style.width = BOX_WIDTH + "px";
+        box.style.height = BOX_HEIGHT + "px";
+        var cell = row[j];
+        var coords = cell.coords;
+        var neighbors = cell.neighbors;
+        var linked = cell.linked;
+        var value = cell.value;
+        var visited = cell.visited;
+        box.style.borderTop = linked.includes("north") ? EMPTY_WALL : SOLID_WALL;
+        box.style.borderRight = linked.includes("east") ? EMPTY_WALL : SOLID_WALL;
+        box.style.borderBottom = linked.includes("south") ? EMPTY_WALL : SOLID_WALL;
+        box.style.borderLeft = linked.includes("west") ? EMPTY_WALL : SOLID_WALL;
+        htmlParent.appendChild(box);
+        // alert("row " + i + ", column " + j + ", coords " + coords.x + ", " + coords.y);
+      }
+    }
+
+    let body = obj.body; 
   }
 
-  function appendServerMessageToView(title, message) {
-      $("#message-content").append("<span>" + title + ": " + message + "<br /><br /></span>");
-  }
+  // function appendClientMessageToView(title, message) {
+  //     $("#message-content").append("<span>" + title + ": " + message + "<br /></span>");
+  // }
+
+  // function appendServerMessageToView(title, message) {
+  //     $("#message-content").append("<span>" + title + ": " + message + "<br /><br /></span>");
+  // }
 
   function consoleLog(message) {
       console.log("New message: ", message);
@@ -141,19 +190,28 @@ $(document).ready(function() {
           "algorithm": algorithm 
         };
        
-        var message = JSON.stringify(request);
+        var messageInput = JSON.stringify(request); // TODO: this is changing integers to string, need library to accept all strings here...
+        // sendToServer(message);
+
+        let jsonMessage = {
+            message: messageInput
+        };
+
+        // send our json message to the server
+        sendToServer(jsonMessage);
+
         // TODO: send this message to server
         console.log("Sending ...");
-        getMessageAndSendToServer();
+        // getMessageAndSendToServer();
         // put focus back in the textarea
-        $("#message-input").focus();
+        // $("#message-input").focus();
       }
   });
 
   // send the message when the user presses the <enter> key while in the textarea
   $(window).on("keydown", function (e) {
       if (e.which == 13) {
-          getMessageAndSendToServer();
+          // getMessageAndSendToServer();
           return false;
       }
   });
@@ -163,30 +221,30 @@ $(document).ready(function() {
   // 2. append that message to our view/div.
   // 3. create a json version of the message.
   // 4. send the message to the server.
-  function getMessageAndSendToServer() {
+  // function getMessageAndSendToServer() {
 
-      // get the text from the textarea
-      messageInput = $("#message-input").val();
+  //     // get the text from the textarea
+  //     messageInput = $("#message-input").val();
 
-      // clear the textarea
-      $("#message-input").val("");
+  //     // clear the textarea
+  //     $("#message-input").val("");
 
-      // if the trimmed message was blank, return now
-      if ($.trim(messageInput) == "") {
-          return false;
-      }
+  //     // if the trimmed message was blank, return now
+  //     if ($.trim(messageInput) == "") {
+  //         return false;
+  //     }
 
-      // add the message to the view/div
-      appendClientMessageToView("Me", messageInput);
+  //     // add the message to the view/div
+  //     // appendClientMessageToView("Me", messageInput);
 
-      // create the message as json
-      let jsonMessage = {
-          message: messageInput
-      };
+  //     // create the message as json
+  //     let jsonMessage = {
+  //         message: messageInput
+  //     };
 
-      // send our json message to the server
-      sendToServer(jsonMessage);
-  }
+  //     // send our json message to the server
+  //     sendToServer(jsonMessage);
+  // }
 
   // send the data to the server using the WebSocket
   function sendToServer(jsonMessage) {

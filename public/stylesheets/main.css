@@ -70,10 +70,11 @@ body.dark-mode input[type=text] {
   color: #cecece;
 }
 
-
-/* input[type=text].numbers {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 50px;
-} */
+#maze {
+  position: fixed;
+  /* width: 500px;
+  height: 500px; */
+  float: left;
+  margin: 30px;
+  background-color: #808080;
+}
