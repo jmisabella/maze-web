@@ -156,7 +156,7 @@ $(document).ready(function() {
       }
     }
 
-    let body = obj.body; 
+    // let body = obj.body; 
   }
 
   // function appendClientMessageToView(title, message) {
@@ -193,7 +193,6 @@ $(document).ready(function() {
         };
        
         var messageInput = JSON.stringify(request); // TODO: this is changing integers to string, need library to accept all strings here...
-        // sendToServer(message);
 
         let jsonMessage = {
             message: messageInput

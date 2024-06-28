@@ -12,11 +12,22 @@
       </select>
       <label for="width">Width: <input type="text" id="width" class="numbers" maxlength="4" value="" /></label>
       <label for="height">Height: <input type="text" id="height" class="numbers" maxlength="4" value="" /></label>
-    </div> 
+    </div>
 
-    <form style="padding-top:1.5em;">
-        <button id="send-button" type="button" class="btn btn-primary">Send</button>
-    </form>
+    <div class="controls">
+      <span id="display-type-span" >
+        <input type="radio" id="display-type-choice-1" value="unsolved" name="display-type" checked="checked" />
+        <label for="display-type-choice-1">Unsolved</label>
+        <br />
+        <input type="radio" id="display-type-choice-2" value="distance-heat-map" name="display-type" />
+        <label for="display-type-choice-2">Distance Heat Map</label>
+        <br />
+        <input type="radio" id="display-type-choice-3" value="solved" name="display-type" />
+        <label for="display-type-choice-3">Solved</label>
+        <br />
+      </span>
+      <button id="send-button" type="button" class="btn btn-primary">Generate</button>
+    </div>
 
     <div id="maze"></div>
 }

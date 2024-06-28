@@ -70,7 +70,15 @@ body.dark-mode input[type=text] {
   background-color: #111;
   color: #cecece;
 }
-
+.controls input[type="text"] {
+  width: 64px;
+}
+.controls label,
+.controls input[type=radio],
+.controls select,
+.controls button {
+  margin-left: 8px;
+}
 #maze {
   overflow-y: scroll;
   /* position: fixed; */
