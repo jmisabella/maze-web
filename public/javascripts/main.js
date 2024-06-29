@@ -115,10 +115,6 @@ $(document).ready(function() {
       let receivedData = JSON.parse(event.data);
       console.log("New Data: ", receivedData);
       drawMaze(event.data, mazeDiv);
-
-      // get the text from the "body" field of the json we
-      // receive from the server.
-      // appendServerMessageToView("Server", receivedData.body);
   }
 
 
@@ -132,8 +128,8 @@ $(document).ready(function() {
       return "";
     }
     let obj = JSON.parse(json.toString());
-    htmlParent.style.width = (obj.body.rows.length * BOX_WIDTH) + "px";
-    htmlParent.style.height = (head(obj.body.rows).length * BOX_HEIGHT) + "px";
+    htmlParent.style.width = (head(obj.body.rows).length * BOX_WIDTH) + "px";
+    htmlParent.style.height = (obj.body.rows.length * BOX_HEIGHT) + "px";
     $('body,html').css("height", (htmlParent.style.height + 200) + "px");
     for (let i = 0; i < obj.body.rows.length; i++) {
       let row = obj.body.rows[i];
