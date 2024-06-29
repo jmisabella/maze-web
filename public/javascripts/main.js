@@ -177,6 +177,7 @@ $(document).ready(function() {
       var width = $("#width").val();
       var height = $("#height").val();
       var algorithm = $("#select-generator").val();
+      var displayType = $('input[name="display-type"]:checked').val(); 
       if (width <= "0" && height <= "0") {
         alert("width and height are required");
       } else if (width <= "0") {
@@ -189,7 +190,9 @@ $(document).ready(function() {
         request = {
           "width": width,
           "height": height,
-          "algorithm": algorithm 
+          "algorithm": algorithm,
+          "mazeType": displayType
+        
         };
        
         var messageInput = JSON.stringify(request); // TODO: this is changing integers to string, need library to accept all strings here...
