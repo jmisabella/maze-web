@@ -166,7 +166,12 @@ $(document).ready(function() {
         if (displayType == "Solved" && cell.onSolutionPath == true) {
           box.style.backgroundColor = "#ffffd8";
         } else if (displayType == "DistanceMap") {
-          // TODO: distance map logic
+          // TODO: for now we're displaying actual distances,
+          //       but eventually we'll change box's background color instead of displaying text
+          // TODO: currently, distances only show the solution path but are missing from non-solution paths
+          box.style.color = "#000";
+          box.style.fontSize = "7px";
+          box.append(cell.distance.toString());
         }
         htmlParent.appendChild(box);
         // alert("row " + i + ", column " + j + ", coords " + coords.x + ", " + coords.y);
