@@ -18,9 +18,9 @@
 .menu li a {
 display: block;
 text-indent: -500em;
-height: 5em;
-width: 5em;
-line-height: 5em;
+height: 2em;
+width: 2em;
+line-height: 2em;
 text-align:center;
 color: #72739f;
 position: relative;
@@ -53,6 +53,21 @@ font-size: 1.4em;
   background: #555;
   color: #fff;
 }
+.menu-bar li #send-button {
+  background-color: #202020;
+  width: 100%;
+}
+.menu-bar li #send-button:hover {
+  background-color: #282828;
+  /* color: #e3ece6; */
+  color: #d5e5d9;
+}
+.menu-bar li #send-button,
+.menu-bar li select {
+  text-align: left;
+  padding-left: 20%;
+}
+
 .menu-bar li label,
 .menu-bar li input[type=text] {
   margin-top: 6px;
@@ -96,7 +111,7 @@ font-size: 1.4em;
 
 .menu-bar{
   overflow:hidden;
-  left:5em;
+  left:2em;
   z-index:5;
   width:0;
   height:0;
@@ -112,15 +127,18 @@ font-size: 1.4em;
 .menu-bar li a,
 .menu-bar li label,
 .menu-bar li label input[type=text],
-.menu-bar li label input[type=radio],
-.menu-bar li select {
+.menu-bar li label input[type=radio] {
   text-align:center;
-
+}
+.menu-bar li a {
+  width: 100%;
+}
+.menu-bar li select {
+  padding-right: 80%;
 }
 .menu-bar li a,
 .menu-bar li select {
   display: block;
-  width: 100%;
   height: 4em;
   line-height: 4em;
   /* text-align:left; */
@@ -132,7 +150,6 @@ font-size: 1.4em;
   transition: background 0.1s ease-in-out;
 }
 .menu-bar li:first-child a {
-  height:5em;
   /* background: #267fdd; */
   /* background: #555; */
   background: #131313;
@@ -149,7 +166,9 @@ font-size: 1.4em;
 }
 
 .open{
-  width:10em;
+  /* width:10em; */
+  /* width:17em; */
+  width:21em;
   height:100%;
 }
 
@@ -158,12 +177,12 @@ font-size: 1.4em;
       margin-top:100px;
   }
   .menu{
-      height:5em;
-      width:100%;
+      height:2em;
   }
   .menu li{
       display:inline-block;
-      float:left;
+      text-align: center;
+      /* float:left; */
   }
   .menu-bar li a{
       width:100%;
@@ -186,11 +205,21 @@ font-size: 1.4em;
 .menu-bar {
   font-size:70%;
 }
+
+#d-type {
+  margin: 1px 25%;
+}
+
 }
 @media screen and (max-height: 34em) and (max-width: 500px){
 .menu{
-      height:3.5em;
-  }
+  height:3.5em;
+}
+
+#d-type {
+  margin: 1px 25%;
+}
+
 }
 /* maze */
 
@@ -228,6 +257,8 @@ font-size: 1.4em;
   }
 }
 
+/* fdsf */
+
 fade {
   -webkit-animation: fadeout 3s linear forwards;
   animation: fadeout 6s linear forwards;
@@ -256,12 +287,21 @@ body.dark-mode {
   color: #cecece;
 }
 
+#d-type {
+  margin-left: 7em;
+}
+#d-type label {
+  padding-left: 2em;
+}
+
+
 #maze {
   overflow-y: scroll;
   /* position: fixed; */
   position: relative;
   float: left;
   /* margin: 30px; */
-  margin: 30px 100px;
+  /* margin: 1em 1em; */
+  margin: 0 1em 1em 1em;
   background-color: #808080;
 }

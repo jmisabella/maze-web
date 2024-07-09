@@ -117,8 +117,8 @@ $(document).ready(function() {
       drawMaze(event.data, mazeDiv);
   }
 
-
   function drawMaze(json, htmlParent) {
+    var displayType = $('input[name="display-type"]:checked').val(); 
     const BORDER_SIZE = 1;
     const BOX_WIDTH = 10;
     const BOX_HEIGHT = 10;
@@ -151,6 +151,9 @@ $(document).ready(function() {
         box.style.borderRight = linked.includes("east") ? EMPTY_WALL : SOLID_WALL;
         box.style.borderBottom = linked.includes("south") ? EMPTY_WALL : SOLID_WALL;
         box.style.borderLeft = linked.includes("west") ? EMPTY_WALL : SOLID_WALL;
+        if (displayType == "Solved" && cell.value != "") {
+          box.style.backgroundColor = "#ffffd8";
+        }
         htmlParent.appendChild(box);
         // alert("row " + i + ", column " + j + ", coords " + coords.x + ", " + coords.y);
       }
@@ -177,22 +180,24 @@ $(document).ready(function() {
       var width = $("#width").val();
       var height = $("#height").val();
       var algorithm = $("#select-generator").val();
-      var displayType = $('input[name="display-type"]:checked').val(); 
       if (width <= "0" && height <= "0") {
-        alert("width and height are required");
+        alert("enter width and height");
       } else if (width <= "0") {
-        alert("width is required");
+        alert("enter width");
       } else if (height <= "0") {
-        alert("height is required");
+        alert("enter height");
       } else if (algorithm == "") {
-        alert("algorithm is required");
+        alert("select algorithm");
       } else {
         request = {
           "width": width,
           "height": height,
           "algorithm": algorithm,
-          "mazeType": displayType
-        
+          "startX": "0",
+          "startY": (height - 1).toString(),
+          "goalX": (width - 1).toString(),
+          "goalY": "0",
+          "mazeType": "Solved"
         };
        
         var messageInput = JSON.stringify(request); // TODO: this is changing integers to string, need library to accept all strings here...

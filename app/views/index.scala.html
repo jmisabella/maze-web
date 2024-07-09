@@ -8,30 +8,22 @@
     </ul>
     <ul class="menu-bar">
       <li><a href="#" class="menu-button">Maze</a></li>
-      <li><label for="width">Width: <input type="text" id="width" class="numbers" maxlength="4" value="" /></label></li>
-      <li><label for="height">Height: <input type="text" id="height" class="numbers" maxlength="4" value="" /></label></li>
+      <li><label for="width">Width: &nbsp;<input type="text" id="width" class="numbers" maxlength="4" value="" /></label><!--/li-->
+      <!--li--><label for="height">Height: <input type="text" id="height" class="numbers" maxlength="4" value="" /></label></li>
       <li>
         <select id='select-generator' >
           <option value=''>Algorithm</option>
           <option value='binarytree'>Binary Tree</option>
           <option value='sidewinder'>Sidewinder</option>
         </select>
-      </li> 
-      <li>
-        <input type="radio" id="display-type-choice-1" value="Unsolved" name="display-type" checked="checked" />
-        <label for="display-type-choice-1" class="menu-radio">Unsolved</label>
-      </li>
-      <li>
-        <input type="radio" id="display-type-choice-2" value="DistanceMap" name="display-type" />
-        <label for="display-type-choice-2" class="menu-radio">Distance Map</label>
-      </li>
-      <li>
-        <input type="radio" id="display-type-choice-3" value="Solved" name="display-type" />
-        <label for="display-type-choice-3" class="menu-radio">Solved</label>
       </li>
       <li><a id="send-button" href="#" class="menu-button">Generate</a></li>
-      <!-- <li><button id="send-button" type="button" class="btn btn-primary">Generate</button></li> -->
+      <!-- <li><a id="send-button" style="width: 10em; background-color: #000;" href="#" class="menu-button">Generate</a></li> -->
     </ul> 
-
+    <div id="d-type" >
+      <label for="display-type-choice-1" class="menu-radio"><input type="radio" id="display-type-choice-1" value="Unsolved" name="display-type" checked="checked" /></label>
+      <label for="display-type-choice-2" class="menu-radio"><input type="radio" id="display-type-choice-2" value="DistanceMap" name="display-type" /></label>
+      <label for="display-type-choice-3" class="menu-radio"><input type="radio" id="display-type-choice-3" value="Solved" name="display-type" /></label>
+    </div>
     <div id="maze"></div>
 }
