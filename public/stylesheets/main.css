@@ -305,3 +305,9 @@ body.dark-mode {
   margin: 0 1em 1em 1em;
   background-color: #808080;
 }
+
+#hidden-maze {
+  display: none;
+  width: 0;
+  height: 0;
+}

@@ -65,6 +65,8 @@ function contains(lst, element) {
 //////////////
 
 $(document).ready(function() {
+  const mazeDiv = document.getElementById("maze");
+  
   if (webSocket == null) {
     init();
   }
@@ -107,16 +109,23 @@ $(document).ready(function() {
       consoleLog("ERROR: " + JSON.stringify(event));
   }
 
-  const mazeDiv = document.getElementById("maze");
   
   function onMessage(event) {
       mazeDiv.innerHTML = ""; 
       console.log(event.data);
       let receivedData = JSON.parse(event.data);
       console.log("New Data: ", receivedData);
+      $("#hidden-maze").html(event.data); 
       drawMaze(event.data, mazeDiv);
   }
-
+  
+  $('input[type=radio][name=display-type]').change(function() {
+    // alert("YO");
+    var mazz = document.getElementById("maze");
+    var json = $("#hidden-maze").val();
+    drawMaze(json, mazz);
+  });
+  
   function drawMaze(json, htmlParent) {
     var displayType = $('input[name="display-type"]:checked').val(); 
     const BORDER_SIZE = 1;
@@ -151,8 +160,10 @@ $(document).ready(function() {
         box.style.borderRight = linked.includes("east") ? EMPTY_WALL : SOLID_WALL;
         box.style.borderBottom = linked.includes("south") ? EMPTY_WALL : SOLID_WALL;
         box.style.borderLeft = linked.includes("west") ? EMPTY_WALL : SOLID_WALL;
-        if (displayType == "Solved" && cell.value != "") {
+        if (displayType == "Solved" && cell.onSolutionPath == true) {
           box.style.backgroundColor = "#ffffd8";
+        } else if (displayType == "DistanceMap") {
+          // TODO: distance map logic
         }
         htmlParent.appendChild(box);
         // alert("row " + i + ", column " + j + ", coords " + coords.x + ", " + coords.y);
@@ -199,6 +210,8 @@ $(document).ready(function() {
           "goalY": "0",
           "mazeType": "Solved"
         };
+      
+        // var displayType = $('input[name="display-type"]:checked').val(); 
        
         var messageInput = JSON.stringify(request); // TODO: this is changing integers to string, need library to accept all strings here...
 
