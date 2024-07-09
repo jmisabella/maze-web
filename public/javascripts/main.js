@@ -120,13 +120,16 @@ $(document).ready(function() {
   }
   
   $('input[type=radio][name=display-type]').change(function() {
-    // alert("YO");
     var mazz = document.getElementById("maze");
-    var json = $("#hidden-maze").val();
+    var json = $("#hidden-maze").html();
     drawMaze(json, mazz);
   });
   
   function drawMaze(json, htmlParent) {
+    // htmlParent.value = "";
+    // htmlParent.html = "";
+    // htmlParent.text = "";
+    $("#maze").html(""); // clear
     var displayType = $('input[name="display-type"]:checked').val(); 
     const BORDER_SIZE = 1;
     const BOX_WIDTH = 10;
@@ -173,14 +176,6 @@ $(document).ready(function() {
     // let body = obj.body; 
   }
 
-  // function appendClientMessageToView(title, message) {
-  //     $("#message-content").append("<span>" + title + ": " + message + "<br /></span>");
-  // }
-
-  // function appendServerMessageToView(title, message) {
-  //     $("#message-content").append("<span>" + title + ": " + message + "<br /><br /></span>");
-  // }
-
   function consoleLog(message) {
       console.log("New message: ", message);
   }
@@ -211,22 +206,15 @@ $(document).ready(function() {
           "mazeType": "Solved"
         };
       
-        // var displayType = $('input[name="display-type"]:checked').val(); 
-       
-        var messageInput = JSON.stringify(request); // TODO: this is changing integers to string, need library to accept all strings here...
+        var messageInput = JSON.stringify(request);
 
         let jsonMessage = {
             message: messageInput
         };
 
         // send our json message to the server
-        sendToServer(jsonMessage);
-
-        // TODO: send this message to server
         console.log("Sending ...");
-        // getMessageAndSendToServer();
-        // put focus back in the textarea
-        // $("#message-input").focus();
+        sendToServer(jsonMessage);
       }
   });
 
@@ -237,36 +225,6 @@ $(document).ready(function() {
           return false;
       }
   });
-
-  // there’s a lot going on here:
-  // 1. get our message from the textarea.
-  // 2. append that message to our view/div.
-  // 3. create a json version of the message.
-  // 4. send the message to the server.
-  // function getMessageAndSendToServer() {
-
-  //     // get the text from the textarea
-  //     messageInput = $("#message-input").val();
-
-  //     // clear the textarea
-  //     $("#message-input").val("");
-
-  //     // if the trimmed message was blank, return now
-  //     if ($.trim(messageInput) == "") {
-  //         return false;
-  //     }
-
-  //     // add the message to the view/div
-  //     // appendClientMessageToView("Me", messageInput);
-
-  //     // create the message as json
-  //     let jsonMessage = {
-  //         message: messageInput
-  //     };
-
-  //     // send our json message to the server
-  //     sendToServer(jsonMessage);
-  // }
 
   // send the data to the server using the WebSocket
   function sendToServer(jsonMessage) {
