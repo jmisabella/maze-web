@@ -134,6 +134,7 @@ $(document).ready(function() {
     const BORDER_SIZE = 1;
     const BOX_WIDTH = 10;
     const BOX_HEIGHT = 10;
+    const COLOR_SHADE_COUNT = 10;
     const EMPTY_WALL = BORDER_SIZE + "px solid transparent"; 
     const SOLID_WALL = BORDER_SIZE + "px solid black"; 
     if (json == null || json.toString() == "") {
@@ -143,6 +144,11 @@ $(document).ready(function() {
     htmlParent.style.width = (head(obj.body.rows).length * BOX_WIDTH) + "px";
     htmlParent.style.height = (obj.body.rows.length * BOX_HEIGHT) + "px";
     $('body,html').css("height", (htmlParent.style.height + 200) + "px");
+    let flattened = Array.prototype.concat.apply([], obj.body.rows);
+    let distances = $.map(flattened, function(c) { return c.distance });
+    let longestDist = Math.max.apply(Math, distances);
+    // TODO: longestDist used to determine when to change colors for distance map
+    //       it would be used for mod arithmetic
     for (let i = 0; i < obj.body.rows.length; i++) {
       let row = obj.body.rows[i];
       for (let j = 0; j < row.length; j++) {
@@ -168,7 +174,18 @@ $(document).ready(function() {
         } else if (displayType == "DistanceMap") {
           // TODO: for now we're displaying actual distances,
           //       but eventually we'll change box's background color instead of displaying text
-          // TODO: currently, distances only show the solution path but are missing from non-solution paths
+          let interval = parseInt(longestDist / COLOR_SHADE_COUNT);
+          var dict = {}; 
+          var color = "#fff"; // TODO: randomly choose a color collection; color would init as head of the collection 
+          for (let i = 0; i <= longestDist; i++) {
+            let changeColor = i % interval == 0;
+            if (changeColor) {
+              // TODO: change color if it's time to do so
+
+            } 
+            dict[i] = color;
+          }
+          box.style.backgroundColor = dict[cell.distance]; 
           box.style.color = "#000";
           box.style.fontSize = "7px";
           box.append(cell.distance.toString());
