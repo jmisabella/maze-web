@@ -124,6 +124,10 @@ $(document).ready(function() {
     var json = $("#hidden-maze").html();
     drawMaze(json, mazz);
   });
+
+  function randomInt(min, max) { // inclusive min and max
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
   
   function drawMaze(json, htmlParent) {
     // htmlParent.value = "";
@@ -140,6 +144,30 @@ $(document).ready(function() {
     if (json == null || json.toString() == "") {
       return "";
     }
+    let colorGradients = [
+      ["turquoise-50", "turquoise-100", "turquoise-200", "turquoise-300", "turquoise-400", "turquoise-500", "turquoise-600", "turquoise-700", "turquoise-800", "turquoise-900"],
+      ["green-sea-50", "green-sea-100", "green-sea-200", "green-sea-300", "green-sea-400", "green-sea-500", "green-sea-600", "green-sea-700", "green-sea-800", "green-sea-900"],
+      ["emerald-50", "emerald-100", "emerald-200", "emerald-300", "emerald-400", "emerald-500", "emerald-600", "emerald-700", "emerald-800", "emerald-900"],
+      ["nephritis-50", "nephritis-100", "nephritis-200", "nephritis-300", "nephritis-400", "nephritis-500", "nephritis-600", "nephritis-700", "nephritis-800", "nephritis-900"],
+      ["peter-river-50", "peter-river-100", "peter-river-200", "peter-river-300", "peter-river-400", "peter-river-500", "peter-river-600", "peter-river-700", "peter-river-800", "peter-river-900"],
+      ["belize-hole-50", "belize-hole-100", "belize-hole-200", "belize-hole-300", "belize-hole-400", "belize-hole-500", "belize-hole-600", "belize-hole-700", "belize-hole-800", "belize-hole-900"],
+      ["amethyst-50", "amethyst-100", "amethyst-200", "amethyst-300", "amethyst-400", "amethyst-500", "amethyst-600", "amethyst-700", "amethyst-800", "amethyst-900"],
+      ["wisteria-50", "wisteria-100", "wisteria-200", "wisteria-300", "wisteria-400", "wisteria-500", "wisteria-600", "wisteria-700", "wisteria-800", "wisteria-900"],
+      ["sunflower-50", "sunflower-100", "sunflower-200", "sunflower-300", "sunflower-400", "sunflower-500", "sunflower-600", "sunflower-700", "sunflower-800", "sunflower-900"],
+      ["orange-50", "orange-100", "orange-200", "orange-300", "orange-400", "orange-500", "orange-600", "orange-700", "orange-800", "orange-900"],
+      ["carrot-50", "carrot-100", "carrot-200", "carrot-300", "carrot-400", "carrot-500", "carrot-600", "carrot-700", "carrot-800", "carrot-900"],
+      ["pumpkin-50", "pumpkin-100", "pumpkin-200", "pumpkin-300", "pumpkin-400", "pumpkin-500", "pumpkin-600", "pumpkin-700", "pumpkin-800", "pumpkin-900"],
+      ["alizarin-50", "alizarin-100", "alizarin-200", "alizarin-300", "alizarin-400", "alizarin-500", "alizarin-600", "alizarin-700", "alizarin-800", "alizarin-900"],
+      ["pomegranate-50", "pomegranate-100", "pomegranate-200", "pomegranate-300", "pomegranate-400", "pomegranate-500", "pomegranate-600", "pomegranate-700", "pomegranate-800", "pomegranate-900"]
+    ];
+    let greyscaleGradients = [
+      ["clouds-50", "clouds-100", "clouds-200", "clouds-300", "clouds-400", "clouds-500", "clouds-600", "clouds-700", "clouds-800", "clouds-900"],
+      ["silver-50", "silver-100", "silver-200", "silver-300", "silver-400", "silver-500", "silver-600", "silver-700", "silver-800", "silver-900"],
+      ["concrete-50", "concrete-100", "concrete-200", "concrete-300", "concrete-400", "concrete-500", "concrete-600", "concrete-700", "concrete-800", "concrete-900"],
+      ["asbestos-50", "asbestos-100", "asbestos-200", "asbestos-300", "asbestos-400", "asbestos-500", "asbestos-600", "asbestos-700", "asbestos-800", "asbestos-900"],
+      ["wet-asphalt-50", "wet-asphalt-100", "wet-asphalt-200", "wet-asphalt-300", "wet-asphalt-400", "wet-asphalt-500", "wet-asphalt-600", "wet-asphalt-700", "wet-asphalt-800", "wet-asphalt-900"],
+      ["midnight-blue-50", "midnight-blue-100", "midnight-blue-200", "midnight-blue-300", "midnight-blue-400", "midnight-blue-500", "midnight-blue-600", "midnight-blue-700", "midnight-blue-800", "midnight-blue-900"]
+    ];
     let obj = JSON.parse(json.toString());
     htmlParent.style.width = (head(obj.body.rows).length * BOX_WIDTH) + "px";
     htmlParent.style.height = (obj.body.rows.length * BOX_HEIGHT) + "px";
@@ -175,17 +203,22 @@ $(document).ready(function() {
           // TODO: for now we're displaying actual distances,
           //       but eventually we'll change box's background color instead of displaying text
           let interval = parseInt(longestDist / COLOR_SHADE_COUNT);
-          var dict = {}; 
-          var color = "#fff"; // TODO: randomly choose a color collection; color would init as head of the collection 
+          var dict = {};
+          var colors = colorGradients[randomInt(0, 13)] // randomly choose one of the color lists
+          var currColor = head(colors);
+          colors = tail(colors); 
           for (let i = 0; i <= longestDist; i++) {
             let changeColor = i % interval == 0;
             if (changeColor) {
-              // TODO: change color if it's time to do so
-
+              currColor = head(colors);
+              if (colors.length >= 2) {
+                colors = tail(colors);
+              } 
             } 
-            dict[i] = color;
+            dict[i] = currColor;
           }
-          box.style.backgroundColor = dict[cell.distance]; 
+          // box.style.backgroundColor = dict[cell.distance]; 
+          box.className = dict[cell.distance]; 
           box.style.color = "#000";
           box.style.fontSize = "7px";
           box.append(cell.distance.toString());
