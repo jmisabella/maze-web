@@ -175,8 +175,17 @@ $(document).ready(function() {
     let flattened = Array.prototype.concat.apply([], obj.body.rows);
     let distances = $.map(flattened, function(c) { return c.distance });
     let longestDist = Math.max.apply(Math, distances);
-    // TODO: longestDist used to determine when to change colors for distance map
-    //       it would be used for mod arithmetic
+    let interval = (COLOR_SHADE_COUNT < longestDist) ? parseInt(longestDist / COLOR_SHADE_COUNT) : 1;
+    var dict = {};
+    let isGreyscale = randomInt(0,1) % 0 == 0;
+    let gradients = isGreyscale ? greyscaleGradients : colorGradients;  
+    var colors = gradients[randomInt(0, gradients.length - 1)] // randomly choose one of the color lists
+    // for (let i = 0; i < colors.length; i++) {
+    //   alert(colors[i]);
+    // } 
+    var currColor = "";
+    // var currColor = head(colors);
+    // colors = tail(colors);
     for (let i = 0; i < obj.body.rows.length; i++) {
       let row = obj.body.rows[i];
       for (let j = 0; j < row.length; j++) {
@@ -200,24 +209,21 @@ $(document).ready(function() {
         if (displayType == "Solved" && cell.onSolutionPath == true) {
           box.style.backgroundColor = "#ffffd8";
         } else if (displayType == "DistanceMap") {
-          // TODO: for now we're displaying actual distances,
-          //       but eventually we'll change box's background color instead of displaying text
-          let interval = parseInt(longestDist / COLOR_SHADE_COUNT);
-          var dict = {};
-          var colors = colorGradients[randomInt(0, 13)] // randomly choose one of the color lists
-          var currColor = head(colors);
-          colors = tail(colors); 
+          currColor = head(colors);
+          if (colors.length >= 2) {
+            colors = tail(colors);
+          } 
           for (let i = 0; i <= longestDist; i++) {
-            let changeColor = i % interval == 0;
+            let changeColor = interval <= 1 ? true : i % interval == 0;
             if (changeColor) {
               currColor = head(colors);
               if (colors.length >= 2) {
                 colors = tail(colors);
               } 
             } 
+            // alert("KEY: " + i + ", COLOR: " + currColor);
             dict[i] = currColor;
           }
-          // box.style.backgroundColor = dict[cell.distance]; 
           box.className = dict[cell.distance]; 
           box.style.color = "#000";
           box.style.fontSize = "7px";
