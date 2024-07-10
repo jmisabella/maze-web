@@ -172,6 +172,7 @@ $(document).ready(function() {
     htmlParent.style.width = (head(obj.body.rows).length * BOX_WIDTH) + "px";
     htmlParent.style.height = (obj.body.rows.length * BOX_HEIGHT) + "px";
     $('body,html').css("height", (htmlParent.style.height + 200) + "px");
+    // BEGINNING of logic for creating distance heat map dictionary 
     let flattened = Array.prototype.concat.apply([], obj.body.rows);
     let distances = $.map(flattened, function(c) { return c.distance });
     let longestDist = Math.max.apply(Math, distances);
@@ -180,12 +181,19 @@ $(document).ready(function() {
     let isGreyscale = randomInt(0,1) % 0 == 0;
     let gradients = isGreyscale ? greyscaleGradients : colorGradients;  
     var colors = gradients[randomInt(0, gradients.length - 1)] // randomly choose one of the color lists
-    // for (let i = 0; i < colors.length; i++) {
-    //   alert(colors[i]);
-    // } 
-    var currColor = "";
-    // var currColor = head(colors);
-    // colors = tail(colors);
+    var currColor = head(colors);
+    colors = tail(colors);
+    for (let i = 0; i <= longestDist; i++) {
+      dict[i] = currColor;
+      let changeColor = interval <= 1 ? true : i % interval == 0;
+      if (changeColor) {
+        currColor = head(colors);
+        if (colors.length >= 2) {
+          colors = tail(colors);
+        } 
+      } 
+    }
+    // END of logic for creating distance heat map dictionary 
     for (let i = 0; i < obj.body.rows.length; i++) {
       let row = obj.body.rows[i];
       for (let j = 0; j < row.length; j++) {
@@ -209,28 +217,12 @@ $(document).ready(function() {
         if (displayType == "Solved" && cell.onSolutionPath == true) {
           box.style.backgroundColor = "#ffffd8";
         } else if (displayType == "DistanceMap") {
-          currColor = head(colors);
-          if (colors.length >= 2) {
-            colors = tail(colors);
-          } 
-          for (let i = 0; i <= longestDist; i++) {
-            let changeColor = interval <= 1 ? true : i % interval == 0;
-            if (changeColor) {
-              currColor = head(colors);
-              if (colors.length >= 2) {
-                colors = tail(colors);
-              } 
-            } 
-            // alert("KEY: " + i + ", COLOR: " + currColor);
-            dict[i] = currColor;
-          }
           box.className = dict[cell.distance]; 
-          box.style.color = "#000";
-          box.style.fontSize = "7px";
-          box.append(cell.distance.toString());
+          // box.style.color = "#000";
+          // box.style.fontSize = "7px";
+          // box.append(cell.distance.toString());
         }
         htmlParent.appendChild(box);
-        // alert("row " + i + ", column " + j + ", coords " + coords.x + ", " + coords.y);
       }
     }
 
