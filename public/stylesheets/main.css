@@ -306,11 +306,16 @@ body.dark-mode {
   background-color: #808080;
 }
 
-#hidden-maze {
+.hidden {
   display: none;
   width: 0;
   height: 0;
 }
+/* #hidden-maze {
+  display: none;
+  width: 0;
+  height: 0;
+} */
 
 /** COLOR GRADIENTS  **/
 
