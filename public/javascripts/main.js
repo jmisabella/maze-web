@@ -199,6 +199,11 @@ $(document).ready(function() {
         if (displayType == "Solved" && cell.onSolutionPath == true) {
           box.style.backgroundColor = "#ffffd8";
         }
+        if (cell.isStart) {
+          box.style.backgroundColor = "#fff";
+        } else if (cell.isGoal) {
+          box.style.backgroundColor = "#99fb99";
+        }
         htmlParent.appendChild(box);
       }
     }
