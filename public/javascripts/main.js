@@ -159,6 +159,7 @@ $(document).ready(function() {
       console.log("New Data: ", receivedData);
       $("#hidden-maze").html(event.data); 
       drawMaze(event.data, mazeDiv);
+      $("#loading-modal").css('display', 'none'); 
   }
  
   $(window).resize(function() {
@@ -192,7 +193,7 @@ $(document).ready(function() {
     var colorName = $("#hidden-color").html();  
     function getShades(color) {
       let suffixes = ["-50", "-100", "-200", "-300", "-400", "-500", "-600", "-700", "-800", "-900"]
-      return $.map(suffixes, function(suffix) { return color + suffix });
+      return $.map(suffixes.reverse(), function(suffix) { return color + suffix });
     }
     var colors = getShades(colorName);
     
@@ -244,12 +245,17 @@ $(document).ready(function() {
           box.className = dict[cell.distance]; 
         }
         if (displayType == "Solved" && cell.onSolutionPath == true) {
-          box.style.backgroundColor = "#ffffd8";
+          // box.style.backgroundColor = "#ffffd8";
+          box.style.backgroundColor = "#b7ffb7";
         }
         if (cell.isStart) {
-          box.style.backgroundColor = "#fff";
+          // box.style.backgroundColor = "#fff";
+          box.style.backgroundColor = "#00ffff";
         } else if (cell.isGoal) {
-          box.style.backgroundColor = "#99fb99";
+          // box.style.backgroundColor = "#99fb99";
+          // box.style.backgroundColor = "#7fffd4";
+          // box.style.backgroundColor = "#3eb489";
+          box.style.backgroundColor = "#98ff98";
         }
         htmlParent.appendChild(box);
       }
@@ -330,6 +336,7 @@ $(document).ready(function() {
       if(webSocket.readyState == WebSocket.OPEN) {
           consoleLog("SENT: " + jsonMessage.message);
           webSocket.send(JSON.stringify(jsonMessage));
+          $("#loading-modal").css('display', 'block');
       } else {
           consoleLog("Could not send data. Websocket is not open.");
       }
