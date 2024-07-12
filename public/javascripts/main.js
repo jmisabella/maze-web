@@ -1,4 +1,7 @@
 
+
+let CELL_SIZE = 10
+
 function head(lst) {
   return lst[0];
 }
@@ -75,9 +78,22 @@ $(document).ready(function() {
     $(".menu-bar").toggleClass( "open" );
   });
 
-  jQuery('.numbers').keyup(function () { 
-    this.value = this.value.replace(/[^0-9]/g,'');
-  }); 
+  jQuery('#width').keyup(function () {
+    if (this.value.length > 0) {
+      let padding = 30;
+      let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
+      let max = parseInt(($(window).width() - padding) / CELL_SIZE, 10);
+      this.value = arg <= max ? arg : max;
+    }
+  });
+  jQuery('#height').keyup(function () { 
+    if (this.value.length > 0) {
+      let padding = 40;
+      let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
+      let max = parseInt(($(window).height() - padding) / CELL_SIZE, 10);
+      this.value = arg <= max ? arg : max;
+    }
+  });
  
   $(document).on('keyup blur input propertychange', 'input[class="numbers"]', function(){$(this).val($(this).val().replace(/[^0-9]/g,''));});  
 
@@ -118,7 +134,12 @@ $(document).ready(function() {
       $("#hidden-maze").html(event.data); 
       drawMaze(event.data, mazeDiv);
   }
-  
+ 
+  $(window).resize(function() {
+    $("#hidden-width").html($(window).width()); // New height
+    $("#hidden-height").html($(window).height()); // New height
+  });  
+
   $('input[type=radio][name=display-type]').change(function() {
     var mazz = document.getElementById("maze");
     var json = $("#hidden-maze").html();
@@ -133,8 +154,8 @@ $(document).ready(function() {
     $("#maze").html(""); // clear
     var displayType = $('input[name="display-type"]:checked').val(); 
     const BORDER_SIZE = 1;
-    const BOX_WIDTH = 10;
-    const BOX_HEIGHT = 10;
+    const BOX_WIDTH = CELL_SIZE;
+    const BOX_HEIGHT = CELL_SIZE;
     const COLOR_SHADE_COUNT = 10;
     const EMPTY_WALL = BORDER_SIZE + "px solid transparent"; 
     const SOLID_WALL = BORDER_SIZE + "px solid black"; 

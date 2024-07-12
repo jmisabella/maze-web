@@ -13,7 +13,11 @@
   /* background: #f7f7f7; */
   z-index:10;  
   overflow:hidden;
-  box-shadow: 2px 0 18px rgba(0, 0, 0, 0.26);
+  /* box-shadow: 2px 0 18px rgba(0, 0, 0, 0.26); */
+}
+.menu-bar li {
+  border-left: solid 1px #202020; 
+  /* border-right: solid 1px #202020;  */
 }
 .menu li a {
 display: block;
