@@ -90,14 +90,15 @@ $(document).ready(function() {
   });
   jQuery('#start-y').keyup(function () {
       let current = parseInt(this.value, 10);
-      let max = parseInt($("#width").val(), 10) / 2;
-      this.value = parseInt(this.value, 10) < max ? this.value : "0"; // keep starting cell on western edge of the maze
+      let max = parseInt(parseInt($("#width").val(), 10) / 2, 10);
+      this.value = current < max ? this.value : "0"; // default start on eastern wall of the maze
   });
   jQuery('#goal-y').keyup(function () {
       // this.value = (parseInt($("#width").val(), 10) - 1).toString() ; // keep starting cell on eastern edge of the maze
       let current = parseInt(this.value, 10);
-      let min = parseInt($("#width").val(), 10) / 2;
-      this.value = parseInt(this.value, 10) > min ? this.value : parseInt($("#width").val(), 10) - 1; // keep starting cell on western edge of the maze
+      let max = parseInt($("#width").val(), 10);
+      let min = parseInt(max / 2, 10);
+      this.value = current > min && current < max ? this.value : parseInt($("#width").val(), 10) - 1; // default goal cell on western wall of the maze
   });
   jQuery('#height').keyup(function () { 
     if (this.value.length > 0) {
@@ -297,10 +298,10 @@ $(document).ready(function() {
           "width": width,
           "height": height,
           "algorithm": algorithm,
-          "startX": startX,
-          "startY": startY,
-          "goalX": goalX,
-          "goalY": goalY,
+          "startX": startY, // bug in maze library, start coords are reversed
+          "startY": startX, // bug in maze library, start coords are reversed
+          "goalX": goalY, // bug in maze library, start coords are reversed
+          "goalY": goalX, // bug in maze library, start coords are reversed
           "mazeType": "Solved"
         };
       
