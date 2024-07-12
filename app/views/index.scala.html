@@ -2,23 +2,31 @@
 
 @main("MAZE") {
 
-    <!-- <h1 class="text-primary" style="font-size:24px;padding-bottom:1.5em;">MAZE</h1> -->
     <ul class="menu">
       <li title="generate"><a href="#" class="menu-button home">options</a></li>
     </ul>
     <ul class="menu-bar">
       <li><a href="#" class="menu-button">Maze</a></li>
-      <li><label for="width">Width: &nbsp;<input type="text" id="width" class="numbers" maxlength="4" value="" /></label><!--/li-->
-      <!--li--><label for="height">Height: <input type="text" id="height" class="numbers" maxlength="4" value="" /></label></li>
+      <li>
+        <label for="width">width: &nbsp;&nbsp;<input type="text" id="width" class="numbers" maxlength="3" value="" /></label>
+        <label for="height">height: <input type="text" id="height" class="numbers" maxlength="3" value="" /></label>
+      </li>
+      <li>
+        <label for="start-x">start x: &nbsp;<input type="text" id="start-x" class="numbers" maxlength="3" value="" /></label>
+        <label for="start-y">start y: <input type="text" id="start-y" class="numbers" maxlength="3" value="" /></label>
+      </li>
+      <li>
+        <label for="goal-x">goal x: &nbsp;<input type="text" id="goal-x" class="numbers" maxlength="3" value="" /></label>
+        <label for="goal-y">goal y: <input type="text" id="goal-y" class="numbers" maxlength="3" value="" /></label>
+      </li>
       <li>
         <select id='select-generator' >
-          <option value=''>Algorithm</option>
-          <option value='binarytree'>Binary Tree</option>
-          <option value='sidewinder'>Sidewinder</option>
+          <option value=''>algorithm</option>
+          <option value='binarytree'>binary tree</option>
+          <option value='sidewinder'>sidewinder</option>
         </select>
       </li>
-      <li><a id="send-button" href="#" class="menu-button">Generate</a></li>
-      <!-- <li><a id="send-button" style="width: 10em; background-color: #000;" href="#" class="menu-button">Generate</a></li> -->
+      <li><a id="send-button" href="#" class="menu-button">generate</a></li>
     </ul> 
     <div id="d-type" >
       <label for="display-type-choice-1" class="menu-radio"><input type="radio" id="display-type-choice-1" value="Unsolved" name="display-type" checked="checked" /></label>

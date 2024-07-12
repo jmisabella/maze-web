@@ -86,7 +86,9 @@ font-size: 1.4em;
   margin-left: 2px;
 }
 .menu-bar li input[type=text] {
-  width: 64px;
+  /* width: 64px; */
+  width: 40px;
+  height: 20px;
 }
 .menu-bar li button,
 .menu-bar li select {
@@ -162,17 +164,18 @@ font-size: 1.4em;
 }
 
 
-.para{
+.para {
   color:#033f72;
   padding-left:100px;
   font-size:3em;
   margin-bottom:20px;
 }
 
-.open{
+.open {
   /* width:10em; */
   /* width:17em; */
-  width:21em;
+  /* width:21em; */
+  width:16em;
   height:100%;
 }
 

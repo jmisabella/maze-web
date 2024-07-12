@@ -84,7 +84,20 @@ $(document).ready(function() {
       let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
       let max = parseInt(($(window).width() - padding) / CELL_SIZE, 10);
       this.value = arg <= max ? arg : max;
+      $("#start-y").val(0); // default start to be on the western wall
+      $("#goal-y").val((this.value - 1).toString()); // default goal to be on the eastern wall
     }
+  });
+  jQuery('#start-y').keyup(function () {
+      let current = parseInt(this.value, 10);
+      let max = parseInt($("#width").val(), 10) / 2;
+      this.value = parseInt(this.value, 10) < max ? this.value : "0"; // keep starting cell on western edge of the maze
+  });
+  jQuery('#goal-y').keyup(function () {
+      // this.value = (parseInt($("#width").val(), 10) - 1).toString() ; // keep starting cell on eastern edge of the maze
+      let current = parseInt(this.value, 10);
+      let min = parseInt($("#width").val(), 10) / 2;
+      this.value = parseInt(this.value, 10) > min ? this.value : parseInt($("#width").val(), 10) - 1; // keep starting cell on western edge of the maze
   });
   jQuery('#height').keyup(function () { 
     if (this.value.length > 0) {
@@ -93,6 +106,18 @@ $(document).ready(function() {
       let max = parseInt(($(window).height() - padding) / CELL_SIZE, 10);
       this.value = arg <= max ? arg : max;
     }
+  });
+  jQuery('#start-x').keyup(function () {
+      let startX = this.value; 
+      if (startX.length > 0 && parseInt(startX, 10) >= parseInt($("#height").val(), 10)) {
+        this.value = parseInt($("#height").val(), 10) - 1;
+      }
+  });
+  jQuery('#goal-x').keyup(function () {
+      let goalX = this.value;
+      if (goalX.length > 0 && parseInt(goalX, 10) >= parseInt($("#height").val(), 10)) {
+        this.value = parseInt($("#height").val(), 10) - 1;
+      }
   });
  
   $(document).on('keyup blur input propertychange', 'input[class="numbers"]', function(){$(this).val($(this).val().replace(/[^0-9]/g,''));});  
@@ -239,15 +264,25 @@ $(document).ready(function() {
   window.addEventListener("load", init, false);
 
   $("#send-button").click(function (e) {
-      var width = $("#width").val();
-      var height = $("#height").val();
-      var algorithm = $("#select-generator").val();
+      let width = $("#width").val();
+      let height = $("#height").val();
+      let algorithm = $("#select-generator").val();
+      let startX = $("#start-x").val();
+      let startY = $("#start-y").val();
+      let goalX = $("#goal-x").val();
+      let goalY = $("#goal-y").val();
       if (width <= "0" && height <= "0") {
         alert("enter width and height");
       } else if (width <= "0") {
         alert("enter width");
       } else if (height <= "0") {
         alert("enter height");
+      } else if ((startX.length == 0 || startY.length) == 9 && (goalX.length == 0 || goalY.length == 0)) {
+        alert("start and goal coordinates are required");
+      } else if (startX.length == 0 || startY.length == 0) {
+        alert("start coordinates are required");
+      } else if (goalX.length == 0 || goalY.length == 0) {
+        alert("goal coordinates are required");
       } else if (algorithm == "") {
         alert("select algorithm");
       } else {
@@ -258,15 +293,14 @@ $(document).ready(function() {
         let availableColors = previousColor == null || previousColor == "" ? allColors : jQuery.grep(allColors, function(c) { return c != previousColor });
         var nextColor = availableColors[randomInt(0, availableColors.length - 1)] // randomly choose one of the color lists
         $("#hidden-color").html(nextColor);
-      
         request = {
           "width": width,
           "height": height,
           "algorithm": algorithm,
-          "startX": "0",
-          "startY": (height - 1).toString(),
-          "goalX": (width - 1).toString(),
-          "goalY": "0",
+          "startX": startX,
+          "startY": startY,
+          "goalX": goalX,
+          "goalY": goalY,
           "mazeType": "Solved"
         };
       
