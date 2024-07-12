@@ -13,7 +13,11 @@
   /* background: #f7f7f7; */
   z-index:10;  
   overflow:hidden;
-  box-shadow: 2px 0 18px rgba(0, 0, 0, 0.26);
+  /* box-shadow: 2px 0 18px rgba(0, 0, 0, 0.26); */
+}
+.menu-bar li {
+  border-left: solid 1px #202020; 
+  /* border-right: solid 1px #202020;  */
 }
 .menu li a {
 display: block;
@@ -82,7 +86,9 @@ font-size: 1.4em;
   margin-left: 2px;
 }
 .menu-bar li input[type=text] {
-  width: 64px;
+  /* width: 64px; */
+  width: 40px;
+  height: 20px;
 }
 .menu-bar li button,
 .menu-bar li select {
@@ -158,17 +164,18 @@ font-size: 1.4em;
 }
 
 
-.para{
+.para {
   color:#033f72;
   padding-left:100px;
   font-size:3em;
   margin-bottom:20px;
 }
 
-.open{
+.open {
   /* width:10em; */
   /* width:17em; */
-  width:21em;
+  /* width:21em; */
+  width:16em;
   height:100%;
 }
 
@@ -304,6 +311,22 @@ body.dark-mode {
   /* margin: 1em 1em; */
   margin: 0 1em 1em 1em;
   background-color: #808080;
+}
+
+#loading-modal {
+  display:    none;
+  position:   fixed;
+  z-index:    1000;
+  top:        0;
+  left:       0;
+  height:     100%;
+  width:      100%;
+  background: rgba( 255, 255, 255, .5 ) 
+              /* url('http://i.stack.imgur.com/FhHRx.gif')  */
+              /* url("../images/cat-loading.gif") */
+              url("../images/loading-200px-200px.gif")
+              50% 40% 
+              no-repeat;
 }
 
 .hidden {

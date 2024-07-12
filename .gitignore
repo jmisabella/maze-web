@@ -16,7 +16,6 @@ server.pid
 .cache
 .bloop
 /project/.bloop/*
-/project/build.properties
 /project/metals.sbt
 .metals/metals.lock.db
 .metals/metals.log

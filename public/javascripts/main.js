@@ -1,4 +1,7 @@
 
+
+let CELL_SIZE = 10
+
 function head(lst) {
   return lst[0];
 }
@@ -75,9 +78,48 @@ $(document).ready(function() {
     $(".menu-bar").toggleClass( "open" );
   });
 
-  jQuery('.numbers').keyup(function () { 
-    this.value = this.value.replace(/[^0-9]/g,'');
-  }); 
+  jQuery('#width').keyup(function () {
+    if (this.value.length > 0) {
+      let padding = 30;
+      let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
+      let max = parseInt(($(window).width() - padding) / CELL_SIZE, 10);
+      this.value = arg <= max ? arg : max;
+      $("#start-y").val(0); // default start to be on the western wall
+      $("#goal-y").val((this.value - 1).toString()); // default goal to be on the eastern wall
+    }
+  });
+  jQuery('#start-y').keyup(function () {
+      let current = parseInt(this.value, 10);
+      let max = parseInt(parseInt($("#width").val(), 10) / 2, 10);
+      this.value = current < max ? this.value : "0"; // default start on eastern wall of the maze
+  });
+  jQuery('#goal-y').keyup(function () {
+      // this.value = (parseInt($("#width").val(), 10) - 1).toString() ; // keep starting cell on eastern edge of the maze
+      let current = parseInt(this.value, 10);
+      let max = parseInt($("#width").val(), 10);
+      let min = parseInt(max / 2, 10);
+      this.value = current > min && current < max ? this.value : parseInt($("#width").val(), 10) - 1; // default goal cell on western wall of the maze
+  });
+  jQuery('#height').keyup(function () { 
+    if (this.value.length > 0) {
+      let padding = 40;
+      let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
+      let max = parseInt(($(window).height() - padding) / CELL_SIZE, 10);
+      this.value = arg <= max ? arg : max;
+    }
+  });
+  jQuery('#start-x').keyup(function () {
+      let startX = this.value; 
+      if (startX.length > 0 && parseInt(startX, 10) >= parseInt($("#height").val(), 10)) {
+        this.value = parseInt($("#height").val(), 10) - 1;
+      }
+  });
+  jQuery('#goal-x').keyup(function () {
+      let goalX = this.value;
+      if (goalX.length > 0 && parseInt(goalX, 10) >= parseInt($("#height").val(), 10)) {
+        this.value = parseInt($("#height").val(), 10) - 1;
+      }
+  });
  
   $(document).on('keyup blur input propertychange', 'input[class="numbers"]', function(){$(this).val($(this).val().replace(/[^0-9]/g,''));});  
 
@@ -117,8 +159,14 @@ $(document).ready(function() {
       console.log("New Data: ", receivedData);
       $("#hidden-maze").html(event.data); 
       drawMaze(event.data, mazeDiv);
+      $("#loading-modal").css('display', 'none'); 
   }
-  
+ 
+  $(window).resize(function() {
+    $("#hidden-width").html($(window).width()); // New height
+    $("#hidden-height").html($(window).height()); // New height
+  });  
+
   $('input[type=radio][name=display-type]').change(function() {
     var mazz = document.getElementById("maze");
     var json = $("#hidden-maze").html();
@@ -133,8 +181,8 @@ $(document).ready(function() {
     $("#maze").html(""); // clear
     var displayType = $('input[name="display-type"]:checked').val(); 
     const BORDER_SIZE = 1;
-    const BOX_WIDTH = 10;
-    const BOX_HEIGHT = 10;
+    const BOX_WIDTH = CELL_SIZE;
+    const BOX_HEIGHT = CELL_SIZE;
     const COLOR_SHADE_COUNT = 10;
     const EMPTY_WALL = BORDER_SIZE + "px solid transparent"; 
     const SOLID_WALL = BORDER_SIZE + "px solid black"; 
@@ -145,7 +193,7 @@ $(document).ready(function() {
     var colorName = $("#hidden-color").html();  
     function getShades(color) {
       let suffixes = ["-50", "-100", "-200", "-300", "-400", "-500", "-600", "-700", "-800", "-900"]
-      return $.map(suffixes, function(suffix) { return color + suffix });
+      return $.map(suffixes.reverse(), function(suffix) { return color + suffix });
     }
     var colors = getShades(colorName);
     
@@ -197,7 +245,17 @@ $(document).ready(function() {
           box.className = dict[cell.distance]; 
         }
         if (displayType == "Solved" && cell.onSolutionPath == true) {
-          box.style.backgroundColor = "#ffffd8";
+          // box.style.backgroundColor = "#ffffd8";
+          box.style.backgroundColor = "#b7ffb7";
+        }
+        if (cell.isStart) {
+          // box.style.backgroundColor = "#fff";
+          box.style.backgroundColor = "#00ffff";
+        } else if (cell.isGoal) {
+          // box.style.backgroundColor = "#99fb99";
+          // box.style.backgroundColor = "#7fffd4";
+          // box.style.backgroundColor = "#3eb489";
+          box.style.backgroundColor = "#98ff98";
         }
         htmlParent.appendChild(box);
       }
@@ -213,15 +271,25 @@ $(document).ready(function() {
   window.addEventListener("load", init, false);
 
   $("#send-button").click(function (e) {
-      var width = $("#width").val();
-      var height = $("#height").val();
-      var algorithm = $("#select-generator").val();
+      let width = $("#width").val();
+      let height = $("#height").val();
+      let algorithm = $("#select-generator").val();
+      let startX = $("#start-x").val();
+      let startY = $("#start-y").val();
+      let goalX = $("#goal-x").val();
+      let goalY = $("#goal-y").val();
       if (width <= "0" && height <= "0") {
         alert("enter width and height");
       } else if (width <= "0") {
         alert("enter width");
       } else if (height <= "0") {
         alert("enter height");
+      } else if ((startX.length == 0 || startY.length) == 9 && (goalX.length == 0 || goalY.length == 0)) {
+        alert("start and goal coordinates are required");
+      } else if (startX.length == 0 || startY.length == 0) {
+        alert("start coordinates are required");
+      } else if (goalX.length == 0 || goalY.length == 0) {
+        alert("goal coordinates are required");
       } else if (algorithm == "") {
         alert("select algorithm");
       } else {
@@ -232,15 +300,14 @@ $(document).ready(function() {
         let availableColors = previousColor == null || previousColor == "" ? allColors : jQuery.grep(allColors, function(c) { return c != previousColor });
         var nextColor = availableColors[randomInt(0, availableColors.length - 1)] // randomly choose one of the color lists
         $("#hidden-color").html(nextColor);
-      
         request = {
           "width": width,
           "height": height,
           "algorithm": algorithm,
-          "startX": "0",
-          "startY": (height - 1).toString(),
-          "goalX": (width - 1).toString(),
-          "goalY": "0",
+          "startX": startY, // bug in maze library, start coords are reversed
+          "startY": startX, // bug in maze library, start coords are reversed
+          "goalX": goalY, // bug in maze library, start coords are reversed
+          "goalY": goalX, // bug in maze library, start coords are reversed
           "mazeType": "Solved"
         };
       
@@ -269,6 +336,7 @@ $(document).ready(function() {
       if(webSocket.readyState == WebSocket.OPEN) {
           consoleLog("SENT: " + jsonMessage.message);
           webSocket.send(JSON.stringify(jsonMessage));
+          $("#loading-modal").css('display', 'block');
       } else {
           consoleLog("Could not send data. Websocket is not open.");
       }
