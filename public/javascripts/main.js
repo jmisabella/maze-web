@@ -1,6 +1,8 @@
 
 
-let CELL_SIZE = 10
+// let CELL_SIZE = 10
+// // let CELL_SIZE = 7
+// // let CELL_SIZE = 5
 
 function head(lst) {
   return lst[0];
@@ -81,8 +83,9 @@ $(document).ready(function() {
   jQuery('#width').keyup(function () {
     if (this.value.length > 0) {
       let padding = 30;
+      let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
       let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
-      let max = parseInt(($(window).width() - padding) / CELL_SIZE, 10);
+      let max = parseInt(($(window).width() - padding) / cellSize, 10);
       this.value = arg <= max ? arg : max;
       $("#start-y").val(0); // default start to be on the western wall
       $("#goal-y").val((this.value - 1).toString()); // default goal to be on the eastern wall
@@ -103,8 +106,9 @@ $(document).ready(function() {
   jQuery('#height').keyup(function () { 
     if (this.value.length > 0) {
       let padding = 40;
+      let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
       let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
-      let max = parseInt(($(window).height() - padding) / CELL_SIZE, 10);
+      let max = parseInt(($(window).height() - padding) / cellSize, 10);
       this.value = arg <= max ? arg : max;
     }
   });
@@ -156,21 +160,41 @@ $(document).ready(function() {
       mazeDiv.innerHTML = ""; 
       console.log(event.data);
       let receivedData = JSON.parse(event.data);
-      console.log("New Data: ", receivedData);
+      // console.log("New Data: ", receivedData);
+      console.log("Received response, drawing the maze...");
       $("#hidden-maze").html(event.data); 
       drawMaze(event.data, mazeDiv);
+      console.log("Finished drawing the maze.");
       $("#loading-modal").css('display', 'none'); 
   }
  
   $(window).resize(function() {
-    $("#hidden-width").html($(window).width()); // New height
-    $("#hidden-height").html($(window).height()); // New height
+    // $("#hidden-width").html($(window).width()); // New height
+    // $("#hidden-height").html($(window).height()); // New height
+    // Whenever window size changes, need to clear out width, height, start coords, and goal coords
+    // so that they would be re-entered according to the new max width and height based on window size
+    $("#width").val("");
+    $("#height").val("");
+    $("#start-x").val("");
+    $("#start-y").val("");
+    $("#goal-x").val("");
+    $("#goal-y").val("");
   });  
 
   $('input[type=radio][name=display-type]').change(function() {
     var mazz = document.getElementById("maze");
     var json = $("#hidden-maze").html();
     drawMaze(json, mazz);
+  });
+  $('input[type=radio][name=cell-size]').change(function() {
+    // Whenever cell size changes, need to clear out width, height, start coords, and goal coords
+    // so that they would be re-entered according to the new max width and height based on cell size
+    $("#width").val("");
+    $("#height").val("");
+    $("#start-x").val("");
+    $("#start-y").val("");
+    $("#goal-x").val("");
+    $("#goal-y").val("");
   });
 
   function randomInt(min, max) { // inclusive min and max
@@ -179,10 +203,11 @@ $(document).ready(function() {
   
   function drawMaze(json, htmlParent) {
     $("#maze").html(""); // clear
-    var displayType = $('input[name="display-type"]:checked').val(); 
+    let displayType = $('input[name="display-type"]:checked').val(); 
+    let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
     const BORDER_SIZE = 1;
-    const BOX_WIDTH = CELL_SIZE;
-    const BOX_HEIGHT = CELL_SIZE;
+    const BOX_WIDTH = cellSize;
+    const BOX_HEIGHT = cellSize;
     const COLOR_SHADE_COUNT = 10;
     const EMPTY_WALL = BORDER_SIZE + "px solid transparent"; 
     const SOLID_WALL = BORDER_SIZE + "px solid black"; 
@@ -292,6 +317,8 @@ $(document).ready(function() {
         alert("goal coordinates are required");
       } else if (algorithm == "") {
         alert("select algorithm");
+      } else if (startX == goalX && startY == goalY) {
+        alert("start and goal coordinates cannot match");
       } else {
         let displayType = $('input[name="display-type"]:checked').val();
         if (displayType == "Solved") {

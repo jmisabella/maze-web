@@ -29,7 +29,8 @@ class WebSocketActor(clientActorRef: ActorRef) extends Actor {
 
       val request: MazeRequest = MazeRequest(json)
       val maze: Grid = Generator.generate(request)
-      println("RESPONSE: \n" + maze)
+      // println("RESPONSE: \n" + maze)
+      println("RESPONSE RECEIVED.\n") // don't log response because it may be very large
 
       val response: JsValue = Json.parse(s"""{"body": ${maze}}""") 
       clientActorRef ! (response)
