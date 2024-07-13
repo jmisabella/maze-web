@@ -1,8 +1,8 @@
 
-
-// let CELL_SIZE = 10
-// // let CELL_SIZE = 7
-// // let CELL_SIZE = 5
+let VISITED_CELL_COLOR = "#b7ffb7";
+let START_CELL_COLOR = "#00ffff";
+let GOAL_CELL_COLOR = "#98ff98";
+let UNVISITED_CELL_COLOR = "#808080";
 
 function head(lst) {
   return lst[0];
@@ -169,8 +169,6 @@ $(document).ready(function() {
   }
  
   $(window).resize(function() {
-    // $("#hidden-width").html($(window).width()); // New height
-    // $("#hidden-height").html($(window).height()); // New height
     // Whenever window size changes, need to clear out width, height, start coords, and goal coords
     // so that they would be re-entered according to the new max width and height based on window size
     $("#width").val("");
@@ -180,12 +178,6 @@ $(document).ready(function() {
     $("#goal-x").val("");
     $("#goal-y").val("");
   });  
-
-  $('input[type=radio][name=display-type]').change(function() {
-    var mazz = document.getElementById("maze");
-    var json = $("#hidden-maze").html();
-    drawMaze(json, mazz);
-  });
   $('input[type=radio][name=cell-size]').change(function() {
     // Whenever cell size changes, need to clear out width, height, start coords, and goal coords
     // so that they would be re-entered according to the new max width and height based on cell size
@@ -196,7 +188,12 @@ $(document).ready(function() {
     $("#goal-x").val("");
     $("#goal-y").val("");
   });
-
+  $('input[type=radio][name=display-type]').change(function() {
+    // Whenever selected display type changes, redraw the maze using JSON persisted in the hidden cell hidden-maze 
+    var mazz = document.getElementById("maze");
+    var json = $("#hidden-maze").html();
+    drawMaze(json, mazz);
+  });
   function randomInt(min, max) { // inclusive min and max
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
@@ -214,14 +211,12 @@ $(document).ready(function() {
     if (json == null || json.toString() == "") {
       return "";
     }
-
     var colorName = $("#hidden-color").html();  
     function getShades(color) {
       let suffixes = ["-50", "-100", "-200", "-300", "-400", "-500", "-600", "-700", "-800", "-900"]
       return $.map(suffixes.reverse(), function(suffix) { return color + suffix });
     }
     var colors = getShades(colorName);
-    
     let obj = JSON.parse(json.toString());
     htmlParent.style.width = (head(obj.body.rows).length * BOX_WIDTH) + "px";
     htmlParent.style.height = (obj.body.rows.length * BOX_HEIGHT) + "px";
@@ -231,10 +226,9 @@ $(document).ready(function() {
     let distances = $.map(flattened, function(c) { return c.distance });
     let longestDist = Math.max.apply(Math, distances);
     let interval = (COLOR_SHADE_COUNT < longestDist) ? parseInt(longestDist / COLOR_SHADE_COUNT) : 1;
-    var dict = {};
-
     var currColor = head(colors);
     colors = tail(colors);
+    var dict = {};
     for (let i = 0; i <= longestDist; i++) {
       dict[i] = currColor;
       let changeColor = interval <= 1 ? true : i % interval == 0;
@@ -266,27 +260,30 @@ $(document).ready(function() {
         box.style.borderRight = linked.includes("east") ? EMPTY_WALL : SOLID_WALL;
         box.style.borderBottom = linked.includes("south") ? EMPTY_WALL : SOLID_WALL;
         box.style.borderLeft = linked.includes("west") ? EMPTY_WALL : SOLID_WALL;
+        box.addEventListener("click", function(c) {
+          // TODO: need to have a hidden div to keep track of whether previously clicked cell was visited or unvisited
+          //       and use this to enforce here that only cells whose immediate neighbors were visited
+          //       however I'm still unsure of how to enforce cell walls when user is toggling cells as visited or unvisited 
+          if (c.target.style.backgroundColor == VISITED_CELL_COLOR) {
+            c.target.style.backgroundColor = UNVISITED_CELL_COLOR;
+          } else {
+            c.target.style.backgroundColor = VISITED_CELL_COLOR;
+          }
+        });
         if (displayType == "DistanceMap" || displayType == "Solved") {
           box.className = dict[cell.distance]; 
         }
         if (displayType == "Solved" && cell.onSolutionPath == true) {
-          // box.style.backgroundColor = "#ffffd8";
-          box.style.backgroundColor = "#b7ffb7";
+          box.style.backgroundColor = VISITED_CELL_COLOR;
         }
         if (cell.isStart) {
-          // box.style.backgroundColor = "#fff";
-          box.style.backgroundColor = "#00ffff";
+          box.style.backgroundColor = START_CELL_COLOR;
         } else if (cell.isGoal) {
-          // box.style.backgroundColor = "#99fb99";
-          // box.style.backgroundColor = "#7fffd4";
-          // box.style.backgroundColor = "#3eb489";
-          box.style.backgroundColor = "#98ff98";
+          box.style.backgroundColor = GOAL_CELL_COLOR;
         }
         htmlParent.appendChild(box);
       }
     }
-
-    // let body = obj.body; 
   }
 
   function consoleLog(message) {
