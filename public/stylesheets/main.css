@@ -2,6 +2,13 @@
 
 @import url("//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css");
 
+body {
+  overflow: hidden;
+  /* overflow: auto; */
+  width:100%;
+  background-color: #014D43;
+}
+
 .menu, .menu-bar {
   position: fixed;
   top: 0;
@@ -283,12 +290,6 @@ fade {
   animation-iteration-count: 1 !important; 
 }
 
-body {
-  /* overflow: hidden; */
-  overflow: auto;
-  width:100%;
-  background-color: #014D43;
-}
 
 body.light-mode {
   background-color: #014D43 !important;

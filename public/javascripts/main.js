@@ -293,6 +293,10 @@ $(document).ready(function() {
       } else if (algorithm == "") {
         alert("select algorithm");
       } else {
+        let displayType = $('input[name="display-type"]:checked').val();
+        if (displayType == "Solved") {
+          $("#display-type-choice-distance-map").prop("checked", true);
+        }
         let colorNames = ["turquoise", "green-sea", "emerald", "nephritis", "peter-river", "belize-hole", "amethyst", "wisteria", "sunflower", "orange", "carrot", "pumpkin", "alizarin", "pomegranate"];
         let greyscaleNames = ["clouds", "silver", "concrete", "asbestos", "wet-asphalt", "midnight-blue"];
         let allColors = colorNames.concat(greyscaleNames);
