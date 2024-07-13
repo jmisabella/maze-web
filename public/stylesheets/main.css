@@ -73,7 +73,8 @@ font-size: 1.4em;
 }
 
 .menu-bar li label,
-.menu-bar li input[type=text] {
+.menu-bar li input[type=text],
+.menu-bar li input[type=tel] {
   margin-top: 6px;
 }
 .menu-bar li input[type=radio] {
@@ -85,7 +86,8 @@ font-size: 1.4em;
 .menu-bar li label.menu-radio {
   margin-left: 2px;
 }
-.menu-bar li input[type=text] {
+.menu-bar li input[type=text],
+.menu-bar li input[type=tel] {
   /* width: 64px; */
   width: 40px;
   height: 20px;
@@ -105,12 +107,14 @@ font-size: 1.4em;
 .menu-bar li {
   background-color: #353535;
 }
-.menu-bar li input[type=text] {
+.menu-bar li input[type=text],
+.menu-bar li input[type=tel] {
   color: #cecece;
   background-color: #696969;
   border: none;
 }
-/* body.dark-mode input[type=text] {
+/* body.dark-mode input[type=text],
+.menu-bar li input[type=tel] {
   background-color: #111;
   color: #cecece;
 } */
@@ -133,6 +137,7 @@ font-size: 1.4em;
 .menu-bar li a,
 .menu-bar li label,
 .menu-bar li label input[type=text],
+.menu-bar li input[type=tel],
 .menu-bar li label input[type=radio] {
   text-align:center;
 }
