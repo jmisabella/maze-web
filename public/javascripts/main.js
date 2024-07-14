@@ -65,7 +65,29 @@ function contains(lst, element) {
   return false;
 }
 
-
+function getDistanceFromClass(classes) {
+  var distance = null;
+  (jQuery.map(classes, function(c) {
+    if (c.toString().includes("distance-")) {
+      distance = parseInt(c.toString().replace("distance-", ""), 10);
+    }
+  }));
+  return distance;
+}
+function sortByDistance(a, b){
+  let aClasses = $(a).attr("class").split(/\s+/);
+  let bClasses = $(b).attr("class").split(/\s+/);
+  var aDist = getDistanceFromClass(aClasses);
+  var bDist = getDistanceFromClass(bClasses);
+  return ((aDist < bDist) ? -1 : ((aDist > bDist) ? 1 : 0));
+}
+function reverseSortByDistance(a, b){
+  let aClasses = $(a).attr("class").split(/\s+/);
+  let bClasses = $(b).attr("class").split(/\s+/);
+  var aDist = getDistanceFromClass(aClasses);
+  var bDist = getDistanceFromClass(bClasses);
+  return ((bDist < aDist) ? -1 : ((bDist > aDist) ? 1 : 0));
+}
 
 //////////////
 
@@ -130,6 +152,11 @@ $(document).ready(function() {
   var webSocket;
   // var messageInput;
 
+  //// var interval = 200;
+  // var interval = 100;
+  var interval = 80;
+  var stepIntervalEvent = null;
+
   function init() {
       var host = location.origin.replace(/^https/, 'wss').replace(/^http/, 'ws'); 
       webSocket = new WebSocket(`${host}/ws`); 
@@ -189,9 +216,11 @@ $(document).ready(function() {
     $("#goal-y").val("");
   });
   $('input[type=radio][name=display-type]').change(function() {
-    let displayType = $('input[name="display-type"]:checked').val(); 
+    let displayType = $('input[name="display-type"]:checked').val();
+    var solutionDivs = $('div').filter('.on-solution-path').sort(sortByDistance);
+    
     $('div', $('#maze')).each(function () {
-      console.log($(this)); //log every element found to console output
+      // console.log($(this)); //log every element found to console output
       let div = this[0]; // first item is object, 2nd item is the index
       let classes = $(this).attr("class").split(/\s+/);
       // let classes = div.class.split(/\s+/);
@@ -213,11 +242,15 @@ $(document).ready(function() {
       } else {
         this.classList.remove(heatColorClass);
       }
-      if (displayType == "Solved" && jQuery.inArray("on-solution-path", classes) >= 0) {
-        this.classList.add("visited");
-      } else {
-        this.classList.remove("visited");
+      if (displayType == "Solved") {
+        window.clearInterval(stepIntervalEvent); 
+        stepIntervalEvent = window.setInterval(solutionSteps, interval);
       }
+      // if (displayType == "Solved" && jQuery.inArray("on-solution-path", classes) >= 0) {
+      //   this.classList.add("visited");
+      // } else {
+      //   this.classList.remove("visited");
+      // }
     });
     // 7/13: removed need to redraw the maze from the hidden json everytime display type changes 
     // Whenever selected display type changes, redraw the maze using JSON persisted in the hidden cell hidden-maze 
@@ -225,6 +258,9 @@ $(document).ready(function() {
     // var json = $("#hidden-maze").html();
     // drawMaze(json, mazz);
   });
+
+
+
   function randomInt(min, max) { // inclusive min and max
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
@@ -275,7 +311,7 @@ $(document).ready(function() {
         } 
       } 
     }
-    // END of logic for creating distance heat map dictionary 
+    // END of logic for creating distance heat map dictionary
     for (let i = 0; i < obj.body.rows.length; i++) {
       let row = obj.body.rows[i];
       for (let j = 0; j < row.length; j++) {
@@ -296,6 +332,21 @@ $(document).ready(function() {
         box.style.borderRight = linked.includes("east") ? EMPTY_WALL : SOLID_WALL;
         box.style.borderBottom = linked.includes("south") ? EMPTY_WALL : SOLID_WALL;
         box.style.borderLeft = linked.includes("west") ? EMPTY_WALL : SOLID_WALL;
+        box.classList.add("distance-" + cell.distance.toString());
+        box.classList.add("heat-color-class-" + dict[cell.distance]);
+        if (cell.onSolutionPath == true) {
+          box.classList.add("on-solution-path");
+        }
+        if (cell.isStart) {
+          box.classList.add("is-start");
+        } else if (cell.isGoal) {
+          box.classList.add("is-goal");
+          $("#hidden-max-distance").html("distance-" + cell.distance.toString());
+          // alert($("#hidden-max-distance").html());
+        }
+        if (displayType == "DistanceMap" || displayType == "Solved") {
+          box.classList.add(dict[cell.distance]);
+        }
         // box.addEventListener("click", function(c) {
         //   // TODO: need to have a hidden div to keep track of whether previously clicked cell was visited or unvisited
         //   //       and use this to enforce here that only cells whose immediate neighbors were visited
@@ -306,11 +357,7 @@ $(document).ready(function() {
         //     c.target.style.backgroundColor = VISITED_CELL_COLOR;
         //   }
         // });
-        box.classList.add("distance-" + cell.distance.toString());
-        box.classList.add("heat-color-class-" + dict[cell.distance]);
-        if (cell.onSolutionPath == true) {
-          box.classList.add("on-solution-path");
-        }
+        htmlParent.appendChild(box);
         //// 7/13: now changing display type has its own event in which existing cells (divs) change their background color classes based on display type
         // if (displayType == "DistanceMap" || displayType == "Solved") {
         //   // box.className = dict[cell.distance]; 
@@ -320,16 +367,38 @@ $(document).ready(function() {
         //   // box.style.backgroundColor = VISITED_CELL_COLOR;
         //   box.classList.add("visited")
         // }
-        if (cell.isStart) {
-          box.classList.add("is-start");
-          // box.style.backgroundColor = START_CELL_COLOR;
-        } else if (cell.isGoal) {
-          box.classList.add("is-goal");
-          // box.style.backgroundColor = GOAL_CELL_COLOR;
-        }
-        htmlParent.appendChild(box);
       }
     }
+    // var solutionDivs = $('#maze div').filter('.on-solution-path').sort(reverseSortByDistance);
+    // $("#hidden-solution").html(solutionDivs); //// why does this cause other legacy work regarding solution to stop rendering correctly ????
+    $("#hidden-distance").html("distance-0");
+    // alert($("#hidden-distance").html());
+    // alert("MAX: " + head(solutionDistances));
+  }
+
+  function solutionSteps() {
+    // console.log("BEGINNING SOLUTION STEPS...");
+    let displayType = $('input[name="display-type"]:checked').val();
+    if (displayType == "Solved") {
+      let maxDistanceClass = $("#hidden-max-distance").html();
+      let currentDistanceClass = $("#hidden-distance").html();
+      if (maxDistanceClass != "" && currentDistanceClass != "" && maxDistanceClass != null && currentDistanceClass != null) {
+        let maxDist = parseInt(maxDistanceClass.replace("distance-", ""), 10);
+        let currDist = parseInt(currentDistanceClass.replace("distance-", ""), 10);
+        // console.log("CURR DIST: " + currDist.toString() + ", MAX DIST: " + maxDist.toString());
+        let nextDist = currDist + 1;
+        if (nextDist > maxDist) {
+          $("#hidden-max-distance").html("");
+          $("#hidden-distance").html("");
+        } else {
+          let div = head($('#maze div').filter('.on-solution-path.' + currentDistanceClass));
+          div.classList.add("visited");
+          $("#hidden-distance").html("distance-" + nextDist.toString());
+        }
+      }
+    }
+    window.clearInterval(stepIntervalEvent); 
+    stepIntervalEvent = window.setInterval(solutionSteps, interval);
   }
 
   function consoleLog(message) {
