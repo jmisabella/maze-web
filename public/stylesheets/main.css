@@ -319,6 +319,16 @@ body.dark-mode {
   background-color: #808080;
 }
 
+.visited {
+  background-color: #b7ffb7 !important;
+}
+.is-start {
+  background-color: #00ffff !important;
+}
+.is-goal {
+  background-color: #98ff98 !important;
+}
+
 #loading-modal {
   display:    none;
   position:   fixed;

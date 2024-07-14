@@ -189,6 +189,35 @@ $(document).ready(function() {
     $("#goal-y").val("");
   });
   $('input[type=radio][name=display-type]').change(function() {
+    let displayType = $('input[name="display-type"]:checked').val(); 
+    // $('div', $('#maze')).each(function () {
+    //   console.log($(this)); //log every element found to console output
+    //   let div = this[0]; // first item is object, 2nd item is the index
+    //   let classes = $(this).attr("class").split(/\s+/);
+    //   // let classes = div.class.split(/\s+/);
+    //   // alert(classes);
+    //   if (displayType == "Unsolved") {
+    //     // alert("unsolved");
+    //   } else if ((displayType == "DistanceMap" || distanceMap == "Solved")) {
+    //     // alert("distance-map");
+    //     var distance = null;
+    //     (jQuery.map(classes, function(c) {
+    //       if (c.toString().includes("distance-")) {
+    //         distance = parseInt(c.toString().replace("distance-", ""), 10);
+    //       }
+    //     }));
+        
+    //     // let distance = (classes.filter(function (index) {
+    //     //   return this.toString().startsWith("distance-");
+    //     // })).toString();
+    //     // alert(distance);
+    //     // console.log("HHHHHHH: " + distance);
+    //   }
+    //   if (displayType == "Solved" && jQuery.inArray("on-solution-path", classes)) {
+    //     // alert("solved");
+    //     this.classList.add("visited");
+    //   }
+    // });
     // Whenever selected display type changes, redraw the maze using JSON persisted in the hidden cell hidden-maze 
     var mazz = document.getElementById("maze");
     var json = $("#hidden-maze").html();
@@ -197,26 +226,31 @@ $(document).ready(function() {
   function randomInt(min, max) { // inclusive min and max
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
-  
+
+  // let drag = false;
+  // document.addEventListener('mousedown', () => drag = false);
+  // document.addEventListener('mousemove', () => drag = true);
+  // document.addEventListener('mouseup', () => console.log(drag ? 'drag' : 'click'));
+
   function drawMaze(json, htmlParent) {
-    $("#maze").html(""); // clear
-    let displayType = $('input[name="display-type"]:checked').val(); 
-    let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
-    const BORDER_SIZE = 1;
-    const BOX_WIDTH = cellSize;
-    const BOX_HEIGHT = cellSize;
-    const COLOR_SHADE_COUNT = 10;
-    const EMPTY_WALL = BORDER_SIZE + "px solid transparent"; 
-    const SOLID_WALL = BORDER_SIZE + "px solid black"; 
     if (json == null || json.toString() == "") {
       return "";
     }
+    $("#maze").html(""); // clear
+    let displayType = $('input[name="display-type"]:checked').val(); 
+    let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
     var colorName = $("#hidden-color").html();  
     function getShades(color) {
       let suffixes = ["-50", "-100", "-200", "-300", "-400", "-500", "-600", "-700", "-800", "-900"]
       return $.map(suffixes.reverse(), function(suffix) { return color + suffix });
     }
     var colors = getShades(colorName);
+    const BORDER_SIZE = 1;
+    const BOX_WIDTH = cellSize;
+    const BOX_HEIGHT = cellSize;
+    const COLOR_SHADE_COUNT = colors.length;
+    const EMPTY_WALL = BORDER_SIZE + "px solid transparent"; 
+    const SOLID_WALL = BORDER_SIZE + "px solid black"; 
     let obj = JSON.parse(json.toString());
     htmlParent.style.width = (head(obj.body.rows).length * BOX_WIDTH) + "px";
     htmlParent.style.height = (obj.body.rows.length * BOX_HEIGHT) + "px";
@@ -260,26 +294,34 @@ $(document).ready(function() {
         box.style.borderRight = linked.includes("east") ? EMPTY_WALL : SOLID_WALL;
         box.style.borderBottom = linked.includes("south") ? EMPTY_WALL : SOLID_WALL;
         box.style.borderLeft = linked.includes("west") ? EMPTY_WALL : SOLID_WALL;
-        box.addEventListener("click", function(c) {
-          // TODO: need to have a hidden div to keep track of whether previously clicked cell was visited or unvisited
-          //       and use this to enforce here that only cells whose immediate neighbors were visited
-          //       however I'm still unsure of how to enforce cell walls when user is toggling cells as visited or unvisited 
-          if (c.target.style.backgroundColor == VISITED_CELL_COLOR) {
-            c.target.style.backgroundColor = UNVISITED_CELL_COLOR;
-          } else {
-            c.target.style.backgroundColor = VISITED_CELL_COLOR;
-          }
-        });
-        if (displayType == "DistanceMap" || displayType == "Solved") {
-          box.className = dict[cell.distance]; 
+        // box.addEventListener("click", function(c) {
+        //   // TODO: need to have a hidden div to keep track of whether previously clicked cell was visited or unvisited
+        //   //       and use this to enforce here that only cells whose immediate neighbors were visited
+        //   //       however I'm still unsure of how to enforce cell walls when user is toggling cells as visited or unvisited 
+        //   if (c.target.style.backgroundColor == VISITED_CELL_COLOR) {
+        //     c.target.style.backgroundColor = UNVISITED_CELL_COLOR;
+        //   } else {
+        //     c.target.style.backgroundColor = VISITED_CELL_COLOR;
+        //   }
+        // });
+        box.classList.add("distance-" + cell.distance.toString());
+        if (cell.onSolutionPath) {
+          box.classList.add("on-solution-path");
         }
-        if (displayType == "Solved" && cell.onSolutionPath == true) {
-          box.style.backgroundColor = VISITED_CELL_COLOR;
+        if (displayType == "DistanceMap" || displayType == "Solved") {
+          // box.className = dict[cell.distance]; 
+          box.classList.add(dict[cell.distance]);
+        }
+        if (displayType == "Solved" && cell.onSolutionPath) {
+          // box.style.backgroundColor = VISITED_CELL_COLOR;
+          box.classList.add("visited")
         }
         if (cell.isStart) {
-          box.style.backgroundColor = START_CELL_COLOR;
+          box.classList.add("is-start");
+          // box.style.backgroundColor = START_CELL_COLOR;
         } else if (cell.isGoal) {
-          box.style.backgroundColor = GOAL_CELL_COLOR;
+          box.classList.add("is-goal");
+          // box.style.backgroundColor = GOAL_CELL_COLOR;
         }
         htmlParent.appendChild(box);
       }
