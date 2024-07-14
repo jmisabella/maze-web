@@ -190,38 +190,40 @@ $(document).ready(function() {
   });
   $('input[type=radio][name=display-type]').change(function() {
     let displayType = $('input[name="display-type"]:checked').val(); 
-    // $('div', $('#maze')).each(function () {
-    //   console.log($(this)); //log every element found to console output
-    //   let div = this[0]; // first item is object, 2nd item is the index
-    //   let classes = $(this).attr("class").split(/\s+/);
-    //   // let classes = div.class.split(/\s+/);
-    //   // alert(classes);
-    //   if (displayType == "Unsolved") {
-    //     // alert("unsolved");
-    //   } else if ((displayType == "DistanceMap" || distanceMap == "Solved")) {
-    //     // alert("distance-map");
-    //     var distance = null;
-    //     (jQuery.map(classes, function(c) {
-    //       if (c.toString().includes("distance-")) {
-    //         distance = parseInt(c.toString().replace("distance-", ""), 10);
-    //       }
-    //     }));
-        
-    //     // let distance = (classes.filter(function (index) {
-    //     //   return this.toString().startsWith("distance-");
-    //     // })).toString();
-    //     // alert(distance);
-    //     // console.log("HHHHHHH: " + distance);
-    //   }
-    //   if (displayType == "Solved" && jQuery.inArray("on-solution-path", classes)) {
-    //     // alert("solved");
-    //     this.classList.add("visited");
-    //   }
-    // });
+    $('div', $('#maze')).each(function () {
+      console.log($(this)); //log every element found to console output
+      let div = this[0]; // first item is object, 2nd item is the index
+      let classes = $(this).attr("class").split(/\s+/);
+      // let classes = div.class.split(/\s+/);
+      // alert(classes);
+      var distance = null;
+      (jQuery.map(classes, function(c) {
+        if (c.toString().includes("distance-")) {
+          distance = parseInt(c.toString().replace("distance-", ""), 10);
+        }
+      }));
+      var heatColorClass = null;
+      (jQuery.map(classes, function(c) {
+        if (c.toString().includes("heat-color-class-")) {
+          heatColorClass = c.toString().replace("heat-color-class-", "");
+        }
+      }));
+      if ((displayType == "DistanceMap" || displayType == "Solved")) {
+        this.classList.add(heatColorClass);
+      } else {
+        this.classList.remove(heatColorClass);
+      }
+      if (displayType == "Solved" && jQuery.inArray("on-solution-path", classes) >= 0) {
+        this.classList.add("visited");
+      } else {
+        this.classList.remove("visited");
+      }
+    });
+    // 7/13: removed need to redraw the maze from the hidden json everytime display type changes 
     // Whenever selected display type changes, redraw the maze using JSON persisted in the hidden cell hidden-maze 
-    var mazz = document.getElementById("maze");
-    var json = $("#hidden-maze").html();
-    drawMaze(json, mazz);
+    // var mazz = document.getElementById("maze");
+    // var json = $("#hidden-maze").html();
+    // drawMaze(json, mazz);
   });
   function randomInt(min, max) { // inclusive min and max
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -305,17 +307,19 @@ $(document).ready(function() {
         //   }
         // });
         box.classList.add("distance-" + cell.distance.toString());
-        if (cell.onSolutionPath) {
+        box.classList.add("heat-color-class-" + dict[cell.distance]);
+        if (cell.onSolutionPath == true) {
           box.classList.add("on-solution-path");
         }
-        if (displayType == "DistanceMap" || displayType == "Solved") {
-          // box.className = dict[cell.distance]; 
-          box.classList.add(dict[cell.distance]);
-        }
-        if (displayType == "Solved" && cell.onSolutionPath) {
-          // box.style.backgroundColor = VISITED_CELL_COLOR;
-          box.classList.add("visited")
-        }
+        //// 7/13: now changing display type has its own event in which existing cells (divs) change their background color classes based on display type
+        // if (displayType == "DistanceMap" || displayType == "Solved") {
+        //   // box.className = dict[cell.distance]; 
+        //   box.classList.add(dict[cell.distance]);
+        // }
+        // if (displayType == "Solved" && cell.onSolutionPath) {
+        //   // box.style.backgroundColor = VISITED_CELL_COLOR;
+        //   box.classList.add("visited")
+        // }
         if (cell.isStart) {
           box.classList.add("is-start");
           // box.style.backgroundColor = START_CELL_COLOR;
