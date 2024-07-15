@@ -1,6 +1,8 @@
 
-
-let CELL_SIZE = 10
+let VISITED_CELL_COLOR = "#b7ffb7";
+let START_CELL_COLOR = "#00ffff";
+let GOAL_CELL_COLOR = "#98ff98";
+let UNVISITED_CELL_COLOR = "#808080";
 
 function head(lst) {
   return lst[0];
@@ -63,7 +65,29 @@ function contains(lst, element) {
   return false;
 }
 
-
+function getDistanceFromClass(classes) {
+  var distance = null;
+  (jQuery.map(classes, function(c) {
+    if (c.toString().includes("distance-")) {
+      distance = parseInt(c.toString().replace("distance-", ""), 10);
+    }
+  }));
+  return distance;
+}
+function sortByDistance(a, b){
+  let aClasses = $(a).attr("class").split(/\s+/);
+  let bClasses = $(b).attr("class").split(/\s+/);
+  var aDist = getDistanceFromClass(aClasses);
+  var bDist = getDistanceFromClass(bClasses);
+  return ((aDist < bDist) ? -1 : ((aDist > bDist) ? 1 : 0));
+}
+function reverseSortByDistance(a, b){
+  let aClasses = $(a).attr("class").split(/\s+/);
+  let bClasses = $(b).attr("class").split(/\s+/);
+  var aDist = getDistanceFromClass(aClasses);
+  var bDist = getDistanceFromClass(bClasses);
+  return ((bDist < aDist) ? -1 : ((bDist > aDist) ? 1 : 0));
+}
 
 //////////////
 
@@ -81,8 +105,9 @@ $(document).ready(function() {
   jQuery('#width').keyup(function () {
     if (this.value.length > 0) {
       let padding = 30;
+      let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
       let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
-      let max = parseInt(($(window).width() - padding) / CELL_SIZE, 10);
+      let max = parseInt(($(window).width() - padding) / cellSize, 10);
       this.value = arg <= max ? arg : max;
       $("#start-y").val(0); // default start to be on the western wall
       $("#goal-y").val((this.value - 1).toString()); // default goal to be on the eastern wall
@@ -94,7 +119,6 @@ $(document).ready(function() {
       this.value = current < max ? this.value : "0"; // default start on eastern wall of the maze
   });
   jQuery('#goal-y').keyup(function () {
-      // this.value = (parseInt($("#width").val(), 10) - 1).toString() ; // keep starting cell on eastern edge of the maze
       let current = parseInt(this.value, 10);
       let max = parseInt($("#width").val(), 10);
       let min = parseInt(max / 2, 10);
@@ -103,8 +127,9 @@ $(document).ready(function() {
   jQuery('#height').keyup(function () { 
     if (this.value.length > 0) {
       let padding = 40;
+      let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
       let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
-      let max = parseInt(($(window).height() - padding) / CELL_SIZE, 10);
+      let max = parseInt(($(window).height() - padding) / cellSize, 10);
       this.value = arg <= max ? arg : max;
     }
   });
@@ -124,12 +149,12 @@ $(document).ready(function() {
   $(document).on('keyup blur input propertychange', 'input[class="numbers"]', function(){$(this).val($(this).val().replace(/[^0-9]/g,''));});  
 
   var webSocket;
-  // var messageInput;
+  var interval = 80;
+  var stepIntervalEvent = null;
 
   function init() {
       var host = location.origin.replace(/^https/, 'wss').replace(/^http/, 'ws'); 
       webSocket = new WebSocket(`${host}/ws`); 
-      // webSocket = new WebSocket("ws://localhost:9000/ws");
       webSocket.onopen = onOpen;
       webSocket.onclose = onClose;
       webSocket.onmessage = onMessage;
@@ -156,47 +181,101 @@ $(document).ready(function() {
       mazeDiv.innerHTML = ""; 
       console.log(event.data);
       let receivedData = JSON.parse(event.data);
-      console.log("New Data: ", receivedData);
+      console.log("Received response, drawing the maze...");
       $("#hidden-maze").html(event.data); 
       drawMaze(event.data, mazeDiv);
+      console.log("Finished drawing the maze.");
       $("#loading-modal").css('display', 'none'); 
   }
  
   $(window).resize(function() {
-    $("#hidden-width").html($(window).width()); // New height
-    $("#hidden-height").html($(window).height()); // New height
+    // Whenever window size changes, need to clear out width, height, start coords, and goal coords
+    // so that they would be re-entered according to the new max width and height based on window size
+    $("#width").val("");
+    $("#height").val("");
+    $("#start-x").val("");
+    $("#start-y").val("");
+    $("#goal-x").val("");
+    $("#goal-y").val("");
   });  
+  $('input[type=radio][name=cell-size]').change(function() {
+    // Whenever cell size changes, need to clear out width, height, start coords, and goal coords
+    // so that they would be re-entered according to the new max width and height based on cell size
+    $("#width").val("");
+    $("#height").val("");
+    $("#start-x").val("");
+    $("#start-y").val("");
+    $("#goal-x").val("");
+    $("#goal-y").val("");
+  });
+  $('input[type=checkbox]').change(function() {
+    window.clearInterval(stepIntervalEvent); 
+    stepIntervalEvent = window.setInterval(solutionSteps, interval);
+    let solve = $('input[name="solved"]:checked').prop('checked') == true;
+    if (!solve) {
+      var solutionDivs = $('div').filter('.on-solution-path').sort(sortByDistance);
+      solutionDivs.each(function () { // mark each cell as not visited
+        this.classList.remove("visited");  
+      });
+      $("#hidden-distance").html("distance-0"); // reset solution back to start cell
+    }
+    window.clearInterval(stepIntervalEvent); 
+    stepIntervalEvent = window.setInterval(solutionSteps, interval);
+  });
 
   $('input[type=radio][name=display-type]').change(function() {
-    var mazz = document.getElementById("maze");
-    var json = $("#hidden-maze").html();
-    drawMaze(json, mazz);
+    let displayType = $('input[name="display-type"]:checked').val();
+    $('div', $('#maze')).each(function () {
+      let div = this[0]; // first item is object, 2nd item is the index
+      let classes = $(this).attr("class").split(/\s+/);
+      var distance = null;
+      (jQuery.map(classes, function(c) {
+        if (c.toString().includes("distance-")) {
+          distance = parseInt(c.toString().replace("distance-", ""), 10);
+        }
+      }));
+      var heatColorClass = null;
+      (jQuery.map(classes, function(c) {
+        if (c.toString().includes("heat-color-class-")) {
+          heatColorClass = c.toString().replace("heat-color-class-", "");
+        }
+      }));
+      if (displayType == "DistanceMap") {
+        this.classList.add(heatColorClass);
+      } else {
+        this.classList.remove(heatColorClass);
+      }
+    });
   });
 
   function randomInt(min, max) { // inclusive min and max
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
-  
+
+  // let drag = false;
+  // document.addEventListener('mousedown', () => drag = false);
+  // document.addEventListener('mousemove', () => drag = true);
+  // document.addEventListener('mouseup', () => console.log(drag ? 'drag' : 'click'));
+
   function drawMaze(json, htmlParent) {
-    $("#maze").html(""); // clear
-    var displayType = $('input[name="display-type"]:checked').val(); 
-    const BORDER_SIZE = 1;
-    const BOX_WIDTH = CELL_SIZE;
-    const BOX_HEIGHT = CELL_SIZE;
-    const COLOR_SHADE_COUNT = 10;
-    const EMPTY_WALL = BORDER_SIZE + "px solid transparent"; 
-    const SOLID_WALL = BORDER_SIZE + "px solid black"; 
     if (json == null || json.toString() == "") {
       return "";
     }
-
+    $("#maze").html(""); // clear
+    let displayType = $('input[name="display-type"]:checked').val(); 
+    let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
     var colorName = $("#hidden-color").html();  
     function getShades(color) {
       let suffixes = ["-50", "-100", "-200", "-300", "-400", "-500", "-600", "-700", "-800", "-900"]
       return $.map(suffixes.reverse(), function(suffix) { return color + suffix });
     }
     var colors = getShades(colorName);
-    
+    const BORDER_SIZE = 1;
+    const BOX_WIDTH = cellSize;
+    const BOX_HEIGHT = cellSize;
+    const COLOR_SHADE_COUNT = colors.length;
+    const EMPTY_WALL = BORDER_SIZE + "px solid transparent"; 
+    const SOLID_WALL = BORDER_SIZE + "px solid black"; 
     let obj = JSON.parse(json.toString());
     htmlParent.style.width = (head(obj.body.rows).length * BOX_WIDTH) + "px";
     htmlParent.style.height = (obj.body.rows.length * BOX_HEIGHT) + "px";
@@ -206,10 +285,9 @@ $(document).ready(function() {
     let distances = $.map(flattened, function(c) { return c.distance });
     let longestDist = Math.max.apply(Math, distances);
     let interval = (COLOR_SHADE_COUNT < longestDist) ? parseInt(longestDist / COLOR_SHADE_COUNT) : 1;
-    var dict = {};
-
     var currColor = head(colors);
     colors = tail(colors);
+    var dict = {};
     for (let i = 0; i <= longestDist; i++) {
       dict[i] = currColor;
       let changeColor = interval <= 1 ? true : i % interval == 0;
@@ -220,7 +298,7 @@ $(document).ready(function() {
         } 
       } 
     }
-    // END of logic for creating distance heat map dictionary 
+    // END of logic for creating distance heat map dictionary
     for (let i = 0; i < obj.body.rows.length; i++) {
       let row = obj.body.rows[i];
       for (let j = 0; j < row.length; j++) {
@@ -241,27 +319,55 @@ $(document).ready(function() {
         box.style.borderRight = linked.includes("east") ? EMPTY_WALL : SOLID_WALL;
         box.style.borderBottom = linked.includes("south") ? EMPTY_WALL : SOLID_WALL;
         box.style.borderLeft = linked.includes("west") ? EMPTY_WALL : SOLID_WALL;
-        if (displayType == "DistanceMap" || displayType == "Solved") {
-          box.className = dict[cell.distance]; 
-        }
-        if (displayType == "Solved" && cell.onSolutionPath == true) {
-          // box.style.backgroundColor = "#ffffd8";
-          box.style.backgroundColor = "#b7ffb7";
+        box.classList.add("distance-" + cell.distance.toString());
+        box.classList.add("heat-color-class-" + dict[cell.distance]);
+        if (cell.onSolutionPath == true) {
+          box.classList.add("on-solution-path");
         }
         if (cell.isStart) {
-          // box.style.backgroundColor = "#fff";
-          box.style.backgroundColor = "#00ffff";
+          box.classList.add("is-start");
         } else if (cell.isGoal) {
-          // box.style.backgroundColor = "#99fb99";
-          // box.style.backgroundColor = "#7fffd4";
-          // box.style.backgroundColor = "#3eb489";
-          box.style.backgroundColor = "#98ff98";
+          box.classList.add("is-goal");
+          $("#hidden-max-distance").html("distance-" + cell.distance.toString());
         }
+        if (displayType == "DistanceMap") {
+          box.classList.add(dict[cell.distance]);
+        }
+        //// here is where we would presumably add event listener to the div box to allow user to draw/click through a path to manually solve the maze 
+        // box.addEventListener("click", function(c) {
+        //   // TODO: need to have a hidden div to keep track of whether previously clicked cell was visited or unvisited
+        //   //       and use this to enforce here that only cells whose immediate neighbors were visited
+        //   //       however I'm still unsure of how to enforce cell walls when user is toggling cells as visited or unvisited 
+        //   if (c.target.style.backgroundColor == VISITED_CELL_COLOR) {
+        //     c.target.style.backgroundColor = UNVISITED_CELL_COLOR;
+        //   } else {
+        //     c.target.style.backgroundColor = VISITED_CELL_COLOR;
+        //   }
+        // });
         htmlParent.appendChild(box);
       }
     }
+    $("#hidden-distance").html("distance-0"); // set solved distance from start cell at 0, where solution starts when being drawn
+  }
 
-    // let body = obj.body; 
+  function solutionSteps() {
+    let solve = $('input[name="solved"]:checked').prop('checked') == true;
+    if (solve) {
+      let maxDistanceClass = $("#hidden-max-distance").html();
+      let currentDistanceClass = $("#hidden-distance").html();
+      if (maxDistanceClass != "" && currentDistanceClass != "" && maxDistanceClass != null && currentDistanceClass != null) {
+        let maxDist = parseInt(maxDistanceClass.replace("distance-", ""), 10);
+        let currDist = parseInt(currentDistanceClass.replace("distance-", ""), 10);
+        let nextDist = currDist + 1;
+        if (nextDist <= maxDist) {
+          let div = head($('#maze div').filter('.on-solution-path.' + currentDistanceClass));
+          div.classList.add("visited");
+          $("#hidden-distance").html("distance-" + nextDist.toString());
+        }
+      }
+    }
+    window.clearInterval(stepIntervalEvent); 
+    stepIntervalEvent = window.setInterval(solutionSteps, interval);
   }
 
   function consoleLog(message) {
@@ -292,6 +398,8 @@ $(document).ready(function() {
         alert("goal coordinates are required");
       } else if (algorithm == "") {
         alert("select algorithm");
+      } else if (startX == goalX && startY == goalY) {
+        alert("start and goal coordinates cannot match");
       } else {
         let colorNames = ["turquoise", "green-sea", "emerald", "nephritis", "peter-river", "belize-hole", "amethyst", "wisteria", "sunflower", "orange", "carrot", "pumpkin", "alizarin", "pomegranate"];
         let greyscaleNames = ["clouds", "silver", "concrete", "asbestos", "wet-asphalt", "midnight-blue"];

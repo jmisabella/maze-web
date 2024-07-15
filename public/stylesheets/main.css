@@ -2,6 +2,13 @@
 
 @import url("//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css");
 
+body {
+  overflow: hidden;
+  /* overflow: auto; */
+  width:100%;
+  background-color: #014D43;
+}
+
 .menu, .menu-bar {
   position: fixed;
   top: 0;
@@ -73,7 +80,8 @@ font-size: 1.4em;
 }
 
 .menu-bar li label,
-.menu-bar li input[type=text] {
+.menu-bar li input[type=text],
+.menu-bar li input[type=tel] {
   margin-top: 6px;
 }
 .menu-bar li input[type=radio] {
@@ -85,7 +93,8 @@ font-size: 1.4em;
 .menu-bar li label.menu-radio {
   margin-left: 2px;
 }
-.menu-bar li input[type=text] {
+.menu-bar li input[type=text],
+.menu-bar li input[type=tel] {
   /* width: 64px; */
   width: 40px;
   height: 20px;
@@ -105,12 +114,14 @@ font-size: 1.4em;
 .menu-bar li {
   background-color: #353535;
 }
-.menu-bar li input[type=text] {
+.menu-bar li input[type=text],
+.menu-bar li input[type=tel] {
   color: #cecece;
   background-color: #696969;
   border: none;
 }
-/* body.dark-mode input[type=text] {
+/* body.dark-mode input[type=text],
+.menu-bar li input[type=tel] {
   background-color: #111;
   color: #cecece;
 } */
@@ -133,6 +144,7 @@ font-size: 1.4em;
 .menu-bar li a,
 .menu-bar li label,
 .menu-bar li label input[type=text],
+.menu-bar li input[type=tel],
 .menu-bar li label input[type=radio] {
   text-align:center;
 }
@@ -278,12 +290,6 @@ fade {
   animation-iteration-count: 1 !important; 
 }
 
-body {
-  /* overflow: hidden; */
-  overflow: auto;
-  width:100%;
-  background-color: #014D43;
-}
 
 body.light-mode {
   background-color: #014D43 !important;
@@ -311,6 +317,16 @@ body.dark-mode {
   /* margin: 1em 1em; */
   margin: 0 1em 1em 1em;
   background-color: #808080;
+}
+
+.visited {
+  background-color: #b7ffb7 !important;
+}
+.is-start {
+  background-color: #00ffff !important;
+}
+.is-goal {
+  background-color: #98ff98 !important;
 }
 
 #loading-modal {

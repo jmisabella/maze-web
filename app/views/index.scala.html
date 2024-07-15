@@ -8,16 +8,21 @@
     <ul class="menu-bar">
       <li><a href="#" class="menu-button">Maze</a></li>
       <li>
-        <label for="width">width: &nbsp;&nbsp;<input type="text" id="width" class="numbers" maxlength="3" value="" /></label>
-        <label for="height">height: <input type="text" id="height" class="numbers" maxlength="3" value="" /></label>
+        <label for="width">width: &nbsp;&nbsp;<input type="tel" id="width" class="numbers" maxlength="3" inputmode="numeric" pattern="[0-9\s]{1,3}" value="" /></label>
+        <label for="height">height: <input type="tel" id="height" class="numbers" maxlength="3" inputmode="numeric" pattern="[0-9\s]{1,3}" value="" /></label>
       </li>
       <li>
-        <label for="start-x">start x: &nbsp;<input type="text" id="start-x" class="numbers" maxlength="3" value="" /></label>
-        <label for="start-y">start y: <input type="text" id="start-y" class="numbers" maxlength="3" value="" /></label>
+        <label for="start-x">start x: &nbsp;<input type="tel" id="start-x" class="numbers" maxlength="3" inputmode="numeric" pattern="[0-9\s]{1,3}" value="" /></label>
+        <label for="start-y">start y: <input type="tel" id="start-y" class="numbers" maxlength="3" inputmode="numeric" pattern="[0-9\s]{1,3}" value="" /></label>
       </li>
       <li>
-        <label for="goal-x">goal x: &nbsp;<input type="text" id="goal-x" class="numbers" maxlength="3" value="" /></label>
-        <label for="goal-y">goal y: <input type="text" id="goal-y" class="numbers" maxlength="3" value="" /></label>
+        <label for="goal-x">goal x: &nbsp;<input type="tel" id="goal-x" class="numbers" maxlength="3" inputmode="numeric" pattern="[0-9\s]{1,3}" value="" /></label>
+        <label for="goal-y">goal y: <input type="tel" id="goal-y" class="numbers" maxlength="3" inputmode="numeric" pattern="[0-9\s]{1,3}" value="" /></label>
+      </li>
+      <li>
+        <label>cell size: </label>
+        <label for="cell-size-small" class="menu-radio"><input type="radio" id="cell-size-small" value="7" name="cell-size" /> small</label>
+        <label for="cell-size-large" class="menu-radio"><input type="radio" id="cell-size-large" value="10" name="cell-size" checked="checked" /> large</label>
       </li>
       <li>
         <select id='select-generator' >
@@ -29,14 +34,15 @@
       <li><a id="send-button" href="#" class="menu-button">generate</a></li>
     </ul> 
     <div id="d-type" >
-      <label for="display-type-choice-1" class="menu-radio"><input type="radio" id="display-type-choice-1" value="Unsolved" name="display-type" checked="checked" /></label>
-      <label for="display-type-choice-2" class="menu-radio"><input type="radio" id="display-type-choice-2" value="DistanceMap" name="display-type" /></label>
-      <label for="display-type-choice-3" class="menu-radio"><input type="radio" id="display-type-choice-3" value="Solved" name="display-type" /></label>
+      <input type="checkbox" id="solved" name="solved" />
+      <label for="display-type-choice-unsolved" class="menu-radio"><input type="radio" id="display-type-choice-unsolved" value="Unsolved" name="display-type" checked="checked" /></label>
+      <label for="display-type-choice-distance-map" class="menu-radio"><input type="radio" id="display-type-choice-distance-map" value="DistanceMap" name="display-type" /></label>
     </div>
     <div id="loading-modal"></div>
     <div id="maze"></div>
     <div id="hidden-maze" class="hidden"></div>
     <div id="hidden-color" class="hidden"></div>
-    <div id="hidden-width" class="hidden"></div>
-    <div id="hidden-height" class="hidden"></div>
+    <div id="hidden-solution" class="hidden"></div>
+    <div id="hidden-distance" class="hidden"></div>
+    <div id="hidden-max-distance" class="hidden"></div>
 }
