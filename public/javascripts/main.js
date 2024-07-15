@@ -119,7 +119,6 @@ $(document).ready(function() {
       this.value = current < max ? this.value : "0"; // default start on eastern wall of the maze
   });
   jQuery('#goal-y').keyup(function () {
-      // this.value = (parseInt($("#width").val(), 10) - 1).toString() ; // keep starting cell on eastern edge of the maze
       let current = parseInt(this.value, 10);
       let max = parseInt($("#width").val(), 10);
       let min = parseInt(max / 2, 10);
@@ -150,17 +149,12 @@ $(document).ready(function() {
   $(document).on('keyup blur input propertychange', 'input[class="numbers"]', function(){$(this).val($(this).val().replace(/[^0-9]/g,''));});  
 
   var webSocket;
-  // var messageInput;
-
-  //// var interval = 200;
-  // var interval = 100;
   var interval = 80;
   var stepIntervalEvent = null;
 
   function init() {
       var host = location.origin.replace(/^https/, 'wss').replace(/^http/, 'ws'); 
       webSocket = new WebSocket(`${host}/ws`); 
-      // webSocket = new WebSocket("ws://localhost:9000/ws");
       webSocket.onopen = onOpen;
       webSocket.onclose = onClose;
       webSocket.onmessage = onMessage;
@@ -187,7 +181,6 @@ $(document).ready(function() {
       mazeDiv.innerHTML = ""; 
       console.log(event.data);
       let receivedData = JSON.parse(event.data);
-      // console.log("New Data: ", receivedData);
       console.log("Received response, drawing the maze...");
       $("#hidden-maze").html(event.data); 
       drawMaze(event.data, mazeDiv);
@@ -336,12 +329,11 @@ $(document).ready(function() {
         } else if (cell.isGoal) {
           box.classList.add("is-goal");
           $("#hidden-max-distance").html("distance-" + cell.distance.toString());
-          // alert($("#hidden-max-distance").html());
         }
-        // if (displayType == "DistanceMap" || displayType == "Solved") {
         if (displayType == "DistanceMap") {
           box.classList.add(dict[cell.distance]);
         }
+        //// here is where we would presumably add event listener to the div box to allow user to draw/click through a path to manually solve the maze 
         // box.addEventListener("click", function(c) {
         //   // TODO: need to have a hidden div to keep track of whether previously clicked cell was visited or unvisited
         //   //       and use this to enforce here that only cells whose immediate neighbors were visited
@@ -353,27 +345,13 @@ $(document).ready(function() {
         //   }
         // });
         htmlParent.appendChild(box);
-        //// 7/13: now changing display type has its own event in which existing cells (divs) change their background color classes based on display type
-        // if (displayType == "DistanceMap" || displayType == "Solved") {
-        //   // box.className = dict[cell.distance]; 
-        //   box.classList.add(dict[cell.distance]);
-        // }
-        // if (displayType == "Solved" && cell.onSolutionPath) {
-        //   // box.style.backgroundColor = VISITED_CELL_COLOR;
-        //   box.classList.add("visited")
-        // }
       }
     }
-    // var solutionDivs = $('#maze div').filter('.on-solution-path').sort(reverseSortByDistance);
-    // $("#hidden-solution").html(solutionDivs); //// why does this cause other legacy work regarding solution to stop rendering correctly ????
-    $("#hidden-distance").html("distance-0");
-    // alert($("#hidden-distance").html());
-    // alert("MAX: " + head(solutionDistances));
+    $("#hidden-distance").html("distance-0"); // set solved distance from start cell at 0, where solution starts when being drawn
   }
 
   function solutionSteps() {
     let solve = $('input[name="solved"]:checked').prop('checked') == true;
-    let displayType = $('input[name="display-type"]:checked').val();
     if (solve) {
       let maxDistanceClass = $("#hidden-max-distance").html();
       let currentDistanceClass = $("#hidden-distance").html();
@@ -381,23 +359,13 @@ $(document).ready(function() {
         let maxDist = parseInt(maxDistanceClass.replace("distance-", ""), 10);
         let currDist = parseInt(currentDistanceClass.replace("distance-", ""), 10);
         let nextDist = currDist + 1;
-        // if (nextDist > maxDist) {
-        //   $("#hidden-max-distance").html("");
-        //   $("#hidden-distance").html("");
-        // } else {
         if (nextDist <= maxDist) {
           let div = head($('#maze div').filter('.on-solution-path.' + currentDistanceClass));
           div.classList.add("visited");
           $("#hidden-distance").html("distance-" + nextDist.toString());
         }
       }
-    }// else {
-    //   var solutionDivs = $('div').filter('.on-solution-path').sort(sortByDistance);
-    //   solutionDivs.each(function () {
-    //     let div = this[0]; // first item is object, 2nd item is the index
-    //     div.classList.remove("visited");  
-    //   });
-    // }
+    }
     window.clearInterval(stepIntervalEvent); 
     stepIntervalEvent = window.setInterval(solutionSteps, interval);
   }
@@ -433,10 +401,6 @@ $(document).ready(function() {
       } else if (startX == goalX && startY == goalY) {
         alert("start and goal coordinates cannot match");
       } else {
-        let displayType = $('input[name="display-type"]:checked').val();
-        // if (displayType == "Solved") {
-        //   $("#display-type-choice-distance-map").prop("checked", true);
-        // }
         let colorNames = ["turquoise", "green-sea", "emerald", "nephritis", "peter-river", "belize-hole", "amethyst", "wisteria", "sunflower", "orange", "carrot", "pumpkin", "alizarin", "pomegranate"];
         let greyscaleNames = ["clouds", "silver", "concrete", "asbestos", "wet-asphalt", "midnight-blue"];
         let allColors = colorNames.concat(greyscaleNames);
