@@ -218,7 +218,6 @@ $(document).ready(function() {
   $('input[type=checkbox]').change(function() {
     window.clearInterval(stepIntervalEvent); 
     stepIntervalEvent = window.setInterval(solutionSteps, interval);
-    // var solutionDivs = $('div').filter('.on-solution-path').sort(sortByDistance);
     let solve = $('input[name="solved"]:checked').prop('checked') == true;
     if (!solve) {
       var solutionDivs = $('div').filter('.on-solution-path').sort(sortByDistance);
@@ -229,7 +228,6 @@ $(document).ready(function() {
     }
     window.clearInterval(stepIntervalEvent); 
     stepIntervalEvent = window.setInterval(solutionSteps, interval);
-
   });
 
   $('input[type=radio][name=display-type]').change(function() {
@@ -255,14 +253,7 @@ $(document).ready(function() {
         this.classList.remove(heatColorClass);
       }
     });
-    // 7/13: removed need to redraw the maze from the hidden json everytime display type changes 
-    // Whenever selected display type changes, redraw the maze using JSON persisted in the hidden cell hidden-maze 
-    // var mazz = document.getElementById("maze");
-    // var json = $("#hidden-maze").html();
-    // drawMaze(json, mazz);
   });
-
-
 
   function randomInt(min, max) { // inclusive min and max
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -381,22 +372,20 @@ $(document).ready(function() {
   }
 
   function solutionSteps() {
-    // console.log("BEGINNING SOLUTION STEPS...");
     let solve = $('input[name="solved"]:checked').prop('checked') == true;
     let displayType = $('input[name="display-type"]:checked').val();
-    // if (displayType == "Solved") {
     if (solve) {
       let maxDistanceClass = $("#hidden-max-distance").html();
       let currentDistanceClass = $("#hidden-distance").html();
       if (maxDistanceClass != "" && currentDistanceClass != "" && maxDistanceClass != null && currentDistanceClass != null) {
         let maxDist = parseInt(maxDistanceClass.replace("distance-", ""), 10);
         let currDist = parseInt(currentDistanceClass.replace("distance-", ""), 10);
-        // console.log("CURR DIST: " + currDist.toString() + ", MAX DIST: " + maxDist.toString());
         let nextDist = currDist + 1;
-        if (nextDist > maxDist) {
-          $("#hidden-max-distance").html("");
-          $("#hidden-distance").html("");
-        } else {
+        // if (nextDist > maxDist) {
+        //   $("#hidden-max-distance").html("");
+        //   $("#hidden-distance").html("");
+        // } else {
+        if (nextDist <= maxDist) {
           let div = head($('#maze div').filter('.on-solution-path.' + currentDistanceClass));
           div.classList.add("visited");
           $("#hidden-distance").html("distance-" + nextDist.toString());
