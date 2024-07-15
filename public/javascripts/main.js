@@ -215,16 +215,28 @@ $(document).ready(function() {
     $("#goal-x").val("");
     $("#goal-y").val("");
   });
+  $('input[type=checkbox]').change(function() {
+    window.clearInterval(stepIntervalEvent); 
+    stepIntervalEvent = window.setInterval(solutionSteps, interval);
+    // var solutionDivs = $('div').filter('.on-solution-path').sort(sortByDistance);
+    let solve = $('input[name="solved"]:checked').prop('checked') == true;
+    if (!solve) {
+      var solutionDivs = $('div').filter('.on-solution-path').sort(sortByDistance);
+      solutionDivs.each(function () { // mark each cell as not visited
+        this.classList.remove("visited");  
+      });
+      $("#hidden-distance").html("distance-0"); // reset solution back to start cell
+    }
+    window.clearInterval(stepIntervalEvent); 
+    stepIntervalEvent = window.setInterval(solutionSteps, interval);
+
+  });
+
   $('input[type=radio][name=display-type]').change(function() {
     let displayType = $('input[name="display-type"]:checked').val();
-    var solutionDivs = $('div').filter('.on-solution-path').sort(sortByDistance);
-    
     $('div', $('#maze')).each(function () {
-      // console.log($(this)); //log every element found to console output
       let div = this[0]; // first item is object, 2nd item is the index
       let classes = $(this).attr("class").split(/\s+/);
-      // let classes = div.class.split(/\s+/);
-      // alert(classes);
       var distance = null;
       (jQuery.map(classes, function(c) {
         if (c.toString().includes("distance-")) {
@@ -237,20 +249,11 @@ $(document).ready(function() {
           heatColorClass = c.toString().replace("heat-color-class-", "");
         }
       }));
-      if ((displayType == "DistanceMap" || displayType == "Solved")) {
+      if (displayType == "DistanceMap") {
         this.classList.add(heatColorClass);
       } else {
         this.classList.remove(heatColorClass);
       }
-      if (displayType == "Solved") {
-        window.clearInterval(stepIntervalEvent); 
-        stepIntervalEvent = window.setInterval(solutionSteps, interval);
-      }
-      // if (displayType == "Solved" && jQuery.inArray("on-solution-path", classes) >= 0) {
-      //   this.classList.add("visited");
-      // } else {
-      //   this.classList.remove("visited");
-      // }
     });
     // 7/13: removed need to redraw the maze from the hidden json everytime display type changes 
     // Whenever selected display type changes, redraw the maze using JSON persisted in the hidden cell hidden-maze 
@@ -344,7 +347,8 @@ $(document).ready(function() {
           $("#hidden-max-distance").html("distance-" + cell.distance.toString());
           // alert($("#hidden-max-distance").html());
         }
-        if (displayType == "DistanceMap" || displayType == "Solved") {
+        // if (displayType == "DistanceMap" || displayType == "Solved") {
+        if (displayType == "DistanceMap") {
           box.classList.add(dict[cell.distance]);
         }
         // box.addEventListener("click", function(c) {
@@ -378,8 +382,10 @@ $(document).ready(function() {
 
   function solutionSteps() {
     // console.log("BEGINNING SOLUTION STEPS...");
+    let solve = $('input[name="solved"]:checked').prop('checked') == true;
     let displayType = $('input[name="display-type"]:checked').val();
-    if (displayType == "Solved") {
+    // if (displayType == "Solved") {
+    if (solve) {
       let maxDistanceClass = $("#hidden-max-distance").html();
       let currentDistanceClass = $("#hidden-distance").html();
       if (maxDistanceClass != "" && currentDistanceClass != "" && maxDistanceClass != null && currentDistanceClass != null) {
@@ -396,7 +402,13 @@ $(document).ready(function() {
           $("#hidden-distance").html("distance-" + nextDist.toString());
         }
       }
-    }
+    }// else {
+    //   var solutionDivs = $('div').filter('.on-solution-path').sort(sortByDistance);
+    //   solutionDivs.each(function () {
+    //     let div = this[0]; // first item is object, 2nd item is the index
+    //     div.classList.remove("visited");  
+    //   });
+    // }
     window.clearInterval(stepIntervalEvent); 
     stepIntervalEvent = window.setInterval(solutionSteps, interval);
   }
@@ -433,9 +445,9 @@ $(document).ready(function() {
         alert("start and goal coordinates cannot match");
       } else {
         let displayType = $('input[name="display-type"]:checked').val();
-        if (displayType == "Solved") {
-          $("#display-type-choice-distance-map").prop("checked", true);
-        }
+        // if (displayType == "Solved") {
+        //   $("#display-type-choice-distance-map").prop("checked", true);
+        // }
         let colorNames = ["turquoise", "green-sea", "emerald", "nephritis", "peter-river", "belize-hole", "amethyst", "wisteria", "sunflower", "orange", "carrot", "pumpkin", "alizarin", "pomegranate"];
         let greyscaleNames = ["clouds", "silver", "concrete", "asbestos", "wet-asphalt", "midnight-blue"];
         let allColors = colorNames.concat(greyscaleNames);
