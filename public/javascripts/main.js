@@ -4,6 +4,13 @@ let START_CELL_COLOR = "#00ffff";
 let GOAL_CELL_COLOR = "#98ff98";
 let UNVISITED_CELL_COLOR = "#808080";
 
+var webSocket;
+//// var interval = 80;
+// var interval = 50;
+// var interval = 20;
+var interval = 10;
+var stepIntervalEvent = null;
+
 function head(lst) {
   return lst[0];
 }
@@ -148,9 +155,6 @@ $(document).ready(function() {
  
   $(document).on('keyup blur input propertychange', 'input[class="numbers"]', function(){$(this).val($(this).val().replace(/[^0-9]/g,''));});  
 
-  var webSocket;
-  var interval = 80;
-  var stepIntervalEvent = null;
 
   function init() {
       var host = location.origin.replace(/^https/, 'wss').replace(/^http/, 'ws'); 
@@ -222,7 +226,9 @@ $(document).ready(function() {
     window.clearInterval(stepIntervalEvent); 
     stepIntervalEvent = window.setInterval(solutionSteps, interval);
   });
-
+  $("#speed").on('change input', function() {
+    interval = $(this).val();
+  });
   $('input[type=radio][name=display-type]').change(function() {
     let displayType = $('input[name="display-type"]:checked').val();
     $('div', $('#maze')).each(function () {

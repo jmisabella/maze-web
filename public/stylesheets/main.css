@@ -229,6 +229,11 @@ font-size: 1.4em;
   margin: 1px 25%;
 }
 
+#speed {
+  width: 80px !important;
+  margin: auto;
+}
+
 }
 @media screen and (max-height: 34em) and (max-width: 500px){
 .menu{
