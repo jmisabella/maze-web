@@ -327,6 +327,9 @@ body.dark-mode {
 .visited {
   background-color: #b7ffb7 !important;
 }
+.solved {
+  background-color: #b7ffb7 !important;
+}
 .is-start {
   background-color: #00ffff !important;
 }
