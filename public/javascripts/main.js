@@ -260,6 +260,88 @@ $(document).ready(function() {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
+  function manualMove(c) {
+    var movesHistory = $("#hidden-visited").html().split("|");
+    if (movesHistory.length > 0) {
+      function getCoordFromClass(classes, xOrY) {
+        // prefix is either x-coord- or y-coord-
+        let coordClassPrefix = xOrY + "-coord-"
+        var coord = null;
+        (jQuery.map(classes, function(c) {
+          if (c.toString().includes(coordClassPrefix)) {
+            coord = parseInt(c.toString().replace(coordClassPrefix, ""), 10);
+          }
+        }));
+        return coord;
+      }
+      function getNeighborsFromClass(classes) {
+        var neighbors = [];
+        (jQuery.map(classes, function(c) {
+          if (c.toString().includes("neighbors-")) {
+            neighbors = c.toString().replace("neighbors-", "").split("-");
+          }
+        }));
+        return neighbors;
+      }
+      let div = c.target; 
+      var xCoord = getCoordFromClass(div.classList, "x");
+      var yCoord = getCoordFromClass(div.classList, "y");
+      console.log("X COORDS: " + xCoord);
+      console.log("Y COORDS: " + yCoord);
+      let coords = xCoord + "," + yCoord;
+      let neighbors = getNeighborsFromClass(div.classList);
+      let visited = div.classList.contains("visited");
+      let north = Array.from(neighbors).includes("north") && yCoord > 0 ? xCoord.toString() + "," + (yCoord - 1).toString() : null;
+      let south = Array.from(neighbors).includes("south") && yCoord < parseInt($("#height").val(), 10) ? xCoord.toString() + "," + (yCoord + 1).toString() : null;
+      let west = Array.from(neighbors).includes("west") && xCoord > 0 ? (xCoord - 1).toString() + "," + yCoord.toString() : null;
+      let east = Array.from(neighbors).includes("east") && xCoord < parseInt($("#width").val(), 10) ? (xCoord + 1).toString() + "," + yCoord.toString() : null;
+      console.log(neighbors);
+      let remainingHistory = movesHistory.length > 1 ? tail(movesHistory).join("|") : "";
+      let previousMove = movesHistory.length > 0 ? head(movesHistory) : "";
+      console.log("CURRENT CELL: " + coords);
+      console.log("PREVIOUS MOVE: " + previousMove);
+      console.log("NORTH: " + north);
+      console.log("EAST: " + east);
+      console.log("SOUTH: " + south);
+      console.log("WEST: " + west);
+      console.log("NEIGHBORS CONTAINS WEST: " + Array.from(neighbors).includes("west"));
+      console.log("X-COORD IS GREATER THAN 0: " + (xCoord > 0).toString());
+      console.log("EXPECTED WEST COORDS: " + (xCoord - 1).toString() + "," + yCoord.toString());
+      let isEligible = div.classList.contains("is-start") ||
+        coords == previousMove ||
+        (north != null && north == previousMove) || 
+        (east != null && east == previousMove) || 
+        (south != null && south == previousMove) || 
+        (west != null && west == previousMove);
+      console.log("IS ELIGIBLE: " + isEligible);
+      // console.log("PREVIOUS MOVE: " + previousMove);
+      // console.log("NORTHERN NEIGHBOR: " + north);
+      // console.log("EASTERN NEIGHBOR: " + east);
+      // console.log("SOUTHERN NEIGHBOR: " + south);
+      // console.log("WESTERN NEIGHBOR: " + west);
+      if (isEligible) {
+        if (visited) {
+          console.log("REMOVING VISITED");
+          div.classList.remove("visited");
+          // let remainingHistory = movesHistory.length > 1 ? tail(movesHistory).join("|") : "";
+          if (previousMove == coords) {
+            remainingHistory = movesHistory.length > 1 ? tail(movesHistory).join("|") : "";
+            $("#hidden-visited").html(remainingHistory)
+          } else {
+            // ???
+            // console.log("NO PREVIOUS MOVES");
+          }
+        } else {
+          console.log("ADDING VISITED");
+          div.classList.add("visited");
+          // $("#hidden-visited").html(coords + "|" + remainingHistory);
+          $("#hidden-visited").html(coords + "|" + movesHistory.join("|"));
+        }
+        console.log("HISTORY: " + $("#hidden-visited").html());
+      }
+    }
+  }
+
   // let drag = false;
   // document.addEventListener('mousedown', () => drag = false);
   // document.addEventListener('mousemove', () => drag = true);
@@ -347,90 +429,15 @@ $(document).ready(function() {
         if (displayType == "DistanceMap") {
           box.classList.add(dict[cell.distance]);
         }
-        //// here is where we would presumably add event listener to the div box to allow user to draw/click through a path to manually solve the maze 
+        //// add event listeners to the div box to allow user to draw/click through a path to manually solve the maze 
         box.addEventListener("click", function(c) {
-          // TODO: need to have a hidden div to keep track of whether previously clicked cell was visited or unvisited
-          //       and use this to enforce here that only cells whose immediate neighbors were visited
-          //       however I'm still unsure of how to enforce cell walls when user is toggling cells as visited or unvisited 
-          var movesHistory = $("#hidden-visited").html().split("|");
-          if (movesHistory.length > 0) {
-            function getCoordFromClass(classes, xOrY) {
-              // prefix is either x-coord- or y-coord-
-              let coordClassPrefix = xOrY + "-coord-"
-              var coord = null;
-              (jQuery.map(classes, function(c) {
-                if (c.toString().includes(coordClassPrefix)) {
-                  coord = parseInt(c.toString().replace(coordClassPrefix, ""), 10);
-                }
-              }));
-              return coord;
-            }
-            function getNeighborsFromClass(classes) {
-              var neighbors = [];
-              (jQuery.map(classes, function(c) {
-                if (c.toString().includes("neighbors-")) {
-                  neighbors = c.toString().replace("neighbors-", "").split("-");
-                }
-              }));
-              return neighbors;
-            }
-            let div = c.target; 
-            var xCoord = getCoordFromClass(div.classList, "x");
-            var yCoord = getCoordFromClass(div.classList, "y");
-            console.log("X COORDS: " + xCoord);
-            console.log("Y COORDS: " + yCoord);
-            let coords = xCoord + "," + yCoord;
-            let neighbors = getNeighborsFromClass(div.classList);
-            let visited = div.classList.contains("visited");
-            let north = Array.from(neighbors).includes("north") && yCoord > 0 ? xCoord.toString() + "," + (yCoord - 1).toString() : null;
-            let south = Array.from(neighbors).includes("south") && yCoord < parseInt($("#height").val(), 10) ? xCoord.toString() + "," + (yCoord + 1).toString() : null;
-            let west = Array.from(neighbors).includes("west") && xCoord > 0 ? (xCoord - 1).toString() + "," + yCoord.toString() : null;
-            let east = Array.from(neighbors).includes("east") && xCoord < parseInt($("#width").val(), 10) ? (xCoord + 1).toString() + "," + yCoord.toString() : null;
-            console.log(neighbors);
-            let remainingHistory = movesHistory.length > 1 ? tail(movesHistory).join("|") : "";
-            let previousMove = movesHistory.length > 0 ? head(movesHistory) : "";
-            console.log("CURRENT CELL: " + coords);
-            console.log("PREVIOUS MOVE: " + previousMove);
-            console.log("NORTH: " + north);
-            console.log("EAST: " + east);
-            console.log("SOUTH: " + south);
-            console.log("WEST: " + west);
-            console.log("NEIGHBORS CONTAINS WEST: " + Array.from(neighbors).includes("west"));
-            console.log("X-COORD IS GREATER THAN 0: " + (xCoord > 0).toString());
-            console.log("EXPECTED WEST COORDS: " + (xCoord - 1).toString() + "," + yCoord.toString());
-            let isEligible = div.classList.contains("is-start") ||
-              coords == previousMove ||
-              (north != null && north == previousMove) || 
-              (east != null && east == previousMove) || 
-              (south != null && south == previousMove) || 
-              (west != null && west == previousMove);
-            console.log("IS ELIGIBLE: " + isEligible);
-            // console.log("PREVIOUS MOVE: " + previousMove);
-            // console.log("NORTHERN NEIGHBOR: " + north);
-            // console.log("EASTERN NEIGHBOR: " + east);
-            // console.log("SOUTHERN NEIGHBOR: " + south);
-            // console.log("WESTERN NEIGHBOR: " + west);
-            if (isEligible) {
-              if (visited) {
-                console.log("REMOVING VISITED");
-                div.classList.remove("visited");
-                // let remainingHistory = movesHistory.length > 1 ? tail(movesHistory).join("|") : "";
-                if (previousMove == coords) {
-                  remainingHistory = movesHistory.length > 1 ? tail(movesHistory).join("|") : "";
-                  $("#hidden-visited").html(remainingHistory)
-                } else {
-                  // ???
-                  // console.log("NO PREVIOUS MOVES");
-                }
-              } else {
-                console.log("ADDING VISITED");
-                div.classList.add("visited");
-                // $("#hidden-visited").html(coords + "|" + remainingHistory);
-                $("#hidden-visited").html(coords + "|" + movesHistory.join("|"));
-              }
-              console.log("HISTORY: " + $("#hidden-visited").html());
-            }
-          }
+          manualMove(c);
+        });
+        box.addEventListener("touchmove", function(c) {
+          manualMove(c);
+        });
+        box.addEventListener("touchend", function(c) {
+          manualMove(c);
         });
         htmlParent.appendChild(box);
       }
