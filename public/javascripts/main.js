@@ -436,9 +436,9 @@ $(document).ready(function() {
         box.addEventListener("touchstart", function(c) {
           manualMove(c);
         });
-        // box.addEventListener("touchmove", function(c) {
-        //   manualMove(c);
-        // });
+        box.addEventListener("touchmove", function(c) {
+          manualMove(c);
+        });
         box.addEventListener("touchend", function(c) {
           manualMove(c);
         });
