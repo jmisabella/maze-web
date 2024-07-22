@@ -366,15 +366,16 @@ $(document).ready(function() {
   //   return { x: mouseX, y: mouseY };
   // };
 
-  document.getElementById('maze').addEventListener("touchmove", function(event) {
-    // If there's exactly one finger inside this element
-    if (event.targetTouches.length == 1) {
-      var touch = event.targetTouches[0];
-      console.log("touch position: " + touch.pageX + "," + touch.pageY);
-      var mazeCellDiv = mazeCellByScreenCoordsDict[ { x: touch.pageX, y: touch.pageY } ];
-      console.log("maze cell div id: " + mazeCellDiv);
-    }
-  }, false);
+  // document.getElementById('maze').addEventListener("touchmove", function(event) {
+  //   // If there's exactly one finger inside this element
+  //   if (event.targetTouches.length == 1) {
+  //     var touch = event.targetTouches[0];
+  //     console.log("touch position: " + touch.pageX + "," + touch.pageY);
+  //     var mazeCellDiv = mazeCellByScreenCoordsDict[ { x: touch.pageX, y: touch.pageY } ];
+  //     console.log("maze cell div id: " + mazeCellDiv);
+  //   }
+  // }, false);
+
   // document.getElementById('maze').addEventListener("mousemove", function(event) {
   //   // var coords = touchPosition(event);
   //   // console.log("touch position: " + coords.x + "," + coords.y);
@@ -404,12 +405,31 @@ $(document).ready(function() {
   //   //   $(this).unbind("mousemove");
   //   });
   // });
+  document.getElementById('maze').addEventListener("touchstart", function(event) {
+    this.addEventListener("touchstart", function(event) {
+      // If there's exactly one finger inside this element
+      if (event.targetTouches.length == 1) {
+        // var touch = event.targetTouches[0];
+        // console.log("touch position: " + touch.pageX + "," + touch.pageY);
+        // var mazeCellDiv = mazeCellByScreenCoordsDict[ { x: touch.pageX, y: touch.pageY } ];
+        // console.log("maze cell div id: " + mazeCellDiv);
+        var coords = eventCoords(e);
+        console.log("touch position: " + coords.x + "," + coords.y);
+        var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
+        console.log("maze cell div coords: " + mazeCellDivCoords);
+        var mazeCellDivX = head(mazeCellDivCoords.split(","));
+        var mazeCellDivY = head(tail(mazeCellDivCoords.split(",")));
+        console.log("CELL X COORDS: " + mazeCellDivX);
+        console.log("CELL Y COORDS: " + mazeCellDivY);
+        var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
+        console.log("CELL DIV: " + mazeCellDiv.classList);
+        manualMove(mazeCellDiv);
+      }
+    }, false);
+  }, false);
 
   $("#maze").mousedown(function () {
     $(this).mousemove(function (e) {
-      for (const [key, value] of Object.entries(mazeCellByScreenCoordsDict)) {
-        console.log("KEY: " + key, ", VALUE: " + value);
-      } 
       var coords = eventCoords(e);
       console.log("touch position: " + coords.x + "," + coords.y);
       var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
@@ -421,17 +441,8 @@ $(document).ready(function() {
       var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
       console.log("CELL DIV: " + mazeCellDiv.classList);
       manualMove(mazeCellDiv);
-      // if (mazeCellDiv != null) {
-      //   manualMove(mazeCellDiv)
-      // } 
     }).mouseup(function () { 
       $(this).unbind("mousemove");
-      // // TODO: ??? 
-      // window.clearInterval(stepIntervalEvent); 
-      // stepIntervalEvent = window.setInterval(manualMove, interval);
-
-    // }).mouseout(function () {
-    //   $(this).unbind("mousemove");
     });
   });
 
@@ -535,9 +546,9 @@ $(document).ready(function() {
         // box.addEventListener("touchmove", function(c) {
         //   manualMove(c);
         // });
-        box.addEventListener("touchend", function(c) {
-          manualMove(c.target);
-        });
+        // box.addEventListener("touchend", function(c) {
+        //   manualMove(c.target);
+        // });
         htmlParent.appendChild(box);
         // var screenCoords = getScreenPosition(box);
         var screenCoords = elementCoords(box);
