@@ -370,6 +370,7 @@ $(document).ready(function() {
         console.log("CELL Y COORDS: " + mazeCellDivY);
         var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
         console.log("CELL DIV: " + mazeCellDiv.classList);
+        alert("CELL DIV: " + mazeCellDiv.classList);
         manualMove(mazeCellDiv, toggleMove = false);
       // }
     }, false);
@@ -492,8 +493,16 @@ $(document).ready(function() {
         }
         //// add event listeners to the div box to allow user to draw/click through a path to manually solve the maze 
         // box.addEventListener("click", function(c) {
-        //   manualMove(c.target);
+        //   manualMove(c.target,toggleMove = true);
         // });
+        box.addEventListener("mousedown", function(c) {
+          // manualMove(c.target, toggleMove = false);
+          manualMove(c.target, togglemMove = true);
+        });
+        box.addEventListener("mouseend", function(c) {
+          // manualMove(c.target, toggleMove = false);
+          manualMove(c.target, togglemMove = true);
+        });
         box.addEventListener("touchstart", function(c) {
           // manualMove(c.target, toggleMove = false);
           manualMove(c.target, toggleMove = true);
@@ -502,12 +511,8 @@ $(document).ready(function() {
         //   manualMove(c.target, toggleMove = false);
         // });
         box.addEventListener("touchend", function(c) {
-          // manualMove(c.target, toggleMove = true);
-          manualMove(c.target, toggleMove = false);
-        });
-        box.addEventListener("mousedown", function(c) {
+          manualMove(c.target, toggleMove = true);
           // manualMove(c.target, toggleMove = false);
-          manualMove(c.target);
         });
         htmlParent.appendChild(box);
         var screenCoords = elementCoords(box);
