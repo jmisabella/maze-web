@@ -375,17 +375,17 @@ $(document).ready(function() {
     }, false);
   }, false);
 
-  document.getElementById('maze').addEventListener("touchend", function(event) {
-    var coords = eventCoords(event);
-    console.log("touch position: " + coords.x + "," + coords.y);
-    var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
-    console.log("maze cell div coords: " + mazeCellDivCoords);
-    var mazeCellDivX = head(mazeCetailllDivCoords.split(","));
-    var mazeCellDivY = head((mazeCellDivCoords.split(",")));
-    console.log("CELL X COORDS: " + mazeCellDivX);
-    console.log("CELL Y COORDS: " + mazeCellDivY);
-    $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0].unbind("touchmove", function(e) { e.preventDefault() });
-  }, false);
+  // document.getElementById('maze').addEventListener("touchend", function(event) {
+  //   var coords = eventCoords(event);
+  //   console.log("touch position: " + coords.x + "," + coords.y);
+  //   var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
+  //   console.log("maze cell div coords: " + mazeCellDivCoords);
+  //   var mazeCellDivX = head(mazeCetailllDivCoords.split(","));
+  //   var mazeCellDivY = head((mazeCellDivCoords.split(",")));
+  //   console.log("CELL X COORDS: " + mazeCellDivX);
+  //   console.log("CELL Y COORDS: " + mazeCellDivY);
+  //   $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0].unbind("touchmove", function(e) { e.preventDefault() });
+  // }, false);
 
 
   $("#maze").mousedown(function () {
@@ -501,10 +501,10 @@ $(document).ready(function() {
         // box.addEventListener("touchmove", function(c) {
         //   manualMove(c.target, toggleMove = false);
         // });
-        // box.addEventListener("touchend", function(c) {
-        //   // manualMove(c.target, toggleMove = true);
-        //   manualMove(c.target, toggleMove = false);
-        // });
+        box.addEventListener("touchend", function(c) {
+          // manualMove(c.target, toggleMove = true);
+          manualMove(c.target, toggleMove = false);
+        });
         box.addEventListener("mousedown", function(c) {
           // manualMove(c.target, toggleMove = false);
           manualMove(c.target);
