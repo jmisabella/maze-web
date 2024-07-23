@@ -523,26 +523,15 @@ $(document).ready(function() {
           manualMove(c.target, togglemMove = true);
         });
         box.addEventListener("touchstart", function(c) {
-          // // manualMove(c.target, toggleMove = false);
-          // manualMove(c.target, toggleMove = true);
-          // TODO:
-          $("#maze").bind("touchmove", function(e) {
-            var coords = eventCoords(e);
-            var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
-            var mazeCellDivX = head(mazeCellDivCoords.split(","));
-            var mazeCellDivY = head((mazeCellDivCoords.split(",")));
-            var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
-            manualMove(mazeCellDiv, toggleMove = false);
-          });
-
+          // manualMove(c.target, toggleMove = false);
+          manualMove(c.target, toggleMove = true);
         });
         // box.addEventListener("touchmove", function(c) {
         //   manualMove(c.target, toggleMove = false);
         // });
         box.addEventListener("touchend", function(c) {
-          // manualMove(c.target, toggleMove = true);
-          // // manualMove(c.target, toggleMove = false);
-          $("#maze").unbind("touchmove"); 
+          manualMove(c.target, toggleMove = true);
+          // manualMove(c.target, toggleMove = false);
         });
         htmlParent.appendChild(box);
         var screenCoords = elementCoords(box);
