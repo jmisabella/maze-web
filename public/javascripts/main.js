@@ -261,7 +261,7 @@ $(document).ready(function() {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  function manualMove(c) {
+  function manualMove(mazeCellDiv, toggleMove = true) {
     var movesHistory = $("#hidden-visited").html().split("|");
     if (movesHistory.length > 0) {
       function getCoordFromClass(classes, xOrY) {
@@ -273,9 +273,6 @@ $(document).ready(function() {
             coord = parseInt(c.toString().replace(coordClassPrefix, ""), 10);
           }
         }));
-        // TODO: ??? 
-        // window.clearInterval(stepIntervalEvent); 
-        // stepIntervalEvent = window.setInterval(manualMove, interval);
         return coord;
       }
       function getNeighborsFromClass(classes) {
@@ -287,7 +284,7 @@ $(document).ready(function() {
         }));
         return neighbors;
       }
-      let div = c; //.target; 
+      let div = mazeCellDiv; //c; //.target; 
       var xCoord = getCoordFromClass(div.classList, "x");
       var yCoord = getCoordFromClass(div.classList, "y");
       console.log("X COORDS: " + xCoord);
@@ -324,7 +321,7 @@ $(document).ready(function() {
       // console.log("SOUTHERN NEIGHBOR: " + south);
       // console.log("WESTERN NEIGHBOR: " + west);
       if (isEligible) {
-        if (visited) {
+        if (visited && toggleMove) {
           console.log("REMOVING VISITED");
           div.classList.remove("visited");
           // let remainingHistory = movesHistory.length > 1 ? tail(movesHistory).join("|") : "";
@@ -346,11 +343,6 @@ $(document).ready(function() {
     }
   }
 
-  // let drag = false;
-  // document.addEventListener('mousedown', () => drag = false);
-  // document.addEventListener('mousemove', () => drag = true);
-  // document.addEventListener('mouseup', () => console.log(drag ? 'drag' : 'click'));
-
   var elementCoords = function(element) {
     var bounds = element.getBoundingClientRect();
     return { x: parseInt(bounds.left, 10), y: parseInt(bounds.top, 10) }
@@ -360,51 +352,6 @@ $(document).ready(function() {
     return { x: parseInt(bounds.left, 10), y: parseInt(bounds.top, 10) }
   };
 
-  // var touchPosition = function(e) {
-  //   var mouseX = e.clientX - this.getCanvasPos(e.target).left + window.scrollX;
-  //   var mouseY = e.clientY - this.getCanvasPos(e.target).top + window.scrollY;
-  //   return { x: mouseX, y: mouseY };
-  // };
-
-  // document.getElementById('maze').addEventListener("touchmove", function(event) {
-  //   // If there's exactly one finger inside this element
-  //   if (event.targetTouches.length == 1) {
-  //     var touch = event.targetTouches[0];
-  //     console.log("touch position: " + touch.pageX + "," + touch.pageY);
-  //     var mazeCellDiv = mazeCellByScreenCoordsDict[ { x: touch.pageX, y: touch.pageY } ];
-  //     console.log("maze cell div id: " + mazeCellDiv);
-  //   }
-  // }, false);
-
-  // document.getElementById('maze').addEventListener("mousemove", function(event) {
-  //   // var coords = touchPosition(event);
-  //   // console.log("touch position: " + coords.x + "," + coords.y);
-  //   console.log("touch position: " + event.offsetX + "," + event.offsetY);
-  //   var mazeCellDiv = mazeCellByScreenCoordsDict[ { x: event.offsetX, y: event.offsetY} ];
-  //   console.log("maze cell div id: " + mazeCellDiv);
-  //   // // Place element where the finger is
-  //   // obj.style.left = touch.pageX + 'px';
-  //   // obj.style.top = touch.pageY + 'px';
-  // }, false);
-  // $("#maze").touchstart(function () {
-  //   $(this).touchmove(function (e) {
-  //     // If there's exactly one finger inside this element
-  //     if (e.targetTouches.length == 1) {
-  //       for (const [key, value] of Object.entries(mazeCellByScreenCoordsDict)) {
-  //         console.log("KEY: " + key, ", VALUE: " + value);
-  //       } 
-  //       var coords = eventCoords(e);
-  //       console.log("touch position: " + coords.x + "," + coords.y);
-  //       var mazeCellDiv = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
-  //       console.log("maze cell div coords: " + mazeCellDiv);
-  //       manualMove(mazeCellDiv);
-  //     }
-  //   }).touchend(function () {
-  //     $(this).unbind("touchmove");
-  //   // }).mouseout(function () {
-  //   //   $(this).unbind("mousemove");
-  //   });
-  // });
   document.getElementById('maze').addEventListener("touchstart", function(event) {
     this.addEventListener("touchstart", function(event) {
       // If there's exactly one finger inside this element
@@ -417,13 +364,13 @@ $(document).ready(function() {
         console.log("touch position: " + coords.x + "," + coords.y);
         var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
         console.log("maze cell div coords: " + mazeCellDivCoords);
-        var mazeCellDivX = head(mazeCellDivCoords.split(","));
-        var mazeCellDivY = head(tail(mazeCellDivCoords.split(",")));
+        var mazeCellDivX = head(mazeCetailllDivCoords.split(","));
+        var mazeCellDivY = head((mazeCellDivCoords.split(",")));
         console.log("CELL X COORDS: " + mazeCellDivX);
         console.log("CELL Y COORDS: " + mazeCellDivY);
         var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
         console.log("CELL DIV: " + mazeCellDiv.classList);
-        manualMove(mazeCellDiv);
+        manualMove(mazeCellDiv, toggleMove = false);
       }
     }, false);
   }, false);
@@ -440,7 +387,7 @@ $(document).ready(function() {
       console.log("CELL Y COORDS: " + mazeCellDivY);
       var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
       console.log("CELL DIV: " + mazeCellDiv.classList);
-      manualMove(mazeCellDiv);
+      manualMove(mazeCellDiv, toggleMove = false);
     }).mouseup(function () { 
       $(this).unbind("mousemove");
     });
@@ -538,26 +485,13 @@ $(document).ready(function() {
           manualMove(c.target);
         });
         box.addEventListener("mousedown", function(c) {
+          // manualMove(c.target, toggleMove = false);
           manualMove(c.target);
         });
-        // box.addEventListener("mouseup", function(c) {
-        //   manualMove(c.target);
-        // });
-        // box.addEventListener("touchmove", function(c) {
-        //   manualMove(c);
-        // });
-        // box.addEventListener("touchend", function(c) {
-        //   manualMove(c.target);
-        // });
         htmlParent.appendChild(box);
-        // var screenCoords = getScreenPosition(box);
         var screenCoords = elementCoords(box);
         var coordsStr = screenCoords.x.toString() + "," + screenCoords.y.toString()
-        // console.log("CELL'S ABS POSITION: " + coordsStr);
-        //// unresolved bug in maze library is reversing the x,y coords 
         mazeCellByScreenCoordsDict[coordsStr] = cell.coords.y.toString() + "," + cell.coords.x.toString();
-        // console.log("PERSISTED MAZE CELL COORDS: " + mazeCellByScreenCoordsDict[coordsStr]);
-        // console.log("MAZE CELL BY SCREEN COORDS DICT LENGTH: " + Object.keys(mazeCellByScreenCoordsDict).length);
       }
     }
     $("#hidden-distance").html("distance-0"); // set solved distance from start cell at 0, where solution starts when being drawn
