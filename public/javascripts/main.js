@@ -357,13 +357,13 @@ $(document).ready(function() {
     // alert("touch position: " + coords.x + "," + coords.y);
     console.log("touch position: " + coords.x + "," + coords.y);
     var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
-    alert("maze cell div coords: " + mazeCellDivCoords);
+    // alert("maze cell div coords: " + mazeCellDivCoords);
     console.log("maze cell div coords: " + mazeCellDivCoords);
-    var mazeCellDivX = head(mazeCetailllDivCoords.split(","));
+    var mazeCellDivX = head(mazeCellDivCoords.split(","));
     var mazeCellDivY = head((mazeCellDivCoords.split(",")));
-    alert("CELL X COORDS: " + mazeCellDivX);
+    // alert("CELL X COORDS: " + mazeCellDivX);
     console.log("CELL X COORDS: " + mazeCellDivX);
-    alert("CELL Y COORDS: " + mazeCellDivY);
+    // alert("CELL Y COORDS: " + mazeCellDivY);
     console.log("CELL Y COORDS: " + mazeCellDivY);
     var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
     alert("CELL DIV: " + mazeCellDiv.classList);
