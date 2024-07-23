@@ -361,7 +361,9 @@ $(document).ready(function() {
     console.log("maze cell div coords: " + mazeCellDivCoords);
     var mazeCellDivX = head(mazeCetailllDivCoords.split(","));
     var mazeCellDivY = head((mazeCellDivCoords.split(",")));
+    alert("CELL X COORDS: " + mazeCellDivX);
     console.log("CELL X COORDS: " + mazeCellDivX);
+    alert("CELL Y COORDS: " + mazeCellDivY);
     console.log("CELL Y COORDS: " + mazeCellDivY);
     var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
     alert("CELL DIV: " + mazeCellDiv.classList);
