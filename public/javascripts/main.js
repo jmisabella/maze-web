@@ -353,18 +353,19 @@ $(document).ready(function() {
   };
 
   $("#maze").bind("touchmove", function(e) {
-    alert("TOUCHMOVE EVENT TRIGGERED");
     var coords = eventCoords(e);
+    alert("touch position: " + coords.x + "," + coords.y);
     console.log("touch position: " + coords.x + "," + coords.y);
     var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
+    alert("maze cell div coords: " + mazeCellDivCoords);
     console.log("maze cell div coords: " + mazeCellDivCoords);
     var mazeCellDivX = head(mazeCetailllDivCoords.split(","));
     var mazeCellDivY = head((mazeCellDivCoords.split(",")));
     console.log("CELL X COORDS: " + mazeCellDivX);
     console.log("CELL Y COORDS: " + mazeCellDivY);
     var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
-    console.log("CELL DIV: " + mazeCellDiv.classList);
     alert("CELL DIV: " + mazeCellDiv.classList);
+    console.log("CELL DIV: " + mazeCellDiv.classList);
     manualMove(mazeCellDiv, toggleMove = false);
   });
 
