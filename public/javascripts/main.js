@@ -366,7 +366,7 @@ $(document).ready(function() {
     // alert("CELL Y COORDS: " + mazeCellDivY);
     console.log("CELL Y COORDS: " + mazeCellDivY);
     var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
-    alert("CELL DIV: " + mazeCellDiv.classList);
+    // alert("CELL DIV: " + mazeCellDiv.classList);
     console.log("CELL DIV: " + mazeCellDiv.classList);
     manualMove(mazeCellDiv, toggleMove = false);
   });
@@ -523,15 +523,26 @@ $(document).ready(function() {
           manualMove(c.target, togglemMove = true);
         });
         box.addEventListener("touchstart", function(c) {
-          // manualMove(c.target, toggleMove = false);
-          manualMove(c.target, toggleMove = true);
+          // // manualMove(c.target, toggleMove = false);
+          // manualMove(c.target, toggleMove = true);
+          // TODO:
+          $("#maze").bind("touchmove", function(e) {
+            var coords = eventCoords(e);
+            var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
+            var mazeCellDivX = head(mazeCellDivCoords.split(","));
+            var mazeCellDivY = head((mazeCellDivCoords.split(",")));
+            var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
+            manualMove(mazeCellDiv, toggleMove = false);
+          });
+
         });
         // box.addEventListener("touchmove", function(c) {
         //   manualMove(c.target, toggleMove = false);
         // });
         box.addEventListener("touchend", function(c) {
-          manualMove(c.target, toggleMove = true);
-          // manualMove(c.target, toggleMove = false);
+          // manualMove(c.target, toggleMove = true);
+          // // manualMove(c.target, toggleMove = false);
+          $("#maze").unbind("touchmove"); 
         });
         htmlParent.appendChild(box);
         var screenCoords = elementCoords(box);
