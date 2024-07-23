@@ -353,7 +353,7 @@ $(document).ready(function() {
   };
 
   document.getElementById('maze').addEventListener("touchstart", function(event) {
-    this.addEventListener("touchmove", function(event) {
+    this.addEventListener("touchmove", function(e) {
       // If there's exactly one finger inside this element
       // if (event.targetTouches.length == 1) {
       //   // var touch = event.targetTouches[0];
