@@ -354,7 +354,7 @@ $(document).ready(function() {
 
   $("#maze").bind("touchmove", function(e) {
     var coords = eventCoords(e);
-    alert("touch position: " + coords.x + "," + coords.y);
+    // alert("touch position: " + coords.x + "," + coords.y);
     console.log("touch position: " + coords.x + "," + coords.y);
     var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
     alert("maze cell div coords: " + mazeCellDivCoords);
