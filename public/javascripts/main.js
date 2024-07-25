@@ -586,28 +586,19 @@ $(document).ready(function() {
       var lastMoveCoords = null; 
       if (movesHistory.length > 0 && head(movesHistory).length > 0) {
         lastMoveCoords = head(movesHistory);
-        // let x = head(lastMoveCoords.split(","));
-        // let y = head(tail(lastMoveCoords.split(",")));
-        let x = xCoord(lastMoveCoords.toString());
-        let y = yCoord(lastMoveCoords.toString());
+        let x = head(lastMoveCoords.split(","));
+        let y = head(tail(lastMoveCoords.split(",")));
+        // let x = xCoord(lastMoveCoords.toString());
+        // let y = yCoord(lastMoveCoords.toString());
         lastMoveCoords = x + "," + y;
         lastMoveDiv = $(".x-coord-" + x + ".y-coord-" + y)[0];
-      } //else {
-      //   lastMoveDiv = $(".is-start")[0];
-      //   let x = getCoordFromClass(lastMoveDiv.classList, "x");
-      //   let y = getCoordFromClass(lastMoveDiv.classList, "y");
-      //   lastMoveCoords = x + "," + y;
-      // }
-      // last x-coord
+      }
       var coords = null;
       if (lastMoveCoords != null) {
+        // previous x-coord
         var xCoord = parseInt(head(lastMoveCoords.split(",")), 10);
-        // last y-coord
+        // previous y-coord
         var yCoord = parseInt(head(tail(lastMoveCoords.split(","))), 10);
-        // // last x-coord
-        // var xCoord = xCoord(lastMoveCoords);
-        // // last y-coord
-        // var yCoord = yCoord(lastMoveCoords);
         console.log("LAST X COORDS: " + xCoord);
         console.log("LAST Y COORDS: " + yCoord);
         let neighbors = getNeighborsFromClass(lastMoveDiv.classList);
@@ -639,7 +630,7 @@ $(document).ready(function() {
         var mazeCellDiv = $(".x-coord-" + head(coords.split(",")) + ".y-coord-" + head(tail(coords.split(","))))[0];
         if (mazeCellDiv != null) {
           manualMove(mazeCellDiv);
-        } 
+        }
       }
     }
   });
