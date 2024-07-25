@@ -83,6 +83,7 @@ function getDistanceFromClass(classes) {
   }));
   return distance;
 }
+
 function sortByDistance(a, b){
   let aClasses = $(a).attr("class").split(/\s+/);
   let bClasses = $(b).attr("class").split(/\s+/);
@@ -90,6 +91,7 @@ function sortByDistance(a, b){
   var bDist = getDistanceFromClass(bClasses);
   return ((aDist < bDist) ? -1 : ((aDist > bDist) ? 1 : 0));
 }
+
 function reverseSortByDistance(a, b){
   let aClasses = $(a).attr("class").split(/\s+/);
   let bClasses = $(b).attr("class").split(/\s+/);
@@ -98,6 +100,15 @@ function reverseSortByDistance(a, b){
   return ((bDist < aDist) ? -1 : ((bDist > aDist) ? 1 : 0));
 }
 
+function isCoords(coords) {
+  return coords != null && coords.split(",").length == 2;
+}
+function xCoord(coords) {
+  return isCoords(coords) ? head(coords.split(",")) : null;
+}
+function yCoord(coords) {
+  return isCoords(coords) ? head(tail(coords.split(","))) : null;
+}
 //////////////
 
 $(document).ready(function() {
@@ -260,30 +271,31 @@ $(document).ready(function() {
   function randomInt(min, max) { // inclusive min and max
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
+  
+  function getCoordFromClass(classes, xOrY) {
+    // prefix is either x-coord- or y-coord-
+    let coordClassPrefix = xOrY + "-coord-"
+    var coord = null;
+    (jQuery.map(classes, function(c) {
+      if (c.toString().includes(coordClassPrefix)) {
+        coord = parseInt(c.toString().replace(coordClassPrefix, ""), 10);
+      }
+    }));
+    return coord;
+  }
+  function getNeighborsFromClass(classes) {
+    var neighbors = [];
+    (jQuery.map(classes, function(c) {
+      if (c.toString().includes("neighbors-")) {
+        neighbors = c.toString().replace("neighbors-", "").split("-");
+      }
+    }));
+    return neighbors;
+  }
 
-  function manualMove(mazeCellDiv, toggleMove = true) {
+  function manualMove(mazeCellDiv, toggleMove = true, moveByMousePosition = true, moveByDirection = false) {
     var movesHistory = $("#hidden-visited").html().split("|");
     if (movesHistory.length > 0) {
-      function getCoordFromClass(classes, xOrY) {
-        // prefix is either x-coord- or y-coord-
-        let coordClassPrefix = xOrY + "-coord-"
-        var coord = null;
-        (jQuery.map(classes, function(c) {
-          if (c.toString().includes(coordClassPrefix)) {
-            coord = parseInt(c.toString().replace(coordClassPrefix, ""), 10);
-          }
-        }));
-        return coord;
-      }
-      function getNeighborsFromClass(classes) {
-        var neighbors = [];
-        (jQuery.map(classes, function(c) {
-          if (c.toString().includes("neighbors-")) {
-            neighbors = c.toString().replace("neighbors-", "").split("-");
-          }
-        }));
-        return neighbors;
-      }
       let div = mazeCellDiv; //c; //.target; 
       var xCoord = getCoordFromClass(div.classList, "x");
       var yCoord = getCoordFromClass(div.classList, "y");
@@ -341,6 +353,7 @@ $(document).ready(function() {
         console.log("HISTORY: " + $("#hidden-visited").html());
       }
     }
+    // alert(mazeCellDiv.classList);
   }
 
   var elementCoords = function(element) {
@@ -359,8 +372,10 @@ $(document).ready(function() {
     var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
     // alert("maze cell div coords: " + mazeCellDivCoords);
     console.log("maze cell div coords: " + mazeCellDivCoords);
-    var mazeCellDivX = head(mazeCellDivCoords.split(","));
-    var mazeCellDivY = head((mazeCellDivCoords.split(",")));
+    // var mazeCellDivX = head(mazeCellDivCoords.split(","));
+    // var mazeCellDivY = head((mazeCellDivCoords.split(",")));
+    var mazeCellDivX = xCoord(mazeCellDivCoords);
+    var mazeCellDivY = yCoord(mazeCellDivCoords);
     // alert("CELL X COORDS: " + mazeCellDivX);
     console.log("CELL X COORDS: " + mazeCellDivX);
     // alert("CELL Y COORDS: " + mazeCellDivY);
@@ -408,14 +423,16 @@ $(document).ready(function() {
   // }, false);
 
 
-  $("#maze").mousedown(function () {
+  $("#maze").mousedown(function (e) {
     $(this).mousemove(function (e) {
       var coords = eventCoords(e);
       console.log("touch position: " + coords.x + "," + coords.y);
       var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
       console.log("maze cell div coords: " + mazeCellDivCoords);
-      var mazeCellDivX = head(mazeCellDivCoords.split(","));
-      var mazeCellDivY = head(tail(mazeCellDivCoords.split(",")));
+      // var mazeCellDivX = head(mazeCellDivCoords.split(","));
+      // var mazeCellDivY = head(tail(mazeCellDivCoords.split(",")));
+      var mazeCellDivX = xCoord(mazeCellDivCoords);
+      var mazeCellDivY = yCoord(mazeCellDivCoords);
       console.log("CELL X COORDS: " + mazeCellDivX);
       console.log("CELL Y COORDS: " + mazeCellDivY);
       var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
@@ -425,7 +442,6 @@ $(document).ready(function() {
       $(this).unbind("mousemove");
     });
   });
-
 
   function drawMaze(json, htmlParent) {
     if (json == null || json.toString() == "") {
@@ -542,6 +558,86 @@ $(document).ready(function() {
     $("#hidden-distance").html("distance-0"); // set solved distance from start cell at 0, where solution starts when being drawn
     // alert(mazeCellByScreenCoordsDict);
   }
+
+  $(window).on("keydown", function(e) {
+    //// TODO: why do we need to redefine these functions inside this event ??? 
+    function isCoords(coords) {
+      return coords != null && coords.split(",").length == 2;
+    }
+    function xCoord(coords) {
+      return isCoords(coords) ? head(coords.split(",")) : null;
+    }
+    function yCoord(coords) {
+      return isCoords(coords) ? head(tail(coords.split(","))) : null;
+    }
+    var direction = null; 
+    if (e.key == "ArrowUp") {
+      direction = "north";
+    } else if (e.key == "ArrowRight") {
+      direction = "east";
+    } else if (e.key == "ArrowDown") {
+      direction = "south";
+    } else if (e.key == "ArrowLeft") {
+      direction = "west";
+    }
+    if (direction) {
+      var movesHistory = $("#hidden-visited").html().split("|");
+      var lastMoveDiv = null; 
+      var lastMoveCoords = null; 
+      if (movesHistory.length > 0) {
+        lastMoveCoords = head(movesHistory);
+        // let x = head(lastMoveCoords.split(","));
+        // let y = head(tail(lastMoveCoords.split(",")));
+        let x = xCoord(lastMoveCoords.toString());
+        let y = yCoord(lastMoveCoords.toString());
+        lastMoveCoords = x + "," + y;
+        lastMoveDiv = $(".x-coord-" + x + ".y-coord-" + y)[0];
+      } else {
+        lastMoveDiv = $(".is-start")[0];
+        let x = getCoordFromClass(lastMoveDiv.classList, "x");
+        let y = getCoordFromClass(lastMoveDiv.classList, "y");
+        lastMoveCoords = x + "," + y;
+      }
+      // last x-coord
+      var xCoord = parseInt(head(lastMoveCoords.split(",")), 10);
+      // last y-coord
+      var yCoord = parseInt(head(tail(lastMoveCoords.split(","))), 10);
+      // // last x-coord
+      // var xCoord = xCoord(lastMoveCoords);
+      // // last y-coord
+      // var yCoord = yCoord(lastMoveCoords);
+      console.log("LAST X COORDS: " + xCoord);
+      console.log("LAST Y COORDS: " + yCoord);
+      let neighbors = getNeighborsFromClass(lastMoveDiv.classList);
+      // alert(neighbors);
+      let north = Array.from(neighbors).includes("north") && yCoord > 0 ? xCoord.toString() + "," + (yCoord - 1).toString() : null;
+      let south = Array.from(neighbors).includes("south") && yCoord < parseInt($("#height").val(), 10) ? xCoord.toString() + "," + (yCoord + 1).toString() : null;
+      let west = Array.from(neighbors).includes("west") && xCoord > 0 ? (xCoord - 1).toString() + "," + yCoord.toString() : null;
+      let east = Array.from(neighbors).includes("east") && xCoord < parseInt($("#width").val(), 10) ? (xCoord + 1).toString() + "," + yCoord.toString() : null;
+      console.log("north neighbor: " + north);
+      console.log("east neighbor: " + east);
+      console.log("south neighbor: " + south);
+      console.log("west neighbor: " + west);
+      var coords = null; 
+      if (direction == "north") {
+        coords = north;
+      } else if (direction == "east") {
+        coords = east;
+      } else if (direction == "south") {
+        coords = south;
+      } else if (direction == "west") {
+        coords = west;
+      }
+      if (coords != null) {
+        // alert(".x-coord-" + coords.x + ".y-coord-" + coords.y) 
+        
+        var mazeCellDiv = $(".x-coord-" + head(coords.split(",")) + ".y-coord-" + head(tail(coords.split(","))))[0];
+        if (mazeCellDiv != null) {
+          manualMove(mazeCellDiv);
+        } 
+      }
+    }
+  });
 
   function solutionSteps() {
     let solve = $('input[name="solved"]:checked').prop('checked') == true;
