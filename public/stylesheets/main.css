@@ -325,16 +325,24 @@ body.dark-mode {
 }
 
 .visited {
-  background-color: #b7ffb7 !important;
+  background-color: #b7ffb7;
 }
 .solved {
-  background-color: #b7ffb7 !important;
+  background-color: #00ffff;
+  /* background-color: #b7ffb7 !important; */
 }
 .is-start {
-  background-color: #00ffff !important;
+  background-color: #00ffff;
 }
 .is-goal {
-  background-color: #98ff98 !important;
+  background-color: #98ff98;
+}
+.visited .is-start {
+  background-color: #b7ffb7;
+}
+.solved .is-goal {
+  background-color: #00ffff;
+  /* background-color: #98ff98 !important; */
 }
 
 #loading-modal {

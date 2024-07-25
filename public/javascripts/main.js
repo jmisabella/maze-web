@@ -584,7 +584,7 @@ $(document).ready(function() {
       var movesHistory = $("#hidden-visited").html().split("|");
       var lastMoveDiv = null; 
       var lastMoveCoords = null; 
-      if (movesHistory.length > 0) {
+      if (movesHistory.length > 0 && head(movesHistory).length > 0) {
         lastMoveCoords = head(movesHistory);
         // let x = head(lastMoveCoords.split(","));
         // let y = head(tail(lastMoveCoords.split(",")));
@@ -592,45 +592,50 @@ $(document).ready(function() {
         let y = yCoord(lastMoveCoords.toString());
         lastMoveCoords = x + "," + y;
         lastMoveDiv = $(".x-coord-" + x + ".y-coord-" + y)[0];
-      } else {
-        lastMoveDiv = $(".is-start")[0];
-        let x = getCoordFromClass(lastMoveDiv.classList, "x");
-        let y = getCoordFromClass(lastMoveDiv.classList, "y");
-        lastMoveCoords = x + "," + y;
-      }
+      } //else {
+      //   lastMoveDiv = $(".is-start")[0];
+      //   let x = getCoordFromClass(lastMoveDiv.classList, "x");
+      //   let y = getCoordFromClass(lastMoveDiv.classList, "y");
+      //   lastMoveCoords = x + "," + y;
+      // }
       // last x-coord
-      var xCoord = parseInt(head(lastMoveCoords.split(",")), 10);
-      // last y-coord
-      var yCoord = parseInt(head(tail(lastMoveCoords.split(","))), 10);
-      // // last x-coord
-      // var xCoord = xCoord(lastMoveCoords);
-      // // last y-coord
-      // var yCoord = yCoord(lastMoveCoords);
-      console.log("LAST X COORDS: " + xCoord);
-      console.log("LAST Y COORDS: " + yCoord);
-      let neighbors = getNeighborsFromClass(lastMoveDiv.classList);
-      // alert(neighbors);
-      let north = Array.from(neighbors).includes("north") && yCoord > 0 ? xCoord.toString() + "," + (yCoord - 1).toString() : null;
-      let south = Array.from(neighbors).includes("south") && yCoord < parseInt($("#height").val(), 10) ? xCoord.toString() + "," + (yCoord + 1).toString() : null;
-      let west = Array.from(neighbors).includes("west") && xCoord > 0 ? (xCoord - 1).toString() + "," + yCoord.toString() : null;
-      let east = Array.from(neighbors).includes("east") && xCoord < parseInt($("#width").val(), 10) ? (xCoord + 1).toString() + "," + yCoord.toString() : null;
-      console.log("north neighbor: " + north);
-      console.log("east neighbor: " + east);
-      console.log("south neighbor: " + south);
-      console.log("west neighbor: " + west);
-      var coords = null; 
-      if (direction == "north") {
-        coords = north;
-      } else if (direction == "east") {
-        coords = east;
-      } else if (direction == "south") {
-        coords = south;
-      } else if (direction == "west") {
-        coords = west;
+      var coords = null;
+      if (lastMoveCoords != null) {
+        var xCoord = parseInt(head(lastMoveCoords.split(",")), 10);
+        // last y-coord
+        var yCoord = parseInt(head(tail(lastMoveCoords.split(","))), 10);
+        // // last x-coord
+        // var xCoord = xCoord(lastMoveCoords);
+        // // last y-coord
+        // var yCoord = yCoord(lastMoveCoords);
+        console.log("LAST X COORDS: " + xCoord);
+        console.log("LAST Y COORDS: " + yCoord);
+        let neighbors = getNeighborsFromClass(lastMoveDiv.classList);
+        // alert(neighbors);
+        let north = Array.from(neighbors).includes("north") && yCoord > 0 ? xCoord.toString() + "," + (yCoord - 1).toString() : null;
+        let south = Array.from(neighbors).includes("south") && yCoord < parseInt($("#height").val(), 10) ? xCoord.toString() + "," + (yCoord + 1).toString() : null;
+        let west = Array.from(neighbors).includes("west") && xCoord > 0 ? (xCoord - 1).toString() + "," + yCoord.toString() : null;
+        let east = Array.from(neighbors).includes("east") && xCoord < parseInt($("#width").val(), 10) ? (xCoord + 1).toString() + "," + yCoord.toString() : null;
+        console.log("north neighbor: " + north);
+        console.log("east neighbor: " + east);
+        console.log("south neighbor: " + south);
+        console.log("west neighbor: " + west);
+        if (direction == "north") {
+          coords = north;
+        } else if (direction == "east") {
+          coords = east;
+        } else if (direction == "south") {
+          coords = south;
+        } else if (direction == "west") {
+          coords = west;
+        }
+      } else {
+        var startDiv = $(".is-start")[0];
+        let x = getCoordFromClass(startDiv.classList, "x");
+        let y = getCoordFromClass(startDiv.classList, "y");
+        coords = x + "," + y;
       }
       if (coords != null) {
-        // alert(".x-coord-" + coords.x + ".y-coord-" + coords.y) 
-        
         var mazeCellDiv = $(".x-coord-" + head(coords.split(",")) + ".y-coord-" + head(tail(coords.split(","))))[0];
         if (mazeCellDiv != null) {
           manualMove(mazeCellDiv);
