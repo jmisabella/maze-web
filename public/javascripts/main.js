@@ -301,14 +301,14 @@ $(document).ready(function() {
     return neighbors;
   }
 
-  function manualMove(mazeCellDiv, toggleMove = true, moveByMousePosition = true, moveByDirection = false) {
+  function manualMove(mazeCellDiv, toggleMove = true, moveByMousePosition = true, moveByDirection = false, undoMove = false ) {
     var movesHistory = $("#hidden-visited").html().split("|");
     if (movesHistory.length > 0) {
       let div = mazeCellDiv; //c; //.target; 
       var xCoord = getCoordFromClass(div.classList, "x");
       var yCoord = getCoordFromClass(div.classList, "y");
-      console.log("X COORDS: " + xCoord);
-      console.log("Y COORDS: " + yCoord);
+      // console.log("X COORDS: " + xCoord);
+      // console.log("Y COORDS: " + yCoord);
       let coords = xCoord + "," + yCoord;
       let neighbors = getNeighborsFromClass(div.classList);
       let visited = div.classList.contains("visited");
@@ -320,14 +320,14 @@ $(document).ready(function() {
       let remainingHistory = movesHistory.length > 1 ? tail(movesHistory).join("|") : "";
       let previousMove = movesHistory.length > 0 ? head(movesHistory) : "";
       console.log("CURRENT CELL: " + coords);
-      console.log("PREVIOUS MOVE: " + previousMove);
-      console.log("NORTH: " + north);
-      console.log("EAST: " + east);
-      console.log("SOUTH: " + south);
-      console.log("WEST: " + west);
-      console.log("NEIGHBORS CONTAINS WEST: " + Array.from(neighbors).includes("west"));
-      console.log("X-COORD IS GREATER THAN 0: " + (xCoord > 0).toString());
-      console.log("EXPECTED WEST COORDS: " + (xCoord - 1).toString() + "," + yCoord.toString());
+      // console.log("PREVIOUS MOVE: " + previousMove);
+      // console.log("NORTH: " + north);
+      // console.log("EAST: " + east);
+      // console.log("SOUTH: " + south);
+      // console.log("WEST: " + west);
+      // console.log("NEIGHBORS CONTAINS WEST: " + Array.from(neighbors).includes("west"));
+      // console.log("X-COORD IS GREATER THAN 0: " + (xCoord > 0).toString());
+      // console.log("EXPECTED WEST COORDS: " + (xCoord - 1).toString() + "," + yCoord.toString());
       let isEligible = div.classList.contains("is-start") ||
         coords == previousMove ||
         (north != null && north == previousMove) || 
@@ -335,16 +335,10 @@ $(document).ready(function() {
         (south != null && south == previousMove) || 
         (west != null && west == previousMove);
       console.log("IS ELIGIBLE: " + isEligible);
-      // console.log("PREVIOUS MOVE: " + previousMove);
-      // console.log("NORTHERN NEIGHBOR: " + north);
-      // console.log("EASTERN NEIGHBOR: " + east);
-      // console.log("SOUTHERN NEIGHBOR: " + south);
-      // console.log("WESTERN NEIGHBOR: " + west);
       if (isEligible) {
-        if (visited && toggleMove) {
+        if (undoMove || (visited && toggleMove)) {
           console.log("REMOVING VISITED");
           div.classList.remove("visited");
-          // let remainingHistory = movesHistory.length > 1 ? tail(movesHistory).join("|") : "";
           if (previousMove == coords) {
             remainingHistory = movesHistory.length > 1 ? tail(movesHistory).join("|") : "";
             $("#hidden-visited").html(remainingHistory)
@@ -355,13 +349,11 @@ $(document).ready(function() {
         } else {
           console.log("ADDING VISITED");
           div.classList.add("visited");
-          // $("#hidden-visited").html(coords + "|" + remainingHistory);
           $("#hidden-visited").html(coords + "|" + movesHistory.join("|"));
         }
         console.log("HISTORY: " + $("#hidden-visited").html());
       }
     }
-    // alert(mazeCellDiv.classList);
   }
 
   var elementCoords = function(element) {
@@ -614,18 +606,18 @@ $(document).ready(function() {
       var xCoord = parseInt(head(lastMoveCoords.split(",")), 10);
       // previous y-coord
       var yCoord = parseInt(head(tail(lastMoveCoords.split(","))), 10);
-      console.log("LAST X COORDS: " + xCoord);
-      console.log("LAST Y COORDS: " + yCoord);
+      // console.log("LAST X COORDS: " + xCoord);
+      // console.log("LAST Y COORDS: " + yCoord);
       let neighbors = getNeighborsFromClass(lastMoveDiv.classList);
       // alert(neighbors);
       let north = Array.from(neighbors).includes("north") && yCoord > 0 ? xCoord.toString() + "," + (yCoord - 1).toString() : null;
       let south = Array.from(neighbors).includes("south") && yCoord < parseInt($("#height").val(), 10) ? xCoord.toString() + "," + (yCoord + 1).toString() : null;
       let west = Array.from(neighbors).includes("west") && xCoord > 0 ? (xCoord - 1).toString() + "," + yCoord.toString() : null;
       let east = Array.from(neighbors).includes("east") && xCoord < parseInt($("#width").val(), 10) ? (xCoord + 1).toString() + "," + yCoord.toString() : null;
-      console.log("north neighbor: " + north);
-      console.log("east neighbor: " + east);
-      console.log("south neighbor: " + south);
-      console.log("west neighbor: " + west);
+      // console.log("north neighbor: " + north);
+      // console.log("east neighbor: " + east);
+      // console.log("south neighbor: " + south);
+      // console.log("west neighbor: " + west);
       if (direction == "north") {
         coords = north;
       } else if (direction == "east") {
@@ -637,7 +629,21 @@ $(document).ready(function() {
       }
       if (coords != null) {
         var mazeCellDiv = $(".x-coord-" + head(coords.split(",")) + ".y-coord-" + head(tail(coords.split(","))))[0];
-        if (mazeCellDiv != null) {
+        // if (mazeCellDiv != null) {
+        if (mazeCellDiv.classList.contains("visited")) {
+          console.log("~~~~~~~~~~~~~~~~~~~~~~ UNDO ~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+          movesHistory = $("#hidden-visited").html().split("|");
+          lastMoveCoords = head(movesHistory);
+          console.log("LAST MOVE COORDS: " + lastMoveCoords);
+          let x = head(lastMoveCoords.split(","));
+          let y = head(tail(lastMoveCoords.split(",")));
+          lastMoveCoords = x + "," + y;
+          lastMoveDiv = $(".x-coord-" + x + ".y-coord-" + y)[0];
+          let remainingHistory = tail(movesHistory).join("|");
+          console.log("History: " + remainingHistory);
+          $("#hidden-visited").html(remainingHistory);
+          lastMoveDiv.classList.remove("visited");
+        } else { //if (!lastMoveDiv.classList.contains("is-start") || !lastMoveDiv.classList.contains("visited")) {
           manualMove(mazeCellDiv);
         }
       }
