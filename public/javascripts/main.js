@@ -429,8 +429,6 @@ $(document).ready(function() {
       console.log("touch position: " + coords.x + "," + coords.y);
       var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
       console.log("maze cell div coords: " + mazeCellDivCoords);
-      // var mazeCellDivX = head(mazeCellDivCoords.split(","));
-      // var mazeCellDivY = head(tail(mazeCellDivCoords.split(",")));
       var mazeCellDivX = xCoord(mazeCellDivCoords);
       var mazeCellDivY = yCoord(mazeCellDivCoords);
       console.log("CELL X COORDS: " + mazeCellDivX);
@@ -507,9 +505,6 @@ $(document).ready(function() {
         box.style.borderLeft = cell.linked.includes("west") ? EMPTY_WALL : SOLID_WALL;
         box.classList.add("distance-" + cell.distance.toString());
         box.classList.add("heat-color-class-" + distanceColorsDict[cell.distance]);
-        // box.classList.add("x-coord-" + cell.coords.x.toString());
-        // box.classList.add("y-coord-" + cell.coords.y.toString());
-        //// unresolved bug in maze library is reversing the x,y coords 
         box.classList.add("x-coord-" + cell.coords.y.toString());
         box.classList.add("y-coord-" + cell.coords.x.toString());
         let neighborsClass = "neighbors-" + cell.linked.join("-");
@@ -556,20 +551,9 @@ $(document).ready(function() {
       }
     }
     $("#hidden-distance").html("distance-0"); // set solved distance from start cell at 0, where solution starts when being drawn
-    // alert(mazeCellByScreenCoordsDict);
   }
 
   $(window).on("keydown", function(e) {
-    //// TODO: why do we need to redefine these functions inside this event ??? 
-    function isCoords(coords) {
-      return coords != null && coords.split(",").length == 2;
-    }
-    function xCoord(coords) {
-      return isCoords(coords) ? head(coords.split(",")) : null;
-    }
-    function yCoord(coords) {
-      return isCoords(coords) ? head(tail(coords.split(","))) : null;
-    }
     var direction = null; 
     if (e.key == "ArrowUp") {
       direction = "north";
@@ -588,8 +572,6 @@ $(document).ready(function() {
         lastMoveCoords = head(movesHistory);
         let x = head(lastMoveCoords.split(","));
         let y = head(tail(lastMoveCoords.split(",")));
-        // let x = xCoord(lastMoveCoords.toString());
-        // let y = yCoord(lastMoveCoords.toString());
         lastMoveCoords = x + "," + y;
         lastMoveDiv = $(".x-coord-" + x + ".y-coord-" + y)[0];
       }
@@ -606,18 +588,11 @@ $(document).ready(function() {
       var xCoord = parseInt(head(lastMoveCoords.split(",")), 10);
       // previous y-coord
       var yCoord = parseInt(head(tail(lastMoveCoords.split(","))), 10);
-      // console.log("LAST X COORDS: " + xCoord);
-      // console.log("LAST Y COORDS: " + yCoord);
       let neighbors = getNeighborsFromClass(lastMoveDiv.classList);
-      // alert(neighbors);
       let north = Array.from(neighbors).includes("north") && yCoord > 0 ? xCoord.toString() + "," + (yCoord - 1).toString() : null;
       let south = Array.from(neighbors).includes("south") && yCoord < parseInt($("#height").val(), 10) ? xCoord.toString() + "," + (yCoord + 1).toString() : null;
       let west = Array.from(neighbors).includes("west") && xCoord > 0 ? (xCoord - 1).toString() + "," + yCoord.toString() : null;
       let east = Array.from(neighbors).includes("east") && xCoord < parseInt($("#width").val(), 10) ? (xCoord + 1).toString() + "," + yCoord.toString() : null;
-      // console.log("north neighbor: " + north);
-      // console.log("east neighbor: " + east);
-      // console.log("south neighbor: " + south);
-      // console.log("west neighbor: " + west);
       if (direction == "north") {
         coords = north;
       } else if (direction == "east") {
@@ -629,7 +604,6 @@ $(document).ready(function() {
       }
       if (coords != null) {
         var mazeCellDiv = $(".x-coord-" + head(coords.split(",")) + ".y-coord-" + head(tail(coords.split(","))))[0];
-        // if (mazeCellDiv != null) {
         if (mazeCellDiv.classList.contains("visited")) {
           console.log("~~~~~~~~~~~~~~~~~~~~~~ UNDO ~~~~~~~~~~~~~~~~~~~~~~~~~~~");
           movesHistory = $("#hidden-visited").html().split("|");
@@ -643,7 +617,7 @@ $(document).ready(function() {
           console.log("History: " + remainingHistory);
           $("#hidden-visited").html(remainingHistory);
           lastMoveDiv.classList.remove("visited");
-        } else { //if (!lastMoveDiv.classList.contains("is-start") || !lastMoveDiv.classList.contains("visited")) {
+        } else {
           manualMove(mazeCellDiv);
         }
       }
