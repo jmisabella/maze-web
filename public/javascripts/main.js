@@ -109,19 +109,27 @@ function xCoord(coords) {
 function yCoord(coords) {
   return isCoords(coords) ? head(tail(coords.split(","))) : null;
 }
-//////////////
 
+
+$('input[type="radio"]').keydown(function(e) {
+  var arrowKeys = [37, 38, 39, 40];
+  if (arrowKeys.indexOf(e.which) !== -1)
+  {
+    $(this).blur();
+    return false;
+  }
+});
+
+
+//////////////
 $(document).ready(function() {
   const mazeDiv = document.getElementById("maze");
-  
   if (webSocket == null) {
     init();
   }
- 
   $(".menu-button").click(function() {
     $(".menu-bar").toggleClass( "open" );
   });
-
   jQuery('#width').keyup(function () {
     if (this.value.length > 0) {
       let padding = 30;
@@ -594,37 +602,38 @@ $(document).ready(function() {
         lastMoveDiv = $(".x-coord-" + x + ".y-coord-" + y)[0];
       }
       var coords = null;
-      if (lastMoveCoords != null) {
-        // previous x-coord
-        var xCoord = parseInt(head(lastMoveCoords.split(",")), 10);
-        // previous y-coord
-        var yCoord = parseInt(head(tail(lastMoveCoords.split(","))), 10);
-        console.log("LAST X COORDS: " + xCoord);
-        console.log("LAST Y COORDS: " + yCoord);
-        let neighbors = getNeighborsFromClass(lastMoveDiv.classList);
-        // alert(neighbors);
-        let north = Array.from(neighbors).includes("north") && yCoord > 0 ? xCoord.toString() + "," + (yCoord - 1).toString() : null;
-        let south = Array.from(neighbors).includes("south") && yCoord < parseInt($("#height").val(), 10) ? xCoord.toString() + "," + (yCoord + 1).toString() : null;
-        let west = Array.from(neighbors).includes("west") && xCoord > 0 ? (xCoord - 1).toString() + "," + yCoord.toString() : null;
-        let east = Array.from(neighbors).includes("east") && xCoord < parseInt($("#width").val(), 10) ? (xCoord + 1).toString() + "," + yCoord.toString() : null;
-        console.log("north neighbor: " + north);
-        console.log("east neighbor: " + east);
-        console.log("south neighbor: " + south);
-        console.log("west neighbor: " + west);
-        if (direction == "north") {
-          coords = north;
-        } else if (direction == "east") {
-          coords = east;
-        } else if (direction == "south") {
-          coords = south;
-        } else if (direction == "west") {
-          coords = west;
-        }
-      } else {
-        var startDiv = $(".is-start")[0];
-        let x = getCoordFromClass(startDiv.classList, "x");
-        let y = getCoordFromClass(startDiv.classList, "y");
-        coords = x + "," + y;
+      if (lastMoveCoords == null) {
+        lastMoveDiv = $(".is-start")[0];
+        let x = getCoordFromClass(lastMoveDiv.classList, "x");
+        let y = getCoordFromClass(lastMoveDiv.classList, "y");
+        lastMoveCoords = x + "," + y;
+        lastMoveDiv.classList.add("visited");
+        $("#hidden-visited").html(lastMoveCoords);
+      }
+      // previous x-coord
+      var xCoord = parseInt(head(lastMoveCoords.split(",")), 10);
+      // previous y-coord
+      var yCoord = parseInt(head(tail(lastMoveCoords.split(","))), 10);
+      console.log("LAST X COORDS: " + xCoord);
+      console.log("LAST Y COORDS: " + yCoord);
+      let neighbors = getNeighborsFromClass(lastMoveDiv.classList);
+      // alert(neighbors);
+      let north = Array.from(neighbors).includes("north") && yCoord > 0 ? xCoord.toString() + "," + (yCoord - 1).toString() : null;
+      let south = Array.from(neighbors).includes("south") && yCoord < parseInt($("#height").val(), 10) ? xCoord.toString() + "," + (yCoord + 1).toString() : null;
+      let west = Array.from(neighbors).includes("west") && xCoord > 0 ? (xCoord - 1).toString() + "," + yCoord.toString() : null;
+      let east = Array.from(neighbors).includes("east") && xCoord < parseInt($("#width").val(), 10) ? (xCoord + 1).toString() + "," + yCoord.toString() : null;
+      console.log("north neighbor: " + north);
+      console.log("east neighbor: " + east);
+      console.log("south neighbor: " + south);
+      console.log("west neighbor: " + west);
+      if (direction == "north") {
+        coords = north;
+      } else if (direction == "east") {
+        coords = east;
+      } else if (direction == "south") {
+        coords = south;
+      } else if (direction == "west") {
+        coords = west;
       }
       if (coords != null) {
         var mazeCellDiv = $(".x-coord-" + head(coords.split(",")) + ".y-coord-" + head(tail(coords.split(","))))[0];
@@ -719,12 +728,12 @@ $(document).ready(function() {
   });
 
   // send the message when the user presses the <enter> key while in the textarea
-  $(window).on("keydown", function (e) {
-      if (e.which == 13) {
-          // getMessageAndSendToServer();
-          return false;
-      }
-  });
+  // $(window).on("keydown", function (e) {
+  //     if (e.which == 13) {
+  //         // getMessageAndSendToServer();
+  //         return false;
+  //     }
+  // });
 
   // send the data to the server using the WebSocket
   function sendToServer(jsonMessage) {
