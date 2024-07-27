@@ -154,8 +154,14 @@ $(document).ready(function() {
       let padding = 40;
       let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
       let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
-      // let max = parseInt(($(window).height() - padding) / cellSize, 10);
-      let max = parseInt(($(window).height() - padding) / cellSize, 10) - 4; // -4 to allow space at bottom for navigation keys
+      var max = parseInt(($(window).height() - padding) / cellSize, 10) - 4; // to allow space at bottom for navigation keys
+      if (cellSize < 20) {
+        max = max - 4;
+      }
+      if (cellSize < 10) {
+        max = max - 3;
+      }
+      // let max = parseInt(($(window).height() - padding) / cellSize, 10) - 10; // to allow space at bottom for navigation keys
       this.value = arg <= max ? arg : max;
     }
   });
