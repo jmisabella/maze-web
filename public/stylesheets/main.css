@@ -312,6 +312,10 @@ body.dark-mode {
   padding-left: 2em;
 }
 
+.disable-dbl-tap-zoom {
+  touch-action: manipulation;
+}
+
 #outer-navigation {
   width:100%;
   display: flex;
@@ -324,6 +328,7 @@ body.dark-mode {
   background-color: #808080;
   border: solid 1px #333;
   text-align: center;
+  color: #000;
 } 
 #outer-navigation input[type=button]:active {
   background-color: #555;

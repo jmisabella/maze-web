@@ -639,16 +639,16 @@ $(document).ready(function() {
     }
   });
 
-  $("#up-navigation").on("click touchend" , function() {
+  $("#up-navigation").on("click" , function() {
     manualMoveByDirection("north");
   });
-  $("#down-navigation").on("click touchend" , function() {
+  $("#down-navigation").on("click" , function() {
     manualMoveByDirection("south");
   });
-  $("#left-navigation").on("click touchend" , function() {
+  $("#left-navigation").on("click" , function() {
     manualMoveByDirection("west");
   });
-  $("#right-navigation").on("click touchend" , function() {
+  $("#right-navigation").on("click" , function() {
     manualMoveByDirection("east");
   });
 
