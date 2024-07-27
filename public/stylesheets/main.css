@@ -312,6 +312,51 @@ body.dark-mode {
   padding-left: 2em;
 }
 
+#outer-navigation {
+  /* border: 0.05em solid red; */
+  width:100%;
+  display: flex;
+  justify-content: center;
+}
+
+#navigation {
+  border: 0.05em solid black;  
+  /* width: 210px; */
+  width: 100px;
+}
+
+#navigation * {
+  display: inline-block;
+}
+/* #navigation #up-down-navigation * {
+  width: 100px !important;
+} */
+
+#navigation #up-navigation,
+#navigation #down-navigation {
+  /* width: 110px; */
+  width: 100px;
+  height:50%;
+  /* margin: auto; */
+  text-align: center;
+  float: right;
+  /* float: left; */
+}
+#left-navigation,
+#right-navigation {
+  width: 50px;
+}
+/* #navigation #left-navigation,
+#navigation #right-navigation {
+  width: 48px;
+  height: 100%;
+} */
+/* #navigation #left-navigation {
+  float: right;
+}
+#navigation #right-navigation {
+  float: left;
+} */
 
 #maze {
   overflow-y: scroll;

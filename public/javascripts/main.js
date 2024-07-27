@@ -6,9 +6,6 @@ let GOAL_CELL_COLOR = "#98ff98";
 let UNVISITED_CELL_COLOR = "#808080";
 
 var webSocket;
-//// var interval = 80;
-// var interval = 50;
-// var interval = 20;
 var interval = 10;
 var stepIntervalEvent = null;
 var mazeCellByScreenCoordsDict = {};
@@ -157,7 +154,8 @@ $(document).ready(function() {
       let padding = 40;
       let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
       let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
-      let max = parseInt(($(window).height() - padding) / cellSize, 10);
+      // let max = parseInt(($(window).height() - padding) / cellSize, 10);
+      let max = parseInt(($(window).height() - padding) / cellSize, 10) - 4; // -4 to allow space at bottom for navigation keys
       this.value = arg <= max ? arg : max;
     }
   });
@@ -652,59 +650,59 @@ $(document).ready(function() {
   window.addEventListener("load", init, false);
 
   $("#send-button").click(function (e) {
-      let width = $("#width").val();
-      let height = $("#height").val();
-      let algorithm = $("#select-generator").val();
-      let startX = $("#start-x").val();
-      let startY = $("#start-y").val();
-      let goalX = $("#goal-x").val();
-      let goalY = $("#goal-y").val();
-      if (width <= "0" && height <= "0") {
-        alert("enter width and height");
-      } else if (width <= "0") {
-        alert("enter width");
-      } else if (height <= "0") {
-        alert("enter height");
-      } else if ((startX.length == 0 || startY.length) == 9 && (goalX.length == 0 || goalY.length == 0)) {
-        alert("start and goal coordinates are required");
-      } else if (startX.length == 0 || startY.length == 0) {
-        alert("start coordinates are required");
-      } else if (goalX.length == 0 || goalY.length == 0) {
-        alert("goal coordinates are required");
-      } else if (algorithm == "") {
-        alert("select algorithm");
-      } else if (startX == goalX && startY == goalY) {
-        alert("start and goal coordinates cannot match");
-      } else {
-        let colorNames = ["turquoise", "green-sea", "emerald", "nephritis", "peter-river", "belize-hole", "amethyst", "wisteria", "sunflower", "orange", "carrot", "pumpkin", "alizarin", "pomegranate"];
-        let greyscaleNames = ["clouds", "silver", "concrete", "asbestos", "wet-asphalt", "midnight-blue"];
-        let allColors = colorNames.concat(greyscaleNames);
-        let previousColor = $("#hidden-color").html();
-        let availableColors = previousColor == null || previousColor == "" ? allColors : jQuery.grep(allColors, function(c) { return c != previousColor });
-        var nextColor = availableColors[randomInt(0, availableColors.length - 1)] // randomly choose one of the color lists
-        $("#hidden-color").html(nextColor);
-        $("#hidden-visited").html(""); 
-        request = {
-          "width": width,
-          "height": height,
-          "algorithm": algorithm,
-          "startX": startY, // bug in maze library, start coords are reversed
-          "startY": startX, // bug in maze library, start coords are reversed
-          "goalX": goalY, // bug in maze library, start coords are reversed
-          "goalY": goalX, // bug in maze library, start coords are reversed
-          "mazeType": "Solved"
-        };
-      
-        var messageInput = JSON.stringify(request);
+    let width = $("#width").val();
+    let height = $("#height").val();
+    let algorithm = $("#select-generator").val();
+    let startX = $("#start-x").val();
+    let startY = $("#start-y").val();
+    let goalX = $("#goal-x").val();
+    let goalY = $("#goal-y").val();
+    if (width <= "0" && height <= "0") {
+      alert("enter width and height");
+    } else if (width <= "0") {
+      alert("enter width");
+    } else if (height <= "0") {
+      alert("enter height");
+    } else if ((startX.length == 0 || startY.length) == 9 && (goalX.length == 0 || goalY.length == 0)) {
+      alert("start and goal coordinates are required");
+    } else if (startX.length == 0 || startY.length == 0) {
+      alert("start coordinates are required");
+    } else if (goalX.length == 0 || goalY.length == 0) {
+      alert("goal coordinates are required");
+    } else if (algorithm == "") {
+      alert("select algorithm");
+    } else if (startX == goalX && startY == goalY) {
+      alert("start and goal coordinates cannot match");
+    } else {
+      let colorNames = ["turquoise", "green-sea", "emerald", "nephritis", "peter-river", "belize-hole", "amethyst", "wisteria", "sunflower", "orange", "carrot", "pumpkin", "alizarin", "pomegranate"];
+      let greyscaleNames = ["clouds", "silver", "concrete", "asbestos", "wet-asphalt", "midnight-blue"];
+      let allColors = colorNames.concat(greyscaleNames);
+      let previousColor = $("#hidden-color").html();
+      let availableColors = previousColor == null || previousColor == "" ? allColors : jQuery.grep(allColors, function(c) { return c != previousColor });
+      var nextColor = availableColors[randomInt(0, availableColors.length - 1)] // randomly choose one of the color lists
+      $("#hidden-color").html(nextColor);
+      $("#hidden-visited").html(""); 
+      request = {
+        "width": width,
+        "height": height,
+        "algorithm": algorithm,
+        "startX": startY, // bug in maze library, start coords are reversed
+        "startY": startX, // bug in maze library, start coords are reversed
+        "goalX": goalY, // bug in maze library, start coords are reversed
+        "goalY": goalX, // bug in maze library, start coords are reversed
+        "mazeType": "Solved"
+      };
+    
+      var messageInput = JSON.stringify(request);
 
-        let jsonMessage = {
-            message: messageInput
-        };
+      let jsonMessage = {
+          message: messageInput
+      };
 
-        // send our json message to the server
-        console.log("Sending ...");
-        sendToServer(jsonMessage);
-      }
+      // send our json message to the server
+      console.log("Sending ...");
+      sendToServer(jsonMessage);
+    }
   });
 
   // send the message when the user presses the <enter> key while in the textarea
