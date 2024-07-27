@@ -1,8 +1,14 @@
 
 let VISITED_CELL_COLOR = "#b7ffb7";
+let SOLVED_CELL_COLOR = "#b7ffb7";
 let START_CELL_COLOR = "#00ffff";
 let GOAL_CELL_COLOR = "#98ff98";
 let UNVISITED_CELL_COLOR = "#808080";
+
+var webSocket;
+var interval = 10;
+var stepIntervalEvent = null;
+var mazeCellByScreenCoordsDict = {};
 
 function head(lst) {
   return lst[0];
@@ -74,6 +80,7 @@ function getDistanceFromClass(classes) {
   }));
   return distance;
 }
+
 function sortByDistance(a, b){
   let aClasses = $(a).attr("class").split(/\s+/);
   let bClasses = $(b).attr("class").split(/\s+/);
@@ -81,6 +88,7 @@ function sortByDistance(a, b){
   var bDist = getDistanceFromClass(bClasses);
   return ((aDist < bDist) ? -1 : ((aDist > bDist) ? 1 : 0));
 }
+
 function reverseSortByDistance(a, b){
   let aClasses = $(a).attr("class").split(/\s+/);
   let bClasses = $(b).attr("class").split(/\s+/);
@@ -89,19 +97,38 @@ function reverseSortByDistance(a, b){
   return ((bDist < aDist) ? -1 : ((bDist > aDist) ? 1 : 0));
 }
 
-//////////////
+function isCoords(coords) {
+  return coords != null && coords.split(",").length == 2;
+}
+function xCoord(coords) {
+  return isCoords(coords) ? head(coords.split(",")) : null;
+}
+function yCoord(coords) {
+  return isCoords(coords) ? head(tail(coords.split(","))) : null;
+}
 
+$('input[type="radio"]').keydown(function(e) {
+  var arrowKeys = [37, 38, 39, 40];
+  if (arrowKeys.indexOf(e.which) !== -1)
+  {
+    $(this).blur();
+    return false;
+  }
+});
+
+//////////////
 $(document).ready(function() {
+  $("#up-navigation").css("visibility: hidden");
+  $("#down-navigation").css("visibility: hidden");
+  $("#left-navigation").css("visibility: hidden");
+  $("#right-navigation").css("visibility: hidden");
   const mazeDiv = document.getElementById("maze");
-  
   if (webSocket == null) {
     init();
   }
- 
   $(".menu-button").click(function() {
     $(".menu-bar").toggleClass( "open" );
   });
-
   jQuery('#width').keyup(function () {
     if (this.value.length > 0) {
       let padding = 30;
@@ -129,7 +156,14 @@ $(document).ready(function() {
       let padding = 40;
       let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
       let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
-      let max = parseInt(($(window).height() - padding) / cellSize, 10);
+      var max = parseInt(($(window).height() - padding) / cellSize, 10) - 6; // to allow space at bottom for navigation keys
+      if (cellSize < 20) {
+        max = max - 6; // adjusted for medium cell size
+      }
+      if (cellSize < 10) {
+        max = max - 3; // adjusted for small cell size
+      }
+      // let max = parseInt(($(window).height() - padding) / cellSize, 10) - 10; // to allow space at bottom for navigation keys
       this.value = arg <= max ? arg : max;
     }
   });
@@ -148,48 +182,49 @@ $(document).ready(function() {
  
   $(document).on('keyup blur input propertychange', 'input[class="numbers"]', function(){$(this).val($(this).val().replace(/[^0-9]/g,''));});  
 
-  var webSocket;
-  var interval = 80;
-  var stepIntervalEvent = null;
 
   function init() {
-      var host = location.origin.replace(/^https/, 'wss').replace(/^http/, 'ws'); 
-      webSocket = new WebSocket(`${host}/ws`); 
-      webSocket.onopen = onOpen;
-      webSocket.onclose = onClose;
-      webSocket.onmessage = onMessage;
-      webSocket.onerror = onError;
-      $("#message-input").focus();
+    var host = location.origin.replace(/^https/, 'wss').replace(/^http/, 'ws'); 
+    webSocket = new WebSocket(`${host}/ws`); 
+    webSocket.onopen = onOpen;
+    webSocket.onclose = onClose;
+    webSocket.onmessage = onMessage;
+    webSocket.onerror = onError;
+    $("#message-input").focus();
   }
 
   function onOpen(event) {
-      consoleLog("CONNECTED");
+    consoleLog("CONNECTED");
   }
 
   function onClose(event) {
-      consoleLog("DISCONNECTED");
-      init();
+    consoleLog("DISCONNECTED");
+    init();
   }
 
   function onError(event) {
-      consoleLog("ERROR: " + event.data);
-      consoleLog("ERROR: " + JSON.stringify(event));
+    consoleLog("ERROR: " + event.data);
+    consoleLog("ERROR: " + JSON.stringify(event));
   }
 
   
   function onMessage(event) {
-      mazeDiv.innerHTML = ""; 
-      console.log(event.data);
-      let receivedData = JSON.parse(event.data);
-      console.log("Received response, drawing the maze...");
-      $("#hidden-maze").html(event.data); 
-      drawMaze(event.data, mazeDiv);
-      console.log("Finished drawing the maze.");
-      $("#loading-modal").css('display', 'none'); 
+    mazeDiv.innerHTML = ""; 
+    console.log(event.data);
+    let receivedData = JSON.parse(event.data);
+    console.log("Received response, drawing the maze...");
+    $("#hidden-maze").html(event.data); 
+    drawMaze(event.data, mazeDiv);
+    console.log("Finished drawing the maze.");
+    $("#loading-modal").css('display', 'none'); 
+    $("#up-navigation").css("visibility: visible");
+    $("#down-navigation").css("visibility: visible");
+    $("#left-navigation").css("visibility: visible");
+    $("#right-navigation").css("visibility: visible");
   }
  
   $(window).resize(function() {
-    // Whenever window size changes, need to clear out width, height, start coords, and goal coords
+    // Whenever window size changes, we need to clear out width, height, start coords, and goal coords
     // so that they would be re-entered according to the new max width and height based on window size
     $("#width").val("");
     $("#height").val("");
@@ -215,14 +250,17 @@ $(document).ready(function() {
     if (!solve) {
       var solutionDivs = $('div').filter('.on-solution-path').sort(sortByDistance);
       solutionDivs.each(function () { // mark each cell as not visited
-        this.classList.remove("visited");  
+        // this.classList.remove("visited");  
+        this.classList.remove("solved");  
       });
       $("#hidden-distance").html("distance-0"); // reset solution back to start cell
     }
     window.clearInterval(stepIntervalEvent); 
     stepIntervalEvent = window.setInterval(solutionSteps, interval);
   });
-
+  $("#speed").on('change input', function() {
+    interval = $(this).val();
+  });
   $('input[type=radio][name=display-type]').change(function() {
     let displayType = $('input[name="display-type"]:checked').val();
     $('div', $('#maze')).each(function () {
@@ -251,11 +289,227 @@ $(document).ready(function() {
   function randomInt(min, max) { // inclusive min and max
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
+  
+  function getCoordFromClass(classes, xOrY) {
+    // prefix is either x-coord- or y-coord-
+    let coordClassPrefix = xOrY + "-coord-"
+    var coord = null;
+    (jQuery.map(classes, function(c) {
+      if (c.toString().includes(coordClassPrefix)) {
+        coord = parseInt(c.toString().replace(coordClassPrefix, ""), 10);
+      }
+    }));
+    return coord;
+  }
+  function getNeighborsFromClass(classes) {
+    var neighbors = [];
+    (jQuery.map(classes, function(c) {
+      if (c.toString().includes("neighbors-")) {
+        neighbors = c.toString().replace("neighbors-", "").split("-");
+      }
+    }));
+    return neighbors;
+  }
 
-  // let drag = false;
-  // document.addEventListener('mousedown', () => drag = false);
-  // document.addEventListener('mousemove', () => drag = true);
-  // document.addEventListener('mouseup', () => console.log(drag ? 'drag' : 'click'));
+  function manualMoveByElement(mazeCellDiv, toggleMove = true, moveByMousePosition = true, moveByDirection = false, undoMove = false ) {
+    var movesHistory = $("#hidden-visited").html().split("|");
+    if (movesHistory.length > 0) {
+      let div = mazeCellDiv; //c; //.target; 
+      var xCoord = getCoordFromClass(div.classList, "x");
+      var yCoord = getCoordFromClass(div.classList, "y");
+      // console.log("X COORDS: " + xCoord);
+      // console.log("Y COORDS: " + yCoord);
+      let coords = xCoord + "," + yCoord;
+      let neighbors = getNeighborsFromClass(div.classList);
+      let visited = div.classList.contains("visited");
+      let north = Array.from(neighbors).includes("north") && yCoord > 0 ? xCoord.toString() + "," + (yCoord - 1).toString() : null;
+      let south = Array.from(neighbors).includes("south") && yCoord < parseInt($("#height").val(), 10) ? xCoord.toString() + "," + (yCoord + 1).toString() : null;
+      let west = Array.from(neighbors).includes("west") && xCoord > 0 ? (xCoord - 1).toString() + "," + yCoord.toString() : null;
+      let east = Array.from(neighbors).includes("east") && xCoord < parseInt($("#width").val(), 10) ? (xCoord + 1).toString() + "," + yCoord.toString() : null;
+      console.log(neighbors);
+      let remainingHistory = movesHistory.length > 1 ? tail(movesHistory).join("|") : "";
+      let previousMove = movesHistory.length > 0 ? head(movesHistory) : "";
+      console.log("CURRENT CELL: " + coords);
+      // console.log("PREVIOUS MOVE: " + previousMove);
+      // console.log("NORTH: " + north);
+      // console.log("EAST: " + east);
+      // console.log("SOUTH: " + south);
+      // console.log("WEST: " + west);
+      // console.log("NEIGHBORS CONTAINS WEST: " + Array.from(neighbors).includes("west"));
+      // console.log("X-COORD IS GREATER THAN 0: " + (xCoord > 0).toString());
+      // console.log("EXPECTED WEST COORDS: " + (xCoord - 1).toString() + "," + yCoord.toString());
+      let isEligible = div.classList.contains("is-start") ||
+        coords == previousMove ||
+        (north != null && north == previousMove) || 
+        (east != null && east == previousMove) || 
+        (south != null && south == previousMove) || 
+        (west != null && west == previousMove);
+      console.log("IS ELIGIBLE: " + isEligible);
+      if (isEligible) {
+        if (undoMove || (visited && toggleMove)) {
+          console.log("REMOVING VISITED");
+          div.classList.remove("visited");
+          if (previousMove == coords) {
+            remainingHistory = movesHistory.length > 1 ? tail(movesHistory).join("|") : "";
+            $("#hidden-visited").html(remainingHistory)
+          } else {
+            // ???
+            // console.log("NO PREVIOUS MOVES");
+          }
+        } else {
+          console.log("ADDING VISITED");
+          div.classList.add("visited");
+          $("#hidden-visited").html(coords + "|" + movesHistory.join("|"));
+        }
+        console.log("HISTORY: " + $("#hidden-visited").html());
+      }
+    }
+  }
+
+  function manualMoveByDirection(direction) {
+    var movesHistory = $("#hidden-visited").html().split("|");
+    var lastMoveDiv = null; 
+    var lastMoveCoords = null; 
+    if (movesHistory.length > 0 && head(movesHistory).length > 0) {
+      lastMoveCoords = head(movesHistory);
+      let x = head(lastMoveCoords.split(","));
+      let y = head(tail(lastMoveCoords.split(",")));
+      lastMoveCoords = x + "," + y;
+      lastMoveDiv = $(".x-coord-" + x + ".y-coord-" + y)[0];
+    }
+    var coords = null;
+    if (lastMoveCoords == null) {
+      lastMoveDiv = $(".is-start")[0];
+      let x = getCoordFromClass(lastMoveDiv.classList, "x");
+      let y = getCoordFromClass(lastMoveDiv.classList, "y");
+      lastMoveCoords = x + "," + y;
+      lastMoveDiv.classList.add("visited");
+      $("#hidden-visited").html(lastMoveCoords);
+    }
+    // previous x-coord
+    var xCoord = parseInt(head(lastMoveCoords.split(",")), 10);
+    // previous y-coord
+    var yCoord = parseInt(head(tail(lastMoveCoords.split(","))), 10);
+    let neighbors = getNeighborsFromClass(lastMoveDiv.classList);
+    let north = Array.from(neighbors).includes("north") && yCoord > 0 ? xCoord.toString() + "," + (yCoord - 1).toString() : null;
+    let south = Array.from(neighbors).includes("south") && yCoord < parseInt($("#height").val(), 10) ? xCoord.toString() + "," + (yCoord + 1).toString() : null;
+    let west = Array.from(neighbors).includes("west") && xCoord > 0 ? (xCoord - 1).toString() + "," + yCoord.toString() : null;
+    let east = Array.from(neighbors).includes("east") && xCoord < parseInt($("#width").val(), 10) ? (xCoord + 1).toString() + "," + yCoord.toString() : null;
+    if (direction == "north") {
+      coords = north;
+    } else if (direction == "east") {
+      coords = east;
+    } else if (direction == "south") {
+      coords = south;
+    } else if (direction == "west") {
+      coords = west;
+    }
+    if (coords != null) {
+      var mazeCellDiv = $(".x-coord-" + head(coords.split(",")) + ".y-coord-" + head(tail(coords.split(","))))[0];
+      if (mazeCellDiv.classList.contains("visited")) {
+        console.log("~~~~~~~~~~~~~~~~~~~~~~ UNDO ~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        movesHistory = $("#hidden-visited").html().split("|");
+        lastMoveCoords = head(movesHistory);
+        console.log("LAST MOVE COORDS: " + lastMoveCoords);
+        let x = head(lastMoveCoords.split(","));
+        let y = head(tail(lastMoveCoords.split(",")));
+        lastMoveCoords = x + "," + y;
+        lastMoveDiv = $(".x-coord-" + x + ".y-coord-" + y)[0];
+        let remainingHistory = tail(movesHistory).join("|");
+        console.log("History: " + remainingHistory);
+        $("#hidden-visited").html(remainingHistory);
+        lastMoveDiv.classList.remove("visited");
+      } else {
+        manualMoveByElement(mazeCellDiv);
+      }
+    }
+  }
+
+
+  var elementCoords = function(element) {
+    var bounds = element.getBoundingClientRect();
+    return { x: parseInt(bounds.left, 10), y: parseInt(bounds.top, 10) }
+  };
+  var eventCoords = function( event ) {
+    var bounds = event.target.getBoundingClientRect();
+    return { x: parseInt(bounds.left, 10), y: parseInt(bounds.top, 10) }
+  };
+
+  $("#maze").bind("touchmove", function(e) {
+    var coords = eventCoords(e);
+    // alert("touch position: " + coords.x + "," + coords.y);
+    console.log("touch position: " + coords.x + "," + coords.y);
+    var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
+    // alert("maze cell div coords: " + mazeCellDivCoords);
+    console.log("maze cell div coords: " + mazeCellDivCoords);
+    // var mazeCellDivX = head(mazeCellDivCoords.split(","));
+    // var mazeCellDivY = head((mazeCellDivCoords.split(",")));
+    var mazeCellDivX = xCoord(mazeCellDivCoords);
+    var mazeCellDivY = yCoord(mazeCellDivCoords);
+    // alert("CELL X COORDS: " + mazeCellDivX);
+    console.log("CELL X COORDS: " + mazeCellDivX);
+    // alert("CELL Y COORDS: " + mazeCellDivY);
+    console.log("CELL Y COORDS: " + mazeCellDivY);
+    var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
+    // alert("CELL DIV: " + mazeCellDiv.classList);
+    console.log("CELL DIV: " + mazeCellDiv.classList);
+    manualMoveByElement(mazeCellDiv, toggleMove = false);
+  });
+
+  // document.getElementById('maze').addEventListener("touchstart", function(event) {
+  //   this.addEventListener("touchmove", function(e) {
+  //     // If there's exactly one finger inside this element
+  //     // if (event.targetTouches.length == 1) {
+  //     //   // var touch = event.targetTouches[0];
+  //     //   // console.log("touch position: " + touch.pageX + "," + touch.pageY);
+  //     //   // var mazeCellDiv = mazeCellByScreenCoordsDict[ { x: touch.pageX, y: touch.pageY } ];
+  //     //   // console.log("maze cell div id: " + mazeCellDiv);
+  //       var coords = eventCoords(e);
+  //       console.log("touch position: " + coords.x + "," + coords.y);
+  //       var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
+  //       console.log("maze cell div coords: " + mazeCellDivCoords);
+  //       var mazeCellDivX = head(mazeCetailllDivCoords.split(","));
+  //       var mazeCellDivY = head((mazeCellDivCoords.split(",")));
+  //       console.log("CELL X COORDS: " + mazeCellDivX);
+  //       console.log("CELL Y COORDS: " + mazeCellDivY);
+  //       var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
+  //       console.log("CELL DIV: " + mazeCellDiv.classList);
+  //       alert("CELL DIV: " + mazeCellDiv.classList);
+  //       manualMoveByElement(mazeCellDiv, toggleMove = false);
+  //     // }
+  //   }, false);
+  // }, false);
+
+  // document.getElementById('maze').addEventListener("touchend", function(event) {
+  //   var coords = eventCoords(event);
+  //   console.log("touch position: " + coords.x + "," + coords.y);
+  //   var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
+  //   console.log("maze cell div coords: " + mazeCellDivCoords);
+  //   var mazeCellDivX = head(mazeCetailllDivCoords.split(","));
+  //   var mazeCellDivY = head((mazeCellDivCoords.split(",")));
+  //   console.log("CELL X COORDS: " + mazeCellDivX);
+  //   console.log("CELL Y COORDS: " + mazeCellDivY);
+  //   $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0].unbind("touchmove", function(e) { e.preventDefault() });
+  // }, false);
+
+
+  $("#maze").mousedown(function (e) {
+    $(this).mousemove(function (e) {
+      var coords = eventCoords(e);
+      console.log("touch position: " + coords.x + "," + coords.y);
+      var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
+      console.log("maze cell div coords: " + mazeCellDivCoords);
+      var mazeCellDivX = xCoord(mazeCellDivCoords);
+      var mazeCellDivY = yCoord(mazeCellDivCoords);
+      console.log("CELL X COORDS: " + mazeCellDivX);
+      console.log("CELL Y COORDS: " + mazeCellDivY);
+      var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
+      console.log("CELL DIV: " + mazeCellDiv.classList);
+      manualMoveByElement(mazeCellDiv, toggleMove = false);
+    }).mouseup(function () { 
+      $(this).unbind("mousemove");
+    });
+  });
 
   function drawMaze(json, htmlParent) {
     if (json == null || json.toString() == "") {
@@ -287,9 +541,9 @@ $(document).ready(function() {
     let interval = (COLOR_SHADE_COUNT < longestDist) ? parseInt(longestDist / COLOR_SHADE_COUNT) : 1;
     var currColor = head(colors);
     colors = tail(colors);
-    var dict = {};
+    var distanceColorsDict = {};
     for (let i = 0; i <= longestDist; i++) {
-      dict[i] = currColor;
+      distanceColorsDict[i] = currColor;
       let changeColor = interval <= 1 ? true : i % interval == 0;
       if (changeColor) {
         currColor = head(colors);
@@ -299,12 +553,12 @@ $(document).ready(function() {
       } 
     }
     // END of logic for creating distance heat map dictionary
+    mazeCellByScreenCoordsDict = {}; // clear global var maze cel by screen coords dictionary
     for (let i = 0; i < obj.body.rows.length; i++) {
       let row = obj.body.rows[i];
       for (let j = 0; j < row.length; j++) {
         var cell = row[j];
         var coords = cell.coords;
-        var neighbors = cell.neighbors;
         var linked = cell.linked;
         var value = cell.value;
         var visited = cell.visited;
@@ -315,12 +569,16 @@ $(document).ready(function() {
         box.style.display = 'block';
         box.style.width = BOX_WIDTH + "px";
         box.style.height = BOX_HEIGHT + "px";
-        box.style.borderTop = linked.includes("north") ? EMPTY_WALL : SOLID_WALL;
-        box.style.borderRight = linked.includes("east") ? EMPTY_WALL : SOLID_WALL;
-        box.style.borderBottom = linked.includes("south") ? EMPTY_WALL : SOLID_WALL;
-        box.style.borderLeft = linked.includes("west") ? EMPTY_WALL : SOLID_WALL;
+        box.style.borderTop = cell.linked.includes("north") ? EMPTY_WALL : SOLID_WALL;
+        box.style.borderRight = cell.linked.includes("east") ? EMPTY_WALL : SOLID_WALL;
+        box.style.borderBottom = cell.linked.includes("south") ? EMPTY_WALL : SOLID_WALL;
+        box.style.borderLeft = cell.linked.includes("west") ? EMPTY_WALL : SOLID_WALL;
         box.classList.add("distance-" + cell.distance.toString());
-        box.classList.add("heat-color-class-" + dict[cell.distance]);
+        box.classList.add("heat-color-class-" + distanceColorsDict[cell.distance]);
+        box.classList.add("x-coord-" + cell.coords.y.toString());
+        box.classList.add("y-coord-" + cell.coords.x.toString());
+        let neighborsClass = "neighbors-" + cell.linked.join("-");
+        box.classList.add(neighborsClass);
         if (cell.onSolutionPath == true) {
           box.classList.add("on-solution-path");
         }
@@ -331,24 +589,69 @@ $(document).ready(function() {
           $("#hidden-max-distance").html("distance-" + cell.distance.toString());
         }
         if (displayType == "DistanceMap") {
-          box.classList.add(dict[cell.distance]);
+          box.classList.add(distanceColorsDict[cell.distance]);
         }
-        //// here is where we would presumably add event listener to the div box to allow user to draw/click through a path to manually solve the maze 
+        //// add event listeners to the div box to allow user to draw/click through a path to manually solve the maze 
         // box.addEventListener("click", function(c) {
-        //   // TODO: need to have a hidden div to keep track of whether previously clicked cell was visited or unvisited
-        //   //       and use this to enforce here that only cells whose immediate neighbors were visited
-        //   //       however I'm still unsure of how to enforce cell walls when user is toggling cells as visited or unvisited 
-        //   if (c.target.style.backgroundColor == VISITED_CELL_COLOR) {
-        //     c.target.style.backgroundColor = UNVISITED_CELL_COLOR;
-        //   } else {
-        //     c.target.style.backgroundColor = VISITED_CELL_COLOR;
-        //   }
+        //   manualMoveByElement(c.target,toggleMove = true);
         // });
+        box.addEventListener("mousedown", function(c) {
+          // manualMoveByElement(c.target, toggleMove = false);
+          manualMoveByElement(c.target, togglemMove = true);
+        });
+        box.addEventListener("mouseend", function(c) {
+          // manualMoveByElement(c.target, toggleMove = false);
+          manualMoveByElement(c.target, togglemMove = true);
+        });
+        box.addEventListener("touchstart", function(c) {
+          // manualMoveByElement(c.target, toggleMove = false);
+          manualMoveByElement(c.target, toggleMove = true);
+        });
+        // box.addEventListener("touchmove", function(c) {
+        //   manualMoveByElement(c.target, toggleMove = false);
+        // });
+        box.addEventListener("touchend", function(c) {
+          manualMoveByElement(c.target, toggleMove = true);
+          // manualMoveByElement(c.target, toggleMove = false);
+        });
         htmlParent.appendChild(box);
+        var screenCoords = elementCoords(box);
+        var coordsStr = screenCoords.x.toString() + "," + screenCoords.y.toString()
+        mazeCellByScreenCoordsDict[coordsStr] = cell.coords.y.toString() + "," + cell.coords.x.toString();
       }
     }
     $("#hidden-distance").html("distance-0"); // set solved distance from start cell at 0, where solution starts when being drawn
   }
+
+  $(window).on("keydown", function(e) {
+    var direction = null; 
+    if (e.key == "ArrowUp") {
+      direction = "north";
+    } else if (e.key == "ArrowRight") {
+      direction = "east";
+    } else if (e.key == "ArrowDown") {
+      direction = "south";
+    } else if (e.key == "ArrowLeft") {
+      direction = "west";
+    }
+    if (direction) {
+      manualMoveByDirection(direction);
+    }
+  });
+
+  $("#up-navigation").on("click touchend" , function() {
+    manualMoveByDirection("north");
+  });
+  $("#down-navigation").on("click touchend" , function() {
+    manualMoveByDirection("south");
+  });
+  $("#left-navigation").on("click touchend" , function() {
+    manualMoveByDirection("west");
+  });
+  $("#right-navigation").on("click touchend" , function() {
+    manualMoveByDirection("east");
+  });
+
 
   function solutionSteps() {
     let solve = $('input[name="solved"]:checked').prop('checked') == true;
@@ -361,7 +664,8 @@ $(document).ready(function() {
         let nextDist = currDist + 1;
         if (nextDist <= maxDist) {
           let div = head($('#maze div').filter('.on-solution-path.' + currentDistanceClass));
-          div.classList.add("visited");
+          // div.classList.add("visited");
+          div.classList.add("solved");
           $("#hidden-distance").html("distance-" + nextDist.toString());
         }
       }
@@ -377,67 +681,72 @@ $(document).ready(function() {
   window.addEventListener("load", init, false);
 
   $("#send-button").click(function (e) {
-      let width = $("#width").val();
-      let height = $("#height").val();
-      let algorithm = $("#select-generator").val();
-      let startX = $("#start-x").val();
-      let startY = $("#start-y").val();
-      let goalX = $("#goal-x").val();
-      let goalY = $("#goal-y").val();
-      if (width <= "0" && height <= "0") {
-        alert("enter width and height");
-      } else if (width <= "0") {
-        alert("enter width");
-      } else if (height <= "0") {
-        alert("enter height");
-      } else if ((startX.length == 0 || startY.length) == 9 && (goalX.length == 0 || goalY.length == 0)) {
-        alert("start and goal coordinates are required");
-      } else if (startX.length == 0 || startY.length == 0) {
-        alert("start coordinates are required");
-      } else if (goalX.length == 0 || goalY.length == 0) {
-        alert("goal coordinates are required");
-      } else if (algorithm == "") {
-        alert("select algorithm");
-      } else if (startX == goalX && startY == goalY) {
-        alert("start and goal coordinates cannot match");
-      } else {
-        let colorNames = ["turquoise", "green-sea", "emerald", "nephritis", "peter-river", "belize-hole", "amethyst", "wisteria", "sunflower", "orange", "carrot", "pumpkin", "alizarin", "pomegranate"];
-        let greyscaleNames = ["clouds", "silver", "concrete", "asbestos", "wet-asphalt", "midnight-blue"];
-        let allColors = colorNames.concat(greyscaleNames);
-        let previousColor = $("#hidden-color").html();
-        let availableColors = previousColor == null || previousColor == "" ? allColors : jQuery.grep(allColors, function(c) { return c != previousColor });
-        var nextColor = availableColors[randomInt(0, availableColors.length - 1)] // randomly choose one of the color lists
-        $("#hidden-color").html(nextColor);
-        request = {
-          "width": width,
-          "height": height,
-          "algorithm": algorithm,
-          "startX": startY, // bug in maze library, start coords are reversed
-          "startY": startX, // bug in maze library, start coords are reversed
-          "goalX": goalY, // bug in maze library, start coords are reversed
-          "goalY": goalX, // bug in maze library, start coords are reversed
-          "mazeType": "Solved"
-        };
-      
-        var messageInput = JSON.stringify(request);
+    let width = $("#width").val();
+    let height = $("#height").val();
+    let algorithm = $("#select-generator").val();
+    let startX = $("#start-x").val();
+    let startY = $("#start-y").val();
+    let goalX = $("#goal-x").val();
+    let goalY = $("#goal-y").val();
+    if (width <= "0" && height <= "0") {
+      alert("enter width and height");
+    } else if (width <= "0") {
+      alert("enter width");
+    } else if (height <= "0") {
+      alert("enter height");
+    } else if ((startX.length == 0 || startY.length) == 9 && (goalX.length == 0 || goalY.length == 0)) {
+      alert("start and goal coordinates are required");
+    } else if (startX.length == 0 || startY.length == 0) {
+      alert("start coordinates are required");
+    } else if (goalX.length == 0 || goalY.length == 0) {
+      alert("goal coordinates are required");
+    } else if (algorithm == "") {
+      alert("select algorithm");
+    } else if (startX == goalX && startY == goalY) {
+      alert("start and goal coordinates cannot match");
+    } else {
+      let colorNames = ["turquoise", "green-sea", "emerald", "nephritis", "peter-river", "belize-hole", "amethyst", "wisteria", "sunflower", "orange", "carrot", "pumpkin", "alizarin", "pomegranate"];
+      let greyscaleNames = ["clouds", "silver", "concrete", "asbestos", "wet-asphalt", "midnight-blue"];
+      let allColors = colorNames.concat(greyscaleNames);
+      let previousColor = $("#hidden-color").html();
+      let availableColors = previousColor == null || previousColor == "" ? allColors : jQuery.grep(allColors, function(c) { return c != previousColor });
+      var nextColor = availableColors[randomInt(0, availableColors.length - 1)] // randomly choose one of the color lists
+      $("#hidden-color").html(nextColor);
+      $("#hidden-visited").html(""); 
+      request = {
+        "width": width,
+        "height": height,
+        "algorithm": algorithm,
+        "startX": startY, // bug in maze library, start coords are reversed
+        "startY": startX, // bug in maze library, start coords are reversed
+        "goalX": goalY, // bug in maze library, start coords are reversed
+        "goalY": goalX, // bug in maze library, start coords are reversed
+        "mazeType": "Solved"
+      };
+    
+      var messageInput = JSON.stringify(request);
 
-        let jsonMessage = {
-            message: messageInput
-        };
+      let jsonMessage = {
+        message: messageInput
+      };
 
-        // send our json message to the server
-        console.log("Sending ...");
-        sendToServer(jsonMessage);
-      }
+      // send our json message to the server
+      console.log("Sending ...");
+      $("#up-navigation").css("visibility: hidden");
+      $("#down-navigation").css("visibility: hidden");
+      $("#left-navigation").css("visibility: hidden");
+      $("#right-navigation").css("visibility: hidden");
+      sendToServer(jsonMessage);
+    }
   });
 
   // send the message when the user presses the <enter> key while in the textarea
-  $(window).on("keydown", function (e) {
-      if (e.which == 13) {
-          // getMessageAndSendToServer();
-          return false;
-      }
-  });
+  // $(window).on("keydown", function (e) {
+  //     if (e.which == 13) {
+  //         // getMessageAndSendToServer();
+  //         return false;
+  //     }
+  // });
 
   // send the data to the server using the WebSocket
   function sendToServer(jsonMessage) {
