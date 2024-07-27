@@ -5,10 +5,12 @@ let START_CELL_COLOR = "#00ffff";
 let GOAL_CELL_COLOR = "#98ff98";
 let UNVISITED_CELL_COLOR = "#808080";
 
+
 var webSocket;
 var interval = 10;
 var stepIntervalEvent = null;
 var mazeCellByScreenCoordsDict = {};
+var displayNavigation = false;
 
 function head(lst) {
   return lst[0];
@@ -116,12 +118,9 @@ $('input[type="radio"]').keydown(function(e) {
   }
 });
 
+
 //////////////
 $(document).ready(function() {
-  $("#up-navigation").css("visibility: hidden");
-  $("#down-navigation").css("visibility: hidden");
-  $("#left-navigation").css("visibility: hidden");
-  $("#right-navigation").css("visibility: hidden");
   const mazeDiv = document.getElementById("maze");
   if (webSocket == null) {
     init();
@@ -217,10 +216,11 @@ $(document).ready(function() {
     drawMaze(event.data, mazeDiv);
     console.log("Finished drawing the maze.");
     $("#loading-modal").css('display', 'none'); 
-    $("#up-navigation").css("visibility: visible");
-    $("#down-navigation").css("visibility: visible");
-    $("#left-navigation").css("visibility: visible");
-    $("#right-navigation").css("visibility: visible");
+    if (!displayNavigation) {
+      // initially buttons are hidden but when maze is drawn should be shown 
+      $("#outer-navigation").toggle();
+      displayNavigation = true;
+    }
   }
  
   $(window).resize(function() {
@@ -732,10 +732,10 @@ $(document).ready(function() {
 
       // send our json message to the server
       console.log("Sending ...");
-      $("#up-navigation").css("visibility: hidden");
-      $("#down-navigation").css("visibility: hidden");
-      $("#left-navigation").css("visibility: hidden");
-      $("#right-navigation").css("visibility: hidden");
+      // $("#up-navigation").css("visibility: hidden");
+      // $("#down-navigation").css("visibility: hidden");
+      // $("#left-navigation").css("visibility: hidden");
+      // $("#right-navigation").css("visibility: hidden");
       sendToServer(jsonMessage);
     }
   });

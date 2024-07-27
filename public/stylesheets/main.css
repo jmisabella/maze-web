@@ -320,7 +320,7 @@ body.dark-mode {
   width:100%;
   display: flex;
   justify-content: center;
-
+  /* display: none; */
 }
 
 #outer-navigation input[type=button] {
@@ -422,10 +422,6 @@ body.dark-mode {
               url("../images/loading-200px-200px.gif")
               50% 40% 
               no-repeat;
-}
-
-.temporarily-hidden {
-  visibility: hidden;
 }
 
 .hidden {
