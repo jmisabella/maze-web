@@ -312,6 +312,10 @@ body.dark-mode {
   padding-left: 2em;
 }
 
+.disable-dbl-tap-zoom {
+  touch-action: manipulation;
+}
+
 #outer-navigation {
   width:100%;
   display: flex;
