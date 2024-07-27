@@ -331,7 +331,6 @@ body.dark-mode {
 }
 
 #inner-navigation {
-  border: 0.05em solid black;  
   width: 100px;
 }
 
@@ -352,21 +351,27 @@ body.dark-mode {
 #right-navigation {
   width: 50px;
 }
+#right-navigation {
+  /* visibility: hidden; */
+}
 #up-navigation {
   transform: rotate(270deg);
   transform-origin: left;
+  /* visibility: hidden; */
 }
 #down-navigation {
   transform: rotate(90deg);
   transform-origin: left;
   position: relative; /* not sure why position is messed up after rotating character, this is a band-aid */
   left: 49px; /* not sure why position is messed up after rotating character, this is a band-aid */
+  /* visibility: hidden; */
 }
 #left-navigation {
   transform: rotate(180deg);
   transform-origin: left;
   position: relative; /* not sure why position is messed up after rotating character, this is a band-aid */
   left: 49px; /* not sure why position is messed up after rotating character, this is a band-aid */
+  /* visibility: hidden; */
 }
 #maze {
   overflow-y: scroll;
@@ -412,6 +417,10 @@ body.dark-mode {
               url("../images/loading-200px-200px.gif")
               50% 40% 
               no-repeat;
+}
+
+.temporarily-hidden {
+  visibility: hidden;
 }
 
 .hidden {

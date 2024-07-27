@@ -107,7 +107,6 @@ function yCoord(coords) {
   return isCoords(coords) ? head(tail(coords.split(","))) : null;
 }
 
-
 $('input[type="radio"]').keydown(function(e) {
   var arrowKeys = [37, 38, 39, 40];
   if (arrowKeys.indexOf(e.which) !== -1)
@@ -117,9 +116,12 @@ $('input[type="radio"]').keydown(function(e) {
   }
 });
 
-
 //////////////
 $(document).ready(function() {
+  $("#up-navigation").css("visibility: hidden");
+  $("#down-navigation").css("visibility: hidden");
+  $("#left-navigation").css("visibility: hidden");
+  $("#right-navigation").css("visibility: hidden");
   const mazeDiv = document.getElementById("maze");
   if (webSocket == null) {
     init();
@@ -154,12 +156,12 @@ $(document).ready(function() {
       let padding = 40;
       let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
       let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
-      var max = parseInt(($(window).height() - padding) / cellSize, 10) - 4; // to allow space at bottom for navigation keys
+      var max = parseInt(($(window).height() - padding) / cellSize, 10) - 6; // to allow space at bottom for navigation keys
       if (cellSize < 20) {
-        max = max - 4;
+        max = max - 6; // adjusted for medium cell size
       }
       if (cellSize < 10) {
-        max = max - 3;
+        max = max - 3; // adjusted for small cell size
       }
       // let max = parseInt(($(window).height() - padding) / cellSize, 10) - 10; // to allow space at bottom for navigation keys
       this.value = arg <= max ? arg : max;
@@ -182,43 +184,47 @@ $(document).ready(function() {
 
 
   function init() {
-      var host = location.origin.replace(/^https/, 'wss').replace(/^http/, 'ws'); 
-      webSocket = new WebSocket(`${host}/ws`); 
-      webSocket.onopen = onOpen;
-      webSocket.onclose = onClose;
-      webSocket.onmessage = onMessage;
-      webSocket.onerror = onError;
-      $("#message-input").focus();
+    var host = location.origin.replace(/^https/, 'wss').replace(/^http/, 'ws'); 
+    webSocket = new WebSocket(`${host}/ws`); 
+    webSocket.onopen = onOpen;
+    webSocket.onclose = onClose;
+    webSocket.onmessage = onMessage;
+    webSocket.onerror = onError;
+    $("#message-input").focus();
   }
 
   function onOpen(event) {
-      consoleLog("CONNECTED");
+    consoleLog("CONNECTED");
   }
 
   function onClose(event) {
-      consoleLog("DISCONNECTED");
-      init();
+    consoleLog("DISCONNECTED");
+    init();
   }
 
   function onError(event) {
-      consoleLog("ERROR: " + event.data);
-      consoleLog("ERROR: " + JSON.stringify(event));
+    consoleLog("ERROR: " + event.data);
+    consoleLog("ERROR: " + JSON.stringify(event));
   }
 
   
   function onMessage(event) {
-      mazeDiv.innerHTML = ""; 
-      console.log(event.data);
-      let receivedData = JSON.parse(event.data);
-      console.log("Received response, drawing the maze...");
-      $("#hidden-maze").html(event.data); 
-      drawMaze(event.data, mazeDiv);
-      console.log("Finished drawing the maze.");
-      $("#loading-modal").css('display', 'none'); 
+    mazeDiv.innerHTML = ""; 
+    console.log(event.data);
+    let receivedData = JSON.parse(event.data);
+    console.log("Received response, drawing the maze...");
+    $("#hidden-maze").html(event.data); 
+    drawMaze(event.data, mazeDiv);
+    console.log("Finished drawing the maze.");
+    $("#loading-modal").css('display', 'none'); 
+    $("#up-navigation").css("visibility: visible");
+    $("#down-navigation").css("visibility: visible");
+    $("#left-navigation").css("visibility: visible");
+    $("#right-navigation").css("visibility: visible");
   }
  
   $(window).resize(function() {
-    // Whenever window size changes, need to clear out width, height, start coords, and goal coords
+    // Whenever window size changes, we need to clear out width, height, start coords, and goal coords
     // so that they would be re-entered according to the new max width and height based on window size
     $("#width").val("");
     $("#height").val("");
@@ -702,11 +708,15 @@ $(document).ready(function() {
       var messageInput = JSON.stringify(request);
 
       let jsonMessage = {
-          message: messageInput
+        message: messageInput
       };
 
       // send our json message to the server
       console.log("Sending ...");
+      $("#up-navigation").css("visibility: hidden");
+      $("#down-navigation").css("visibility: hidden");
+      $("#left-navigation").css("visibility: hidden");
+      $("#right-navigation").css("visibility: hidden");
       sendToServer(jsonMessage);
     }
   });
