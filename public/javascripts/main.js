@@ -121,6 +121,9 @@ $('input[type="radio"]').keydown(function(e) {
 
 //////////////
 $(document).ready(function() {
+
+  window.addEventListener("load", init, false);
+
   const mazeDiv = document.getElementById("maze");
   if (webSocket == null) {
     init();
@@ -128,6 +131,26 @@ $(document).ready(function() {
   $(".menu-button").click(function() {
     $(".menu-bar").toggleClass( "open" );
   });
+
+  // function setDefaultWidth() {
+
+  // }
+  // function setDefaultHeight() {
+
+  // }
+  // function defaultStartX() {
+
+  // }
+  // function defaultStartY() {
+
+  // }
+  // function defaultGoalX() {
+
+  // }
+  // function defaultGoalY() {
+
+  // }
+
   jQuery('#width').keyup(function () {
     if (this.value.length > 0) {
       let padding = 30;
@@ -178,7 +201,7 @@ $(document).ready(function() {
         this.value = parseInt($("#height").val(), 10) - 1;
       }
   });
- 
+
   $(document).on('keyup blur input propertychange', 'input[class="numbers"]', function(){$(this).val($(this).val().replace(/[^0-9]/g,''));});  
 
 
@@ -189,6 +212,7 @@ $(document).ready(function() {
     webSocket.onclose = onClose;
     webSocket.onmessage = onMessage;
     webSocket.onerror = onError;
+    document.body.addEventListener('touchstart', function() {}, false); // this is supposed to make button:active work in Chrome
     $("#message-input").focus();
   }
 
