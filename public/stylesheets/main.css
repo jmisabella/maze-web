@@ -320,7 +320,7 @@ body.dark-mode {
   width:100%;
   display: flex;
   justify-content: center;
-
+  /* display: none; */
 }
 
 #outer-navigation input[type=button] {
@@ -357,26 +357,23 @@ body.dark-mode {
   width: 50px;
 }
 #right-navigation {
-  /* visibility: hidden; */
+
 }
 #up-navigation {
   transform: rotate(270deg);
   transform-origin: left;
-  /* visibility: hidden; */
 }
 #down-navigation {
   transform: rotate(90deg);
   transform-origin: left;
   position: relative; /* not sure why position is messed up after rotating character, this is a band-aid */
-  left: 49px; /* not sure why position is messed up after rotating character, this is a band-aid */
-  /* visibility: hidden; */
+  left: 50px; /* not sure why position is messed up after rotating character, this is a band-aid */
 }
 #left-navigation {
   transform: rotate(180deg);
   transform-origin: left;
   position: relative; /* not sure why position is messed up after rotating character, this is a band-aid */
-  left: 49px; /* not sure why position is messed up after rotating character, this is a band-aid */
-  /* visibility: hidden; */
+  left: 50px; /* not sure why position is messed up after rotating character, this is a band-aid */
 }
 #maze {
   overflow-y: scroll;
@@ -422,10 +419,6 @@ body.dark-mode {
               url("../images/loading-200px-200px.gif")
               50% 40% 
               no-repeat;
-}
-
-.temporarily-hidden {
-  visibility: hidden;
 }
 
 .hidden {
