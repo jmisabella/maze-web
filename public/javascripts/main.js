@@ -110,6 +110,7 @@ function yCoord(coords) {
 }
 
 $('input[type="radio"]').keydown(function(e) {
+  // this is so users using arrow keys for navigation won't cause radio buttons to change value
   var arrowKeys = [37, 38, 39, 40];
   if (arrowKeys.indexOf(e.which) !== -1)
   {
@@ -118,10 +119,10 @@ $('input[type="radio"]').keydown(function(e) {
   }
 });
 
-
 //////////////
 $(document).ready(function() {
 
+  // this is so client's session will reload so user won't need to refresh screen
   window.addEventListener("load", init, false);
 
   const mazeDiv = document.getElementById("maze");
@@ -132,24 +133,46 @@ $(document).ready(function() {
     $(".menu-bar").toggleClass( "open" );
   });
 
-  // function setDefaultWidth() {
-
-  // }
-  // function setDefaultHeight() {
-
-  // }
-  // function defaultStartX() {
-
-  // }
-  // function defaultStartY() {
-
-  // }
-  // function defaultGoalX() {
-
-  // }
-  // function defaultGoalY() {
-
-  // }
+  function defaultWidth() {
+    let padding = 30;
+    let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
+    let max = parseInt(($(window).width() - padding) / cellSize, 10);
+    $("#width").val(max);
+    $("#start-y").val(0); // default start to be on the western wall
+    $("#goal-y").val((this.value - 1).toString()); // default goal to be on the eastern wall
+  }
+  function defaultHeight() {
+    let padding = 40;
+    let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
+    var max = parseInt(($(window).height() - padding) / cellSize, 10) - 6; // to allow space at bottom for navigation keys
+    if (cellSize < 20) {
+      max = max - 6; // adjusted for medium cell size
+    }
+    if (cellSize < 10) {
+      max = max - 3; // adjusted for small cell size
+    }
+    $("#height").val(max);
+  }
+  function defaultStartX() {
+    $("#start-x").val(parseInt($("#height").val(), 10) - 1);
+  }
+  function defaultStartY() {
+    let current = parseInt($("#start-y").val(), 10);
+    let max = parseInt(parseInt($("#width").val(), 10) / 2, 10);
+    $("#start-y").val("0"); // default start on eastern wall of the maze
+  }
+  function defaultGoalX() {
+    $("#goal-x").val(parseInt($("#height").val(), 10) - 1);
+    // let goalX = this.value;
+    // if (goalX.length > 0 && parseInt(goalX, 10) >= parseInt($("#height").val(), 10)) {
+    //   $("#goal-x").val(parseInt($("#height").val(), 10) - 1);
+    // }
+  }
+  function defaultGoalY() {
+    let max = parseInt($("#width").val(), 10);
+    let min = parseInt(max / 2, 10);
+    $("#goal-y").val(parseInt($("#width").val(), 10) - 1); // default goal cell on western wall of the maze
+  }
 
   jQuery('#width').keyup(function () {
     if (this.value.length > 0) {
@@ -202,6 +225,59 @@ $(document).ready(function() {
       }
   });
 
+
+
+  // jQuery('#width').keyup(function () {
+  //   if (this.value.length > 0) {
+  //     let padding = 30;
+  //     let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
+  //     let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
+  //     let max = parseInt(($(window).width() - padding) / cellSize, 10);
+  //     this.value = arg <= max ? arg : max;
+  //     $("#start-y").val(0); // default start to be on the western wall
+  //     $("#goal-y").val((this.value - 1).toString()); // default goal to be on the eastern wall
+  //   }
+  // });
+  // jQuery('#start-y').keyup(function () {
+  //     let current = parseInt(this.value, 10);
+  //     let max = parseInt(parseInt($("#width").val(), 10) / 2, 10);
+  //     this.value = current < max ? this.value : "0"; // default start on eastern wall of the maze
+  // });
+  // jQuery('#goal-y').keyup(function () {
+  //     let current = parseInt(this.value, 10);
+  //     let max = parseInt($("#width").val(), 10);
+  //     let min = parseInt(max / 2, 10);
+  //     this.value = current > min && current < max ? this.value : parseInt($("#width").val(), 10) - 1; // default goal cell on western wall of the maze
+  // });
+  // jQuery('#height').keyup(function () { 
+  //   if (this.value.length > 0) {
+  //     let padding = 40;
+  //     let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
+  //     let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
+  //     var max = parseInt(($(window).height() - padding) / cellSize, 10) - 6; // to allow space at bottom for navigation keys
+  //     if (cellSize < 20) {
+  //       max = max - 6; // adjusted for medium cell size
+  //     }
+  //     if (cellSize < 10) {
+  //       max = max - 3; // adjusted for small cell size
+  //     }
+  //     // let max = parseInt(($(window).height() - padding) / cellSize, 10) - 10; // to allow space at bottom for navigation keys
+  //     this.value = arg <= max ? arg : max;
+  //   }
+  // });
+  // jQuery('#start-x').keyup(function () {
+  //     let startX = this.value; 
+  //     if (startX.length > 0 && parseInt(startX, 10) >= parseInt($("#height").val(), 10)) {
+  //       this.value = parseInt($("#height").val(), 10) - 1;
+  //     }
+  // });
+  // jQuery('#goal-x').keyup(function () {
+  //     let goalX = this.value;
+  //     if (goalX.length > 0 && parseInt(goalX, 10) >= parseInt($("#height").val(), 10)) {
+  //       this.value = parseInt($("#height").val(), 10) - 1;
+  //     }
+  // });
+
   $(document).on('keyup blur input propertychange', 'input[class="numbers"]', function(){$(this).val($(this).val().replace(/[^0-9]/g,''));});  
 
 
@@ -212,8 +288,16 @@ $(document).ready(function() {
     webSocket.onclose = onClose;
     webSocket.onmessage = onMessage;
     webSocket.onerror = onError;
-    document.body.addEventListener('touchstart', function() {}, false); // this is supposed to make button:active work in Chrome
-    $("#message-input").focus();
+    document.body.addEventListener('touchstart', function() {}, false); // this is to make button:active work in Chrome on mobile devices
+    if ($("#width").val() == "" && $("#height").val() == "" && $("#start-x").val() == "" && $("#start-y").val() == "" && $("#goal-x").val() == "" && $("#goal-y").val() == "") {
+      // if all inputs are empty, means page has loaded for first time, so default all inputs based on screen size
+      defaultWidth();
+      defaultHeight();
+      defaultStartX();
+      defaultStartY();
+      defaultGoalX();
+      defaultGoalY();
+    }
   }
 
   function onOpen(event) {
@@ -256,6 +340,12 @@ $(document).ready(function() {
     $("#start-y").val("");
     $("#goal-x").val("");
     $("#goal-y").val("");
+    defaultWidth();
+    defaultHeight();
+    defaultStartX();
+    defaultStartY();
+    defaultGoalX();
+    defaultGoalY();
   });  
   $('input[type=radio][name=cell-size]').change(function() {
     // Whenever cell size changes, need to clear out width, height, start coords, and goal coords
@@ -266,6 +356,12 @@ $(document).ready(function() {
     $("#start-y").val("");
     $("#goal-x").val("");
     $("#goal-y").val("");
+    defaultWidth();
+    defaultHeight();
+    defaultStartX();
+    defaultStartY();
+    defaultGoalX();
+    defaultGoalY();
   });
   $('input[type=checkbox]').change(function() {
     window.clearInterval(stepIntervalEvent); 
@@ -448,7 +544,6 @@ $(document).ready(function() {
       }
     }
   }
-
 
   var elementCoords = function(element) {
     var bounds = element.getBoundingClientRect();
