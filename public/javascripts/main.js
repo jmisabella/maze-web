@@ -155,6 +155,7 @@ $(document).ready(function() {
   }
 
   function defaultStartAndGoal() {
+    let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
     if (parseInt($("#width").val(), 10) >= parseInt($("#height").val(), 10)) {
       $("#start-y").val(0);
       $("#start-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2, 10)   );
@@ -165,6 +166,12 @@ $(document).ready(function() {
       $("#goal-y").val((parseInt(parseInt($("#height").val(), 10) - 1) / 2, 10));
       $("#start-x").val(parseInt($("#height").val(), 10) - 1);
       $("#start-y").val((parseInt(parseInt($("#height").val(), 10) - 1) / 2, 10));
+      let horizontalMultiplier = 1;
+      if (cellSize < 20) {
+        horizontalMultiplier = 2;
+      }
+      $("#goal-y").val(parseInt($("#goal-y").val(), 10) * horizontalMultiplier);
+      $("#start-y").val(parseInt($("#start-y").val(), 10) * horizontalMultiplier);
     }
   }
 
@@ -193,6 +200,13 @@ $(document).ready(function() {
       }
       // let max = parseInt(($(window).height() - padding) / cellSize, 10) - 10; // to allow space at bottom for navigation keys
       this.value = arg <= max ? arg : max;
+    }
+    if (parseInt($("#width").val(), 10) >= parseInt($("#height").val(), 10)) {
+      $("#start-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2, 10)   );
+      $("#goal-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2)   );
+    } else {
+      $("#goal-x").val(0);
+      $("#start-x").val(parseInt($("#height").val(), 10) - 1);
     }
   });
   jQuery('#start-y').keyup(function () {
