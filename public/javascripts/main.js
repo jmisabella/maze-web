@@ -153,25 +153,19 @@ $(document).ready(function() {
     }
     $("#height").val(max);
   }
-  function defaultStartX() {
-    $("#start-x").val(parseInt($("#height").val(), 10) - 1);
-  }
-  function defaultStartY() {
-    let current = parseInt($("#start-y").val(), 10);
-    let max = parseInt(parseInt($("#width").val(), 10) / 2, 10);
-    $("#start-y").val("0"); // default start on eastern wall of the maze
-  }
-  function defaultGoalX() {
-    $("#goal-x").val(parseInt($("#height").val(), 10) - 1);
-    // let goalX = this.value;
-    // if (goalX.length > 0 && parseInt(goalX, 10) >= parseInt($("#height").val(), 10)) {
-    //   $("#goal-x").val(parseInt($("#height").val(), 10) - 1);
-    // }
-  }
-  function defaultGoalY() {
-    let max = parseInt($("#width").val(), 10);
-    let min = parseInt(max / 2, 10);
-    $("#goal-y").val(parseInt($("#width").val(), 10) - 1); // default goal cell on western wall of the maze
+
+  function defaultStartAndGoal() {
+    if (parseInt($("#width").val(), 10) >= parseInt($("#height").val(), 10)) {
+      $("#start-y").val(0);
+      $("#start-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2, 10)   );
+      $("#goal-y").val(parseInt($("#width").val(), 10) - 1);
+      $("#goal-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2)   );
+    } else {
+      $("#goal-x").val(0);
+      $("#goal-y").val((parseInt(parseInt($("#height").val(), 10) - 1) / 2, 10));
+      $("#start-x").val(parseInt($("#height").val(), 10) - 1);
+      $("#start-y").val((parseInt(parseInt($("#height").val(), 10) - 1) / 2, 10));
+    }
   }
 
   jQuery('#width').keyup(function () {
@@ -184,17 +178,6 @@ $(document).ready(function() {
       $("#start-y").val(0); // default start to be on the western wall
       $("#goal-y").val((this.value - 1).toString()); // default goal to be on the eastern wall
     }
-  });
-  jQuery('#start-y').keyup(function () {
-      let current = parseInt(this.value, 10);
-      let max = parseInt(parseInt($("#width").val(), 10) / 2, 10);
-      this.value = current < max ? this.value : "0"; // default start on eastern wall of the maze
-  });
-  jQuery('#goal-y').keyup(function () {
-      let current = parseInt(this.value, 10);
-      let max = parseInt($("#width").val(), 10);
-      let min = parseInt(max / 2, 10);
-      this.value = current > min && current < max ? this.value : parseInt($("#width").val(), 10) - 1; // default goal cell on western wall of the maze
   });
   jQuery('#height').keyup(function () { 
     if (this.value.length > 0) {
@@ -211,6 +194,17 @@ $(document).ready(function() {
       // let max = parseInt(($(window).height() - padding) / cellSize, 10) - 10; // to allow space at bottom for navigation keys
       this.value = arg <= max ? arg : max;
     }
+  });
+  jQuery('#start-y').keyup(function () {
+      let current = parseInt(this.value, 10);
+      let max = parseInt(parseInt($("#width").val(), 10) / 2, 10);
+      this.value = current < max ? this.value : "0"; // default start on eastern wall of the maze
+  });
+  jQuery('#goal-y').keyup(function () {
+      let current = parseInt(this.value, 10);
+      let max = parseInt($("#width").val(), 10);
+      let min = parseInt(max / 2, 10);
+      this.value = current > min && current < max ? this.value : parseInt($("#width").val(), 10) - 1; // default goal cell on western wall of the maze
   });
   jQuery('#start-x').keyup(function () {
       let startX = this.value; 
@@ -293,10 +287,11 @@ $(document).ready(function() {
       // if all inputs are empty, means page has loaded for first time, so default all inputs based on screen size
       defaultWidth();
       defaultHeight();
-      defaultStartX();
-      defaultStartY();
-      defaultGoalX();
-      defaultGoalY();
+      defaultStartAndGoal(); 
+      // defaultStartX();
+      // defaultStartY();
+      // defaultGoalX();
+      // defaultGoalY();
     }
   }
 
@@ -323,12 +318,12 @@ $(document).ready(function() {
     $("#hidden-maze").html(event.data); 
     drawMaze(event.data, mazeDiv);
     console.log("Finished drawing the maze.");
-    $("#loading-modal").css('display', 'none'); 
     if (!displayNavigation) {
       // initially buttons are hidden but when maze is drawn should be shown 
       $("#outer-navigation").toggle();
       displayNavigation = true;
     }
+    $("#loading-modal").css('display', 'none'); 
   }
  
   $(window).resize(function() {
@@ -342,10 +337,11 @@ $(document).ready(function() {
     $("#goal-y").val("");
     defaultWidth();
     defaultHeight();
-    defaultStartX();
-    defaultStartY();
-    defaultGoalX();
-    defaultGoalY();
+    defaultStartAndGoal(); 
+    // defaultStartX();
+    // defaultStartY();
+    // defaultGoalX();
+    // defaultGoalY();
   });  
   $('input[type=radio][name=cell-size]').change(function() {
     // Whenever cell size changes, need to clear out width, height, start coords, and goal coords
@@ -358,10 +354,11 @@ $(document).ready(function() {
     $("#goal-y").val("");
     defaultWidth();
     defaultHeight();
-    defaultStartX();
-    defaultStartY();
-    defaultGoalX();
-    defaultGoalY();
+    defaultStartAndGoal(); 
+    // defaultStartX();
+    // defaultStartY();
+    // defaultGoalX();
+    // defaultGoalY();
   });
   $('input[type=checkbox]').change(function() {
     window.clearInterval(stepIntervalEvent); 
@@ -869,13 +866,13 @@ $(document).ready(function() {
 
   // send the data to the server using the WebSocket
   function sendToServer(jsonMessage) {
-      if(webSocket.readyState == WebSocket.OPEN) {
-          consoleLog("SENT: " + jsonMessage.message);
-          webSocket.send(JSON.stringify(jsonMessage));
-          $("#loading-modal").css('display', 'block');
-      } else {
-          consoleLog("Could not send data. Websocket is not open.");
-      }
+    if(webSocket.readyState == WebSocket.OPEN) {
+        consoleLog("SENT: " + jsonMessage.message);
+        webSocket.send(JSON.stringify(jsonMessage));
+        $("#loading-modal").css('display', 'block');
+    } else {
+        consoleLog("Could not send data. Websocket is not open.");
+    }
   }
 
 });
