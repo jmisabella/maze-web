@@ -397,10 +397,17 @@ body.dark-mode {
 .is-goal {
   background-color: #98ff98 !important;
 }
+.visited .is-goal{
+  background-color: #b7ffb7 !important;
+}
 .visited .is-start {
   background-color: #b7ffb7 !important;
 }
 .solved .is-goal {
+  background-color: #00ffff !important;
+  /* background-color: #98ff98 !important; */
+}
+.solved .is-start{
   background-color: #00ffff !important;
   /* background-color: #98ff98 !important; */
 }

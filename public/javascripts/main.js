@@ -389,6 +389,24 @@ $(document).ready(function() {
     window.clearInterval(stepIntervalEvent); 
     stepIntervalEvent = window.setInterval(solutionSteps, interval);
   });
+  $('#hidden-goal-reached').change(function() {
+    if (this.value == true || this.value == "true") {
+      alert("solved!");
+      window.clearInterval(stepIntervalEvent); 
+      stepIntervalEvent = window.setInterval(solutionSteps, interval);
+      let solve = $('input[name="solved"]:checked').prop('checked') == true;
+      if (!solve) {
+        var solutionDivs = $('div').filter('.on-solution-path').sort(sortByDistance);
+        solutionDivs.each(function () { // mark each cell as not visited
+          // this.classList.remove("visited");  
+          this.classList.remove("solved");  
+        });
+        $("#hidden-distance").html("distance-0"); // reset solution back to start cell
+      }
+      window.clearInterval(stepIntervalEvent); 
+      stepIntervalEvent = window.setInterval(solutionSteps, interval);
+    }
+  });
   $("#speed").on('change input', function() {
     interval = $(this).val();
   });
@@ -491,6 +509,12 @@ $(document).ready(function() {
           console.log("ADDING VISITED");
           div.classList.add("visited");
           $("#hidden-visited").html(coords + "|" + movesHistory.join("|"));
+          if (div.classList.contains("is-goal")) {
+            $("#hidden-distance").html("distance-0"); // set solved distance from start cell at 0, where solution starts when being drawn
+            $("#hidden-solved").html(true);
+            window.clearInterval(stepIntervalEvent); 
+            stepIntervalEvent = window.setInterval(solutionSteps, interval);
+          }
         }
         console.log("HISTORY: " + $("#hidden-visited").html());
       }
@@ -785,7 +809,8 @@ $(document).ready(function() {
 
   function solutionSteps() {
     let solve = $('input[name="solved"]:checked').prop('checked') == true;
-    if (solve) {
+    let solved = $("#hidden-solved").html();
+    if (solve || solved) {
       let maxDistanceClass = $("#hidden-max-distance").html();
       let currentDistanceClass = $("#hidden-distance").html();
       if (maxDistanceClass != "" && currentDistanceClass != "" && maxDistanceClass != null && currentDistanceClass != null) {
@@ -811,6 +836,7 @@ $(document).ready(function() {
   window.addEventListener("load", init, false);
 
   $("#send-button").click(function (e) {
+    $("#hidden-solved").html(false);
     let width = $("#width").val();
     let height = $("#height").val();
     let algorithm = $("#select-generator").val();
