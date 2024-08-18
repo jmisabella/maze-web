@@ -138,8 +138,10 @@ $(document).ready(function() {
     let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
     let max = parseInt(($(window).width() - padding) / cellSize, 10);
     $("#width").val(max);
-    $("#start-y").val(0); // default start to be on the western wall
-    $("#goal-y").val((this.value - 1).toString()); // default goal to be on the eastern wall
+    // $("#start-y").val(0); // default start to be on the western wall
+    // $("#goal-y").val((this.value - 1).toString()); // default goal to be on the eastern wall
+    $("#start-x").val(0); // default start to be on the western wall
+    $("#goal-x").val((this.value - 1).toString()); // default goal to be on the eastern wall
   }
   function defaultHeight() {
     let padding = 40;
@@ -157,21 +159,31 @@ $(document).ready(function() {
   function defaultStartAndGoal() {
     let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
     if (parseInt($("#width").val(), 10) >= parseInt($("#height").val(), 10)) {
-      $("#start-y").val(0);
-      $("#start-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2, 10)   );
-      $("#goal-y").val(parseInt($("#width").val(), 10) - 1);
-      $("#goal-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2)   );
+      // $("#start-y").val(0);
+      // $("#start-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2, 10)   );
+      // $("#goal-y").val(parseInt($("#width").val(), 10) - 1);
+      // $("#goal-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2)   );
+      $("#start-x").val(0);
+      $("#start-y").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2, 10)   );
+      $("#goal-x").val(parseInt($("#width").val(), 10) - 1);
+      $("#goal-y").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2)   );
     } else {
-      $("#goal-x").val(0);
-      $("#goal-y").val((parseInt(parseInt($("#height").val(), 10) - 1) / 2, 10));
-      $("#start-x").val(parseInt($("#height").val(), 10) - 1);
-      $("#start-y").val((parseInt(parseInt($("#height").val(), 10) - 1) / 2, 10));
+      // $("#goal-x").val(0);
+      // $("#goal-y").val((parseInt(parseInt($("#height").val(), 10) - 1) / 2, 10));
+      // $("#start-x").val(parseInt($("#height").val(), 10) - 1);
+      // $("#start-y").val((parseInt(parseInt($("#height").val(), 10) - 1) / 2, 10));
+      $("#goal-y").val(0);
+      $("#goal-x").val((parseInt(parseInt($("#height").val(), 10) - 1) / 2, 10));
+      $("#start-y").val(parseInt($("#height").val(), 10) - 1);
+      $("#start-x").val((parseInt(parseInt($("#height").val(), 10) - 1) / 2, 10));
       let horizontalMultiplier = 1;
       if (cellSize < 20) {
         horizontalMultiplier = 2;
       }
-      $("#goal-y").val(parseInt($("#goal-y").val(), 10) * horizontalMultiplier);
-      $("#start-y").val(parseInt($("#start-y").val(), 10) * horizontalMultiplier);
+      // $("#goal-y").val(parseInt($("#goal-y").val(), 10) * horizontalMultiplier);
+      // $("#start-y").val(parseInt($("#start-y").val(), 10) * horizontalMultiplier);
+      $("#goal-x").val(parseInt($("#goal-x").val(), 10) * horizontalMultiplier);
+      $("#start-x").val(parseInt($("#start-x").val(), 10) * horizontalMultiplier);
     }
   }
 
@@ -182,8 +194,10 @@ $(document).ready(function() {
       let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
       let max = parseInt(($(window).width() - padding) / cellSize, 10);
       this.value = arg <= max ? arg : max;
-      $("#start-y").val(0); // default start to be on the western wall
-      $("#goal-y").val((this.value - 1).toString()); // default goal to be on the eastern wall
+      // $("#start-y").val(0); // default start to be on the western wall
+      // $("#goal-y").val((this.value - 1).toString()); // default goal to be on the eastern wall
+      $("#start-x").val(0); // default start to be on the western wall
+      $("#goal-x").val((this.value - 1).toString()); // default goal to be on the eastern wall
     }
   });
   jQuery('#height').keyup(function () { 
@@ -202,31 +216,39 @@ $(document).ready(function() {
       this.value = arg <= max ? arg : max;
     }
     if (parseInt($("#width").val(), 10) >= parseInt($("#height").val(), 10)) {
-      $("#start-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2, 10)   );
-      $("#goal-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2)   );
+      // $("#start-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2, 10)   );
+      // $("#goal-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2)   );
+      $("#start-y").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2, 10)   );
+      $("#goal-y").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2)   );
     } else {
-      $("#goal-x").val(0);
-      $("#start-x").val(parseInt($("#height").val(), 10) - 1);
+      // $("#goal-x").val(0);
+      // $("#start-x").val(parseInt($("#height").val(), 10) - 1);
+      $("#goal-y").val(0);
+      $("#start-y").val(parseInt($("#height").val(), 10) - 1);
     }
   });
-  jQuery('#start-y').keyup(function () {
+  // jQuery('#start-y').keyup(function () {
+  jQuery('#start-x').keyup(function () {
       let current = parseInt(this.value, 10);
       let max = parseInt(parseInt($("#width").val(), 10) / 2, 10);
       this.value = current < max ? this.value : "0"; // default start on eastern wall of the maze
   });
-  jQuery('#goal-y').keyup(function () {
+  // jQuery('#goal-y').keyup(function () {
+  jQuery('#goal-x').keyup(function () {
       let current = parseInt(this.value, 10);
       let max = parseInt($("#width").val(), 10);
       let min = parseInt(max / 2, 10);
       this.value = current > min && current < max ? this.value : parseInt($("#width").val(), 10) - 1; // default goal cell on western wall of the maze
   });
-  jQuery('#start-x').keyup(function () {
+  // jQuery('#start-x').keyup(function () {
+  jQuery('#start-y').keyup(function () {
       let startX = this.value; 
       if (startX.length > 0 && parseInt(startX, 10) >= parseInt($("#height").val(), 10)) {
         this.value = parseInt($("#height").val(), 10) - 1;
       }
   });
-  jQuery('#goal-x').keyup(function () {
+  // jQuery('#goal-x').keyup(function () {
+  jQuery('#goal-y').keyup(function () {
       let goalX = this.value;
       if (goalX.length > 0 && parseInt(goalX, 10) >= parseInt($("#height").val(), 10)) {
         this.value = parseInt($("#height").val(), 10) - 1;
@@ -389,6 +411,24 @@ $(document).ready(function() {
     window.clearInterval(stepIntervalEvent); 
     stepIntervalEvent = window.setInterval(solutionSteps, interval);
   });
+  $('#hidden-goal-reached').change(function() {
+    if (this.value == true || this.value == "true") {
+      alert("solved!");
+      window.clearInterval(stepIntervalEvent); 
+      stepIntervalEvent = window.setInterval(solutionSteps, interval);
+      let solve = $('input[name="solved"]:checked').prop('checked') == true;
+      if (!solve) {
+        var solutionDivs = $('div').filter('.on-solution-path').sort(sortByDistance);
+        solutionDivs.each(function () { // mark each cell as not visited
+          // this.classList.remove("visited");  
+          this.classList.remove("solved");  
+        });
+        $("#hidden-distance").html("distance-0"); // reset solution back to start cell
+      }
+      window.clearInterval(stepIntervalEvent); 
+      stepIntervalEvent = window.setInterval(solutionSteps, interval);
+    }
+  });
   $("#speed").on('change input', function() {
     interval = $(this).val();
   });
@@ -491,6 +531,12 @@ $(document).ready(function() {
           console.log("ADDING VISITED");
           div.classList.add("visited");
           $("#hidden-visited").html(coords + "|" + movesHistory.join("|"));
+          if (div.classList.contains("is-goal")) {
+            $("#hidden-distance").html("distance-0"); // set solved distance from start cell at 0, where solution starts when being drawn
+            $("#hidden-solved").html(true);
+            window.clearInterval(stepIntervalEvent); 
+            stepIntervalEvent = window.setInterval(solutionSteps, interval);
+          }
         }
         console.log("HISTORY: " + $("#hidden-visited").html());
       }
@@ -705,8 +751,10 @@ $(document).ready(function() {
         box.style.borderLeft = cell.linked.includes("west") ? EMPTY_WALL : SOLID_WALL;
         box.classList.add("distance-" + cell.distance.toString());
         box.classList.add("heat-color-class-" + distanceColorsDict[cell.distance]);
-        box.classList.add("x-coord-" + cell.coords.y.toString());
-        box.classList.add("y-coord-" + cell.coords.x.toString());
+        // box.classList.add("x-coord-" + cell.coords.y.toString()); // bug switched x and y coords
+        // box.classList.add("y-coord-" + cell.coords.x.toString()); // bug switched x and y coords
+        box.classList.add("x-coord-" + cell.coords.x.toString());
+        box.classList.add("y-coord-" + cell.coords.y.toString());
         let neighborsClass = "neighbors-" + cell.linked.join("-");
         box.classList.add(neighborsClass);
         if (cell.onSolutionPath == true) {
@@ -747,7 +795,8 @@ $(document).ready(function() {
         htmlParent.appendChild(box);
         var screenCoords = elementCoords(box);
         var coordsStr = screenCoords.x.toString() + "," + screenCoords.y.toString()
-        mazeCellByScreenCoordsDict[coordsStr] = cell.coords.y.toString() + "," + cell.coords.x.toString();
+        // mazeCellByScreenCoordsDict[coordsStr] = cell.coords.y.toString() + "," + cell.coords.x.toString(); // coords bug
+        mazeCellByScreenCoordsDict[coordsStr] = cell.coords.x.toString() + "," + cell.coords.y.toString();
       }
     }
     $("#hidden-distance").html("distance-0"); // set solved distance from start cell at 0, where solution starts when being drawn
@@ -785,7 +834,8 @@ $(document).ready(function() {
 
   function solutionSteps() {
     let solve = $('input[name="solved"]:checked').prop('checked') == true;
-    if (solve) {
+    let solved = $("#hidden-solved").html();
+    if (solve || solved) {
       let maxDistanceClass = $("#hidden-max-distance").html();
       let currentDistanceClass = $("#hidden-distance").html();
       if (maxDistanceClass != "" && currentDistanceClass != "" && maxDistanceClass != null && currentDistanceClass != null) {
@@ -810,7 +860,8 @@ $(document).ready(function() {
 
   window.addEventListener("load", init, false);
 
-  $("#send-button").click(function (e) {
+  function generateNewMaze() {
+    $("#hidden-solved").html(false);
     let width = $("#width").val();
     let height = $("#height").val();
     let algorithm = $("#select-generator").val();
@@ -847,10 +898,10 @@ $(document).ready(function() {
         "width": width,
         "height": height,
         "algorithm": algorithm,
-        "startX": startY, // bug in maze library, start coords are reversed
-        "startY": startX, // bug in maze library, start coords are reversed
-        "goalX": goalY, // bug in maze library, start coords are reversed
-        "goalY": goalX, // bug in maze library, start coords are reversed
+        "startX": startX,
+        "startY": startY,
+        "goalX": goalX,
+        "goalY": goalY,
         "mazeType": "Solved"
       };
     
@@ -868,7 +919,16 @@ $(document).ready(function() {
       // $("#right-navigation").css("visibility: hidden");
       sendToServer(jsonMessage);
     }
+
+  }
+
+  $("#send-button").click(function (e) {
+    generateNewMaze();
   });
+  $("#maze-button").click(function (e) {
+    generateNewMaze();
+  });
+
 
   // send the message when the user presses the <enter> key while in the textarea
   // $(window).on("keydown", function (e) {

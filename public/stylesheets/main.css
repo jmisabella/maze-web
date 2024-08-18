@@ -397,10 +397,17 @@ body.dark-mode {
 .is-goal {
   background-color: #98ff98 !important;
 }
+.visited .is-goal{
+  background-color: #b7ffb7 !important;
+}
 .visited .is-start {
   background-color: #b7ffb7 !important;
 }
 .solved .is-goal {
+  background-color: #00ffff !important;
+  /* background-color: #98ff98 !important; */
+}
+.solved .is-start{
   background-color: #00ffff !important;
   /* background-color: #98ff98 !important; */
 }
@@ -679,3 +686,13 @@ body.dark-mode {
 .midnight-blue-900 { background-color: #17202a; }
 
 
+#maze-button {
+  float:left;
+  margin:14px 40px 0 0;
+  width:20px;
+  height:20px;
+  background-image: url("/assets/images/play-ffffff.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
