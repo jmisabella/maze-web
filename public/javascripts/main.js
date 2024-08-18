@@ -860,7 +860,7 @@ $(document).ready(function() {
 
   window.addEventListener("load", init, false);
 
-  $("#send-button").click(function (e) {
+  function generateNewMaze() {
     $("#hidden-solved").html(false);
     let width = $("#width").val();
     let height = $("#height").val();
@@ -898,14 +898,10 @@ $(document).ready(function() {
         "width": width,
         "height": height,
         "algorithm": algorithm,
-        "startX": startX, // bug in maze library, start coords are reversed
-        "startY": startY, // bug in maze library, start coords are reversed
-        "goalX": goalX, // bug in maze library, start coords are reversed
-        "goalY": goalY, // bug in maze library, start coords are reversed
-        // "startX": startY, // bug in maze library, start coords are reversed
-        // "startY": startX, // bug in maze library, start coords are reversed
-        // "goalX": goalY, // bug in maze library, start coords are reversed
-        // "goalY": goalX, // bug in maze library, start coords are reversed
+        "startX": startX,
+        "startY": startY,
+        "goalX": goalX,
+        "goalY": goalY,
         "mazeType": "Solved"
       };
     
@@ -923,7 +919,16 @@ $(document).ready(function() {
       // $("#right-navigation").css("visibility: hidden");
       sendToServer(jsonMessage);
     }
+
+  }
+
+  $("#send-button").click(function (e) {
+    generateNewMaze();
   });
+  $("#maze-button").click(function (e) {
+    generateNewMaze();
+  });
+
 
   // send the message when the user presses the <enter> key while in the textarea
   // $(window).on("keydown", function (e) {

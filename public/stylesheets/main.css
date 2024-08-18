@@ -686,3 +686,13 @@ body.dark-mode {
 .midnight-blue-900 { background-color: #17202a; }
 
 
+#maze-button {
+  float:left;
+  margin:14px 40px 0 0;
+  width:20px;
+  height:20px;
+  background-image: url("/assets/images/play-ffffff.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
