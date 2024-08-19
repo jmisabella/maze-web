@@ -701,11 +701,11 @@ body.dark-mode {
 /* mobile device specific rules */
 @media (max-width: 900px) {
   #maze-button {
-    margin:4px 40px 0 0;
+    margin:2px 40px 0 0;
   }
 }
 @media (max-width: 500px) {
   #maze-button {
-    margin:4px 40px 0 0;
+    margin:2px 40px 0 0;
   }
 }
