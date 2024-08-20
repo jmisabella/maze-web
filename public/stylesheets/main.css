@@ -689,10 +689,23 @@ body.dark-mode {
 #maze-button {
   float:left;
   margin:14px 40px 0 0;
+  /* margin:0 40px 0 0; */
   width:20px;
   height:20px;
   background-image: url("/assets/images/play-ffffff.png");
   background-size: contain;
   background-repeat: no-repeat;
   cursor: pointer;
+}
+
+/* mobile device specific rules */
+@media (max-width: 900px) {
+  #maze-button {
+    margin:2px 40px 0 0;
+  }
+}
+@media (max-width: 500px) {
+  #maze-button {
+    margin:2px 40px 0 0;
+  }
 }
