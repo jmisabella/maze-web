@@ -901,8 +901,7 @@ $(document).ready(function() {
         "startX": startX,
         "startY": startY,
         "goalX": goalX,
-        "goalY": goalY,
-        "mazeType": "Solved"
+        "goalY": goalY
       };
     
       var messageInput = JSON.stringify(request);
@@ -913,10 +912,6 @@ $(document).ready(function() {
 
       // send our json message to the server
       console.log("Sending ...");
-      // $("#up-navigation").css("visibility: hidden");
-      // $("#down-navigation").css("visibility: hidden");
-      // $("#left-navigation").css("visibility: hidden");
-      // $("#right-navigation").css("visibility: hidden");
       sendToServer(jsonMessage);
     }
 
