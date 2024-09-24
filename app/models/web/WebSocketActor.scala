@@ -1,7 +1,7 @@
 package models.web
 
 import maze.behaviors.builders.Generator
-import maze.classes.{ MazeRequest, Grid }
+import maze.classes.{ MazeRequest, SquareGrid }
 import akka.actor._
 import play.api.libs.json._
 import play.api.libs.json.Json
@@ -28,7 +28,7 @@ class WebSocketActor(clientActorRef: ActorRef) extends Actor {
       println("REQUEST: " + json)
 
       val request: MazeRequest = MazeRequest(json)
-      val maze: Grid = Generator.generate(request)
+      val maze = Generator.generate(request)
       // println("RESPONSE: \n" + maze)
       println("RESPONSE RECEIVED.\n") // don't log response because it may be very large
 

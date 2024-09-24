@@ -895,6 +895,7 @@ $(document).ready(function() {
       $("#hidden-color").html(nextColor);
       $("#hidden-visited").html(""); 
       request = {
+        "mazeType": "Square",
         "width": width,
         "height": height,
         "algorithm": algorithm,
