@@ -1,7 +1,8 @@
 package models.web
 
 import maze.behaviors.builders.Generator
-import maze.classes.{ MazeRequest, SquareGrid }
+import maze.classes.{ MazeRequest, Grid }
+import maze.classes.MazeType._
 import akka.actor._
 import play.api.libs.json._
 import play.api.libs.json.Json
