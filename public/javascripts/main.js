@@ -4,7 +4,13 @@ let SOLVED_CELL_COLOR = "#b7ffb7";
 let START_CELL_COLOR = "#00ffff";
 let GOAL_CELL_COLOR = "#98ff98";
 let UNVISITED_CELL_COLOR = "#808080";
-
+// let SQUARE = "&#9632;";
+// let TRIANGLE = "&#x25B2";
+// let HEX = "&#11043;";
+const SQUARE = "\u25A1";
+const TRIANGLE = "\u25B3";
+// const HEX = "\u2B22";
+const HEX = "\u2B21";
 
 var webSocket;
 var interval = 10;
@@ -923,6 +929,20 @@ $(document).ready(function() {
   });
   $("#maze-button").click(function (e) {
     generateNewMaze();
+  });
+  $("#grid-type-button").click(function (e) {
+    var current = $(this).text();
+    var next = SQUARE;
+    if (current == SQUARE) {
+      next = TRIANGLE;
+    } else if (current == TRIANGLE) {
+      next = HEX;
+    } else if (current == HEX) {
+      next = SQUARE;
+    } else {
+      next = SQUARE;
+    }
+    $(this).text(next);
   });
 
 
