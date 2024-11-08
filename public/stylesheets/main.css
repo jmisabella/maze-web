@@ -220,30 +220,29 @@ font-size: 1.4em;
 }  
 }
 @media screen and (max-height: 34em){
-.menu li,
-.menu-bar {
-  font-size:70%;
-}
+  .menu li,
+  .menu-bar {
+    font-size:70%;
+  }
 
-#d-type {
-  margin: 1px 25%;
-}
+  /* #d-type {
+    margin: 1px 25%;
+  } */
 
-#speed {
-  width: 80px !important;
-  margin: auto;
-}
+  #speed {
+    width: 80px !important;
+    margin: auto;
+  }
 
 }
 @media screen and (max-height: 34em) and (max-width: 500px){
-.menu{
-  height:3.5em;
-}
+  .menu{
+    height:3.5em;
+  }
 
-#d-type {
-  margin: 1px 25%;
-}
-
+  /* #d-type {
+    margin: 1px 25%;
+  } */
 }
 /* maze */
 
@@ -305,12 +304,6 @@ body.dark-mode {
   color: #cecece;
 }
 
-#d-type {
-  margin-left: 7em;
-}
-#d-type label {
-  padding-left: 2em;
-}
 
 .disable-dbl-tap-zoom {
   touch-action: manipulation;
@@ -686,26 +679,43 @@ body.dark-mode {
 .midnight-blue-900 { background-color: #17202a; }
 
 
-#maze-button {
+#d-type {
+  margin-top: 0;
+}
+
+#d-type label {
+  margin-top: 10px;
+  padding-left: 2em;
+  margin-left:-12px;
+  float: left;
+}
+
+#d-type label#lbl-maze-button,
+#d-type label#lbl-grid-type,
+#d-type .button {
+  cursor: pointer;
+}
+#d-type label #maze-button {
   float:left;
-  margin:14px 40px 0 0;
-  /* margin:0 40px 0 0; */
   width:20px;
   height:20px;
   background-image: url("/assets/images/play-ffffff.png");
   background-size: contain;
   background-repeat: no-repeat;
-  cursor: pointer;
+  margin-top: 3px;
+  margin-left:30px; 
+  /* margin-right: -20px; */
+  /* margin-top:10px !important; */
 }
 
 /* mobile device specific rules */
 @media (max-width: 900px) {
-  #maze-button {
-    margin:2px 40px 0 0;
-  }
+  /* #d-type #maze-button {
+    margin:2px 0 0 0;
+  } */
 }
 @media (max-width: 500px) {
-  #maze-button {
-    margin:2px 40px 0 0;
-  }
+  /* #d-type #maze-button {
+    margin:2px 0 0 0;
+  } */
 }
