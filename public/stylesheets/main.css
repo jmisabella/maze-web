@@ -686,7 +686,7 @@ body.dark-mode {
 #d-type label {
   margin-top: 10px;
   padding-left: 2em;
-  margin-left:-12px;
+  /* margin-left:-12px; */
   float: left;
 }
 
