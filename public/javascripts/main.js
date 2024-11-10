@@ -942,6 +942,7 @@ $(document).ready(function() {
     } else {
       next = SQUARE;
     }
+    $("#hidden-grid-type").val(next);
     $(this).text(next);
   });
 

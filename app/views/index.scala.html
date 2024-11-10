@@ -50,14 +50,40 @@
     </div>
     <div id="loading-modal"></div>
     <div id="maze"></div>
-    <div id="outer-navigation" style="display: none">
+    <!-- <div id="outer-navigation" style="display: none">
       <input type="button" id="left-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
       <div id="inner-navigation">
         <input type="button" id="up-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
         <input type="button" id="down-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
       </div>
       <input type="button" id="right-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
+    </div> -->
+    <div id="outer-navigation" style="display: none">
+      <div id="left-navigation">
+        <input type="button" id="left-navigation-button" class="disable-dbl-tap-zoom" value="&#x27A4;" />
+      </div>
+      <div id="inner-navigation">
+        <input type="button" id="up-navigation-button" class="disable-dbl-tap-zoom" value="&#x27A4;" />
+        <input type="button" id="down-navigation-button" class="disable-dbl-tap-zoom" value="&#x27A4;" />
+      </div>
+      <div id="right-navigation">
+        <input type="button" id="right-navigation-button" class="disable-dbl-tap-zoom" value="&#x27A4;" />
+      </div>
     </div>
+    <!-- <div id="outer-navigation" style="display: none">
+      <div id="left-navigation">
+        <input type="button" id="northwest-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
+        <input type="button" id="southwest-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
+      </div>
+      <div id="inner-navigation">
+        <input type="button" id="up-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
+        <input type="button" id="down-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
+      </div>
+      <div id="right-navigation">
+        <input type="button" id="northeast-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
+        <input type="button" id="southeast-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
+      </div>
+    </div> -->
     <div id="hidden-maze" class="hidden"></div>
     <div id="hidden-color" class="hidden"></div>
     <div id="hidden-solution" class="hidden"></div>
@@ -65,4 +91,5 @@
     <div id="hidden-max-distance" class="hidden"></div>
     <div id="hidden-visited" class="hidden"></div>
     <div id="hidden-solved" class="hidden"></div>
+    <div id="hidden-grid-type" class="hidden"></div>
   }
