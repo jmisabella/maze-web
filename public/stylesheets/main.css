@@ -507,6 +507,7 @@ body.dark-mode {
 #upper-left-navigation-button span {
   transform: rotate(45deg);
   transform-origin: left;
+  display: inline-block;
 }
 #outer-navigation button ,
 #inner-navigation button {
