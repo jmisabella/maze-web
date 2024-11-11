@@ -386,36 +386,54 @@ body.dark-mode {
   transform-origin: center;
 } */
 
+/********************************************************************/
+
 #outer-navigation {
   width:100%;
   display: flex;
   justify-content: center;
 }
-
+/* #outer-navigation input[type=button]:active {
+  background-color: #555;
+  color: #999;
+}
 #outer-navigation input[type=button] {
   background-color: #808080;
   border: solid 1px #333;
   text-align: center;
   color: #000;
-} 
-#outer-navigation input[type=button]:active {
+}  */
+/* #outer-navigation input[type=button]:active,  */
+#outer-navigation button:active {
   background-color: #555;
   color: #999;
 }
+/* #outer-navigation input[type=button],  */
+#outer-navigation button {
+  background-color: #808080;
+  border: solid 1px #333;
+  text-align: center;
+  color: #000;
+} 
 
 #inner-navigation {
   width: 100px;
 }
 
-#inner-navigation * {
+/* 
+#inner-navigation {
   display: inline-block;
-}
+} */
+
+/* #outer-navigation span,
+#inner-navigation span {
+  display: inline-block;
+} */
 
 #inner-navigation #up-navigation-button,
 #inner-navigation #down-navigation-button {
   width: 50%;
   height:100px;
-  text-align: center;
   float: right;
 }
 #left-navigation,
@@ -445,6 +463,54 @@ body.dark-mode {
 #right-navigation-button {
   width: 100%;
   height: 100%;
+}
+#upper-left-navigation-button,
+#lower-left-navigation-button,
+#upper-right-navigation-button,
+#lower-right-navigation-button {
+  width: 100%;
+  height: 50%;
+}
+
+#up-navigation-button span {
+
+  display: inline-block;
+}
+#upper-right-navigation-button span {
+  transform: rotate(-45deg);
+  transform-origin: right;
+  display: inline-block;
+}
+#right-navigation-button span {
+
+  display: inline-block;
+}
+#lower-right-navigation-button span {
+  transform: rotate(45deg);
+  transform-origin: right;
+  display: inline-block;
+}
+#down-navigation-button span {
+
+  display: inline-block;
+}
+#lower-left-navigation-button span {
+  /* transform: rotate(135deg); */
+  transform: rotate(-45deg);
+  transform-origin: left;
+  display: inline-block;
+}
+#left-navigation-button span {
+
+  display: inline-block;
+}
+#upper-left-navigation-button span {
+  transform: rotate(45deg);
+  transform-origin: left;
+}
+#outer-navigation button ,
+#inner-navigation button {
+  text-align: center !important;
 }
 
 
