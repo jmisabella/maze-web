@@ -40,9 +40,9 @@
     </ul> 
     <div id="d-type" >
       <label for="maze-button" id="lbl-maze-button"><div id="maze-button" class="button" title="generate a new maze" ></div></label>
-      <!-- <label for="grid-type-button"><div id="grid-type-button" class="button" title="change grid type" >&#x25A1;</div></label> -->
+      <label for="grid-type-button"><div id="grid-type-button" class="button" title="change grid type" >&#x25A1;</div></label>
       <!-- <label for="grid-type-button"><div id="grid-type-button" class="button" title="change grid type" >&#x25B3;</div></label> -->
-      <label for="grid-type-button"><div id="grid-type-button" class="button" title="change grid type" >&#x2B21;</div></label>
+      <!-- <label for="grid-type-button"><div id="grid-type-button" class="button" title="change grid type" >&#x2B21;</div></label> -->
       <label for="solved"><input type="checkbox" id="solved" name="solved" /></label>
       <label for="display-type-choice-unsolved" class="menu-radio"><input type="radio" id="display-type-choice-unsolved" value="Unsolved" name="display-type" checked="checked" /></label>
       <label for="display-type-choice-distance-map" class="menu-radio"><input type="radio" id="display-type-choice-distance-map" value="DistanceMap" name="display-type" /></label>
@@ -50,44 +50,22 @@
     </div>
     <div id="loading-modal"></div>
     <div id="maze"></div>
-    <!-- <div id="outer-navigation" style="display: none">
-      <input type="button" id="left-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
-      <div id="inner-navigation">
-        <input type="button" id="up-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
-        <input type="button" id="down-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
-      </div>
-      <input type="button" id="right-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
-    </div> -->
     <div id="outer-navigation" style="display: none">
       <div id="left-navigation">
-        <button style="display: none" id="left-navigation-button" class="disable-dbl-tap-zoom" ><span>&#x27A4;</span></button>
-        <button id="lower-left-navigation-button" class="disable-dbl-tap-zoom" ><span>&#x27A4;</span></button>
-        <button id="upper-left-navigation-button" class="disable-dbl-tap-zoom" ><span>&#x27A4;</span></button>
+        <button id="left-navigation-button" class="disable-dbl-tap-zoom" ><span>&#x27A4;</span></button>
+        <button style="display: none" id="lower-left-navigation-button" class="disable-dbl-tap-zoom" ><span>&#x27A4;</span></button>
+        <button style="display: none" id="upper-left-navigation-button" class="disable-dbl-tap-zoom" ><span>&#x27A4;</span></button>
       </div>
       <div id="inner-navigation">
         <button id="up-navigation-button" class="disable-dbl-tap-zoom" ><span>&#x27A4;</span></button>
         <button id="down-navigation-button" class="disable-dbl-tap-zoom" ><span>&#x27A4;</span></button>
       </div>
       <div id="right-navigation">
-        <button style="display: none" id="right-navigation-button" class="disable-dbl-tap-zoom" ><span></span>&#x27A4;</span></button>
-        <button id="upper-right-navigation-button" class="disable-dbl-tap-zoom" ><span>&#x27A4;</span></button>
-        <button id="lower-right-navigation-button" class="disable-dbl-tap-zoom" ><span>&#x27A4;</span></button>
+        <button id="right-navigation-button" class="disable-dbl-tap-zoom" ><span></span>&#x27A4;</span></button>
+        <button style="display: none" id="upper-right-navigation-button" class="disable-dbl-tap-zoom" ><span>&#x27A4;</span></button>
+        <button style="display: none" id="lower-right-navigation-button" class="disable-dbl-tap-zoom" ><span>&#x27A4;</span></button>
       </div>
     </div>
-    <!-- <div id="outer-navigation" style="display: none">
-      <div id="left-navigation">
-        <input type="button" id="northwest-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
-        <input type="button" id="southwest-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
-      </div>
-      <div id="inner-navigation">
-        <input type="button" id="up-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
-        <input type="button" id="down-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
-      </div>
-      <div id="right-navigation">
-        <input type="button" id="northeast-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
-        <input type="button" id="southeast-navigation" class="disable-dbl-tap-zoom" value="&#x27A4;" />
-      </div>
-    </div> -->
     <div id="hidden-maze" class="hidden"></div>
     <div id="hidden-color" class="hidden"></div>
     <div id="hidden-solution" class="hidden"></div>

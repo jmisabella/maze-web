@@ -139,6 +139,8 @@ $(document).ready(function() {
     $(".menu-bar").toggleClass( "open" );
   });
 
+
+
   function defaultWidth() {
     let padding = 30;
     let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
@@ -935,12 +937,44 @@ $(document).ready(function() {
     var next = SQUARE;
     if (current == SQUARE) {
       next = TRIANGLE;
+      $("#upper-right-navigation-button").css("display", "none");
+      $("#lower-right-navigation-button").css("display", "none");
+      $("#upper-left-navigation-button").css("display", "none");
+      $("#lower-left-navigation-button").css("display", "none");
+      $("#up-navigation-button").css("display", "block");
+      $("#right-navigation-button").css("display", "block");
+      $("#down-navigation-button").css("display", "block");
+      $("#left-navigation-button").css("display", "block");
     } else if (current == TRIANGLE) {
       next = HEX;
+      $("#upper-right-navigation-button").css("display", "block");
+      $("#lower-right-navigation-button").css("display", "block");
+      $("#upper-left-navigation-button").css("display", "block");
+      $("#lower-left-navigation-button").css("display", "block");
+      $("#up-navigation-button").css("display", "block");
+      $("#down-navigation-button").css("display", "block");
+      $("#left-navigation-button").css("display", "none");
+      $("#right-navigation-button").css("display", "none");
     } else if (current == HEX) {
       next = SQUARE;
+      $("#upper-right-navigation-button").css("display", "none");
+      $("#lower-right-navigation-button").css("display", "none");
+      $("#upper-left-navigation-button").css("display", "none");
+      $("#lower-left-navigation-button").css("display", "none");
+      $("#up-navigation-button").css("display", "block");
+      $("#right-navigation-button").css("display", "block");
+      $("#down-navigation-button").css("display", "block");
+      $("#left-navigation-button").css("display", "block");
     } else {
       next = SQUARE;
+      $("#upper-right-navigation-button").css("display", "none");
+      $("#lower-right-navigation-button").css("display", "none");
+      $("#upper-left-navigation-button").css("display", "none");
+      $("#lower-left-navigation-button").css("display", "none");
+      $("#up-navigation-button").css("display", "block");
+      $("#right-navigation-button").css("display", "block");
+      $("#down-navigation-button").css("display", "block");
+      $("#left-navigation-button").css("display", "block");
     }
     $("#hidden-grid-type").val(next);
     $(this).text(next);
