@@ -4,12 +4,8 @@ let SOLVED_CELL_COLOR = "#b7ffb7";
 let START_CELL_COLOR = "#00ffff";
 let GOAL_CELL_COLOR = "#98ff98";
 let UNVISITED_CELL_COLOR = "#808080";
-// let SQUARE = "&#9632;";
-// let TRIANGLE = "&#x25B2";
-// let HEX = "&#11043;";
 const SQUARE = "\u25A1";
 const TRIANGLE = "\u25B3";
-// const HEX = "\u2B22";
 const HEX = "\u2B21";
 
 var webSocket;
@@ -146,8 +142,6 @@ $(document).ready(function() {
     let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
     let max = parseInt(($(window).width() - padding) / cellSize, 10);
     $("#width").val(max);
-    // $("#start-y").val(0); // default start to be on the western wall
-    // $("#goal-y").val((this.value - 1).toString()); // default goal to be on the eastern wall
     $("#start-x").val(0); // default start to be on the western wall
     $("#goal-x").val((this.value - 1).toString()); // default goal to be on the eastern wall
   }
@@ -167,19 +161,11 @@ $(document).ready(function() {
   function defaultStartAndGoal() {
     let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
     if (parseInt($("#width").val(), 10) >= parseInt($("#height").val(), 10)) {
-      // $("#start-y").val(0);
-      // $("#start-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2, 10)   );
-      // $("#goal-y").val(parseInt($("#width").val(), 10) - 1);
-      // $("#goal-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2)   );
       $("#start-x").val(0);
       $("#start-y").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2, 10)   );
       $("#goal-x").val(parseInt($("#width").val(), 10) - 1);
       $("#goal-y").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2)   );
     } else {
-      // $("#goal-x").val(0);
-      // $("#goal-y").val((parseInt(parseInt($("#height").val(), 10) - 1) / 2, 10));
-      // $("#start-x").val(parseInt($("#height").val(), 10) - 1);
-      // $("#start-y").val((parseInt(parseInt($("#height").val(), 10) - 1) / 2, 10));
       $("#goal-y").val(0);
       $("#goal-x").val((parseInt(parseInt($("#height").val(), 10) - 1) / 2, 10));
       $("#start-y").val(parseInt($("#height").val(), 10) - 1);
@@ -188,8 +174,6 @@ $(document).ready(function() {
       if (cellSize < 20) {
         horizontalMultiplier = 2;
       }
-      // $("#goal-y").val(parseInt($("#goal-y").val(), 10) * horizontalMultiplier);
-      // $("#start-y").val(parseInt($("#start-y").val(), 10) * horizontalMultiplier);
       $("#goal-x").val(parseInt($("#goal-x").val(), 10) * horizontalMultiplier);
       $("#start-x").val(parseInt($("#start-x").val(), 10) * horizontalMultiplier);
     }
@@ -202,8 +186,6 @@ $(document).ready(function() {
       let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
       let max = parseInt(($(window).width() - padding) / cellSize, 10);
       this.value = arg <= max ? arg : max;
-      // $("#start-y").val(0); // default start to be on the western wall
-      // $("#goal-y").val((this.value - 1).toString()); // default goal to be on the eastern wall
       $("#start-x").val(0); // default start to be on the western wall
       $("#goal-x").val((this.value - 1).toString()); // default goal to be on the eastern wall
     }
@@ -224,38 +206,30 @@ $(document).ready(function() {
       this.value = arg <= max ? arg : max;
     }
     if (parseInt($("#width").val(), 10) >= parseInt($("#height").val(), 10)) {
-      // $("#start-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2, 10)   );
-      // $("#goal-x").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2)   );
       $("#start-y").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2, 10)   );
       $("#goal-y").val(   parseInt((parseInt($("#height").val(), 10) - 1) / 2)   );
     } else {
-      // $("#goal-x").val(0);
-      // $("#start-x").val(parseInt($("#height").val(), 10) - 1);
       $("#goal-y").val(0);
       $("#start-y").val(parseInt($("#height").val(), 10) - 1);
     }
   });
-  // jQuery('#start-y').keyup(function () {
   jQuery('#start-x').keyup(function () {
       let current = parseInt(this.value, 10);
       let max = parseInt(parseInt($("#width").val(), 10) / 2, 10);
       this.value = current < max ? this.value : "0"; // default start on eastern wall of the maze
   });
-  // jQuery('#goal-y').keyup(function () {
   jQuery('#goal-x').keyup(function () {
       let current = parseInt(this.value, 10);
       let max = parseInt($("#width").val(), 10);
       let min = parseInt(max / 2, 10);
       this.value = current > min && current < max ? this.value : parseInt($("#width").val(), 10) - 1; // default goal cell on western wall of the maze
   });
-  // jQuery('#start-x').keyup(function () {
   jQuery('#start-y').keyup(function () {
       let startX = this.value; 
       if (startX.length > 0 && parseInt(startX, 10) >= parseInt($("#height").val(), 10)) {
         this.value = parseInt($("#height").val(), 10) - 1;
       }
   });
-  // jQuery('#goal-x').keyup(function () {
   jQuery('#goal-y').keyup(function () {
       let goalX = this.value;
       if (goalX.length > 0 && parseInt(goalX, 10) >= parseInt($("#height").val(), 10)) {
@@ -263,61 +237,7 @@ $(document).ready(function() {
       }
   });
 
-
-
-  // jQuery('#width').keyup(function () {
-  //   if (this.value.length > 0) {
-  //     let padding = 30;
-  //     let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
-  //     let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
-  //     let max = parseInt(($(window).width() - padding) / cellSize, 10);
-  //     this.value = arg <= max ? arg : max;
-  //     $("#start-y").val(0); // default start to be on the western wall
-  //     $("#goal-y").val((this.value - 1).toString()); // default goal to be on the eastern wall
-  //   }
-  // });
-  // jQuery('#start-y').keyup(function () {
-  //     let current = parseInt(this.value, 10);
-  //     let max = parseInt(parseInt($("#width").val(), 10) / 2, 10);
-  //     this.value = current < max ? this.value : "0"; // default start on eastern wall of the maze
-  // });
-  // jQuery('#goal-y').keyup(function () {
-  //     let current = parseInt(this.value, 10);
-  //     let max = parseInt($("#width").val(), 10);
-  //     let min = parseInt(max / 2, 10);
-  //     this.value = current > min && current < max ? this.value : parseInt($("#width").val(), 10) - 1; // default goal cell on western wall of the maze
-  // });
-  // jQuery('#height').keyup(function () { 
-  //   if (this.value.length > 0) {
-  //     let padding = 40;
-  //     let cellSize = parseInt($('input[name="cell-size"]:checked').val(), 10);
-  //     let arg = parseInt(this.value.replace(/[^0-9]/g,''), 10);
-  //     var max = parseInt(($(window).height() - padding) / cellSize, 10) - 6; // to allow space at bottom for navigation keys
-  //     if (cellSize < 20) {
-  //       max = max - 6; // adjusted for medium cell size
-  //     }
-  //     if (cellSize < 10) {
-  //       max = max - 3; // adjusted for small cell size
-  //     }
-  //     // let max = parseInt(($(window).height() - padding) / cellSize, 10) - 10; // to allow space at bottom for navigation keys
-  //     this.value = arg <= max ? arg : max;
-  //   }
-  // });
-  // jQuery('#start-x').keyup(function () {
-  //     let startX = this.value; 
-  //     if (startX.length > 0 && parseInt(startX, 10) >= parseInt($("#height").val(), 10)) {
-  //       this.value = parseInt($("#height").val(), 10) - 1;
-  //     }
-  // });
-  // jQuery('#goal-x').keyup(function () {
-  //     let goalX = this.value;
-  //     if (goalX.length > 0 && parseInt(goalX, 10) >= parseInt($("#height").val(), 10)) {
-  //       this.value = parseInt($("#height").val(), 10) - 1;
-  //     }
-  // });
-
   $(document).on('keyup blur input propertychange', 'input[class="numbers"]', function(){$(this).val($(this).val().replace(/[^0-9]/g,''));});  
-
 
   function init() {
     var host = location.origin.replace(/^https/, 'wss').replace(/^http/, 'ws'); 
@@ -332,10 +252,6 @@ $(document).ready(function() {
       defaultWidth();
       defaultHeight();
       defaultStartAndGoal(); 
-      // defaultStartX();
-      // defaultStartY();
-      // defaultGoalX();
-      // defaultGoalY();
     }
   }
 
@@ -382,10 +298,6 @@ $(document).ready(function() {
     defaultWidth();
     defaultHeight();
     defaultStartAndGoal(); 
-    // defaultStartX();
-    // defaultStartY();
-    // defaultGoalX();
-    // defaultGoalY();
   });  
   $('input[type=radio][name=cell-size]').change(function() {
     // Whenever cell size changes, need to clear out width, height, start coords, and goal coords
@@ -399,10 +311,6 @@ $(document).ready(function() {
     defaultWidth();
     defaultHeight();
     defaultStartAndGoal(); 
-    // defaultStartX();
-    // defaultStartY();
-    // defaultGoalX();
-    // defaultGoalY();
   });
   $('input[type=checkbox]').change(function() {
     window.clearInterval(stepIntervalEvent); 
@@ -496,8 +404,6 @@ $(document).ready(function() {
       let div = mazeCellDiv; //c; //.target; 
       var xCoord = getCoordFromClass(div.classList, "x");
       var yCoord = getCoordFromClass(div.classList, "y");
-      // console.log("X COORDS: " + xCoord);
-      // console.log("Y COORDS: " + yCoord);
       let coords = xCoord + "," + yCoord;
       let neighbors = getNeighborsFromClass(div.classList);
       let visited = div.classList.contains("visited");
@@ -509,14 +415,6 @@ $(document).ready(function() {
       let remainingHistory = movesHistory.length > 1 ? tail(movesHistory).join("|") : "";
       let previousMove = movesHistory.length > 0 ? head(movesHistory) : "";
       console.log("CURRENT CELL: " + coords);
-      // console.log("PREVIOUS MOVE: " + previousMove);
-      // console.log("NORTH: " + north);
-      // console.log("EAST: " + east);
-      // console.log("SOUTH: " + south);
-      // console.log("WEST: " + west);
-      // console.log("NEIGHBORS CONTAINS WEST: " + Array.from(neighbors).includes("west"));
-      // console.log("X-COORD IS GREATER THAN 0: " + (xCoord > 0).toString());
-      // console.log("EXPECTED WEST COORDS: " + (xCoord - 1).toString() + "," + yCoord.toString());
       let isEligible = div.classList.contains("is-start") ||
         coords == previousMove ||
         (north != null && north == previousMove) || 
@@ -621,61 +519,17 @@ $(document).ready(function() {
 
   $("#maze").bind("touchmove", function(e) {
     var coords = eventCoords(e);
-    // alert("touch position: " + coords.x + "," + coords.y);
     console.log("touch position: " + coords.x + "," + coords.y);
     var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
-    // alert("maze cell div coords: " + mazeCellDivCoords);
     console.log("maze cell div coords: " + mazeCellDivCoords);
-    // var mazeCellDivX = head(mazeCellDivCoords.split(","));
-    // var mazeCellDivY = head((mazeCellDivCoords.split(",")));
     var mazeCellDivX = xCoord(mazeCellDivCoords);
     var mazeCellDivY = yCoord(mazeCellDivCoords);
-    // alert("CELL X COORDS: " + mazeCellDivX);
     console.log("CELL X COORDS: " + mazeCellDivX);
-    // alert("CELL Y COORDS: " + mazeCellDivY);
     console.log("CELL Y COORDS: " + mazeCellDivY);
     var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
-    // alert("CELL DIV: " + mazeCellDiv.classList);
     console.log("CELL DIV: " + mazeCellDiv.classList);
     manualMoveByElement(mazeCellDiv, toggleMove = false);
   });
-
-  // document.getElementById('maze').addEventListener("touchstart", function(event) {
-  //   this.addEventListener("touchmove", function(e) {
-  //     // If there's exactly one finger inside this element
-  //     // if (event.targetTouches.length == 1) {
-  //     //   // var touch = event.targetTouches[0];
-  //     //   // console.log("touch position: " + touch.pageX + "," + touch.pageY);
-  //     //   // var mazeCellDiv = mazeCellByScreenCoordsDict[ { x: touch.pageX, y: touch.pageY } ];
-  //     //   // console.log("maze cell div id: " + mazeCellDiv);
-  //       var coords = eventCoords(e);
-  //       console.log("touch position: " + coords.x + "," + coords.y);
-  //       var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
-  //       console.log("maze cell div coords: " + mazeCellDivCoords);
-  //       var mazeCellDivX = head(mazeCetailllDivCoords.split(","));
-  //       var mazeCellDivY = head((mazeCellDivCoords.split(",")));
-  //       console.log("CELL X COORDS: " + mazeCellDivX);
-  //       console.log("CELL Y COORDS: " + mazeCellDivY);
-  //       var mazeCellDiv = $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0];
-  //       console.log("CELL DIV: " + mazeCellDiv.classList);
-  //       alert("CELL DIV: " + mazeCellDiv.classList);
-  //       manualMoveByElement(mazeCellDiv, toggleMove = false);
-  //     // }
-  //   }, false);
-  // }, false);
-
-  // document.getElementById('maze').addEventListener("touchend", function(event) {
-  //   var coords = eventCoords(event);
-  //   console.log("touch position: " + coords.x + "," + coords.y);
-  //   var mazeCellDivCoords = mazeCellByScreenCoordsDict[ coords.x.toString() + "," + coords.y.toString() ];
-  //   console.log("maze cell div coords: " + mazeCellDivCoords);
-  //   var mazeCellDivX = head(mazeCetailllDivCoords.split(","));
-  //   var mazeCellDivY = head((mazeCellDivCoords.split(",")));
-  //   console.log("CELL X COORDS: " + mazeCellDivX);
-  //   console.log("CELL Y COORDS: " + mazeCellDivY);
-  //   $(".x-coord-" + mazeCellDivX + ".y-coord-" + mazeCellDivY)[0].unbind("touchmove", function(e) { e.preventDefault() });
-  // }, false);
-
 
   $("#maze").mousedown(function (e) {
     $(this).mousemove(function (e) {
@@ -759,8 +613,6 @@ $(document).ready(function() {
         box.style.borderLeft = cell.linked.includes("west") ? EMPTY_WALL : SOLID_WALL;
         box.classList.add("distance-" + cell.distance.toString());
         box.classList.add("heat-color-class-" + distanceColorsDict[cell.distance]);
-        // box.classList.add("x-coord-" + cell.coords.y.toString()); // bug switched x and y coords
-        // box.classList.add("y-coord-" + cell.coords.x.toString()); // bug switched x and y coords
         box.classList.add("x-coord-" + cell.coords.x.toString());
         box.classList.add("y-coord-" + cell.coords.y.toString());
         let neighborsClass = "neighbors-" + cell.linked.join("-");
@@ -778,32 +630,21 @@ $(document).ready(function() {
           box.classList.add(distanceColorsDict[cell.distance]);
         }
         //// add event listeners to the div box to allow user to draw/click through a path to manually solve the maze 
-        // box.addEventListener("click", function(c) {
-        //   manualMoveByElement(c.target,toggleMove = true);
-        // });
         box.addEventListener("mousedown", function(c) {
-          // manualMoveByElement(c.target, toggleMove = false);
           manualMoveByElement(c.target, togglemMove = true);
         });
         box.addEventListener("mouseend", function(c) {
-          // manualMoveByElement(c.target, toggleMove = false);
           manualMoveByElement(c.target, togglemMove = true);
         });
         box.addEventListener("touchstart", function(c) {
-          // manualMoveByElement(c.target, toggleMove = false);
           manualMoveByElement(c.target, toggleMove = true);
         });
-        // box.addEventListener("touchmove", function(c) {
-        //   manualMoveByElement(c.target, toggleMove = false);
-        // });
         box.addEventListener("touchend", function(c) {
           manualMoveByElement(c.target, toggleMove = true);
-          // manualMoveByElement(c.target, toggleMove = false);
         });
         htmlParent.appendChild(box);
         var screenCoords = elementCoords(box);
         var coordsStr = screenCoords.x.toString() + "," + screenCoords.y.toString()
-        // mazeCellByScreenCoordsDict[coordsStr] = cell.coords.y.toString() + "," + cell.coords.x.toString(); // coords bug
         mazeCellByScreenCoordsDict[coordsStr] = cell.coords.x.toString() + "," + cell.coords.y.toString();
       }
     }
@@ -826,16 +667,16 @@ $(document).ready(function() {
     }
   });
 
-  $("#up-navigation").on("click" , function() {
+  $("#up-navigation-button").on("click" , function() {
     manualMoveByDirection("north");
   });
-  $("#down-navigation").on("click" , function() {
+  $("#down-navigation-button").on("click" , function() {
     manualMoveByDirection("south");
   });
-  $("#left-navigation").on("click" , function() {
+  $("#left-navigation-button").on("click" , function() {
     manualMoveByDirection("west");
   });
-  $("#right-navigation").on("click" , function() {
+  $("#right-navigation-button").on("click" , function() {
     manualMoveByDirection("east");
   });
 
@@ -993,15 +834,6 @@ $(document).ready(function() {
     $(this).text(next);
     generateNewMaze();
   });
-
-
-  // send the message when the user presses the <enter> key while in the textarea
-  // $(window).on("keydown", function (e) {
-  //     if (e.which == 13) {
-  //         // getMessageAndSendToServer();
-  //         return false;
-  //     }
-  // });
 
   // send the data to the server using the WebSocket
   function sendToServer(jsonMessage) {
