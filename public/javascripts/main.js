@@ -978,6 +978,7 @@ $(document).ready(function() {
     }
     $("#hidden-grid-type").val(next);
     $(this).text(next);
+    generateNewMaze();
   });
 
 
