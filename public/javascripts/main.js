@@ -901,9 +901,22 @@ $(document).ready(function() {
       let availableColors = previousColor == null || previousColor == "" ? allColors : jQuery.grep(allColors, function(c) { return c != previousColor });
       var nextColor = availableColors[randomInt(0, availableColors.length - 1)] // randomly choose one of the color lists
       $("#hidden-color").html(nextColor);
-      $("#hidden-visited").html(""); 
+      $("#hidden-visited").html("");
+      var gridType = "Orthogonal";
+      switch($("#hidden-grid-type").val()) {
+        case TRIANGLE:
+          gridType = "Delta";
+          break;
+        case HEX:
+          gridType = "Sigma";
+          break;
+        case SQUARE:
+        default:
+          gridType = "Orthogonal";
+          break;
+      }
       request = {
-        "mazeType": "Orthogonal",
+        "mazeType": gridType,
         "width": width,
         "height": height,
         "algorithm": algorithm,
