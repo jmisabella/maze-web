@@ -21,6 +21,10 @@ extends AbstractController(cc)
         logger.info("index page was called")
         Ok(views.html.index())
     }
+    def trianglePage = Action { implicit request: Request[AnyContent] =>
+        logger.info("triangle page was called")
+        Ok(views.html.triangle())
+    }
 
     // our WebSocket. DOCS on WebSocket.accept:
     // def accept[In, Out](f: RequestHeader => Flow[In, Out, _])(implicit transformer: WebSocket.MessageFlowTransformer[In,Out]): WebSocket

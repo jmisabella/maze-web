@@ -1,0 +1,46 @@
+/* #maze {
+    display: grid;
+    grid-template-columns: repeat(20, 30px);
+    gap: 0;
+  }
+  
+  .triangle {
+    position: relative;
+    width: 0;
+    height: 0;
+    border-style: solid;
+  }
+  
+  .triangle.normal {
+    border-width: 0 15px 26px 15px;
+    border-color: transparent transparent black transparent;
+  }
+  
+  .triangle.inverted {
+    border-width: 26px 15px 0 15px;
+    border-color: black transparent transparent transparent;
+  }
+  
+  .wall {
+    position: absolute;
+    background: black;
+  }
+  
+  .wall.horizontal {
+    width: 30px;
+    height: 1px;
+    top: 0;
+  }
+  
+  .wall.left {
+    height: 30px;
+    width: 1px;
+    left: 0;
+  }
+  
+  .wall.right {
+    height: 30px;
+    width: 1px;
+    right: 0;
+  }
+   */
