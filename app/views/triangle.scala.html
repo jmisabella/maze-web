@@ -6,102 +6,100 @@
 
   <h2>HELLO</h2>
 
-  <!-- <svg width="800" height="600">
+  <svg id="svg" width="800" height="600">
     <script>
-      const data = {"rows":[[{"coords":{"x":0,"y":0},"linked":["upperright","down"],"distance":0,"isStart":true,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"},{"coords":{"x":1,"y":0},"linked":["lowerleft","lowerright"],"distance":1,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Inverted"},{"coords":{"x":2,"y":0},"linked":["upperleft","upperright"],"distance":2,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"},{"coords":{"x":3,"y":0},"linked":["lowerleft","lowerright"],"distance":3,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Inverted"},{"coords":{"x":4,"y":0},"linked":["upperleft","upperright"],"distance":4,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"},{"coords":{"x":5,"y":0},"linked":["lowerleft","lowerright"],"distance":5,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Inverted"},{"coords":{"x":6,"y":0},"linked":["upperleft","upperright","down"],"distance":6,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"},{"coords":{"x":7,"y":0},"linked":["lowerleft"],"distance":7,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"}],[{"coords":{"x":0,"y":1},"linked":["up","lowerright"],"distance":1,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":1,"y":1},"linked":["upperleft","down"],"distance":2,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":2,"y":1},"linked":["lowerright"],"distance":15,"isStart":false,"isGoal":true,"onSolutionPath":true,"orientation":"Inverted"},{"coords":{"x":3,"y":1},"linked":["upperleft","upperright","down"],"distance":14,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"},{"coords":{"x":4,"y":1},"linked":["lowerleft","lowerright"],"distance":15,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":5,"y":1},"linked":["upperleft"],"distance":16,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":6,"y":1},"linked":["up","lowerright"],"distance":7,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Inverted"},{"coords":{"x":7,"y":1},"linked":["upperleft","down"],"distance":8,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"}],[{"coords":{"x":0,"y":2},"linked":["upperright","down"],"distance":4,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":1,"y":2},"linked":["up","lowerleft"],"distance":3,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":2,"y":2},"linked":["upperright"],"distance":14,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":3,"y":2},"linked":["up","lowerleft","lowerright"],"distance":13,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Inverted"},{"coords":{"x":4,"y":2},"linked":["upperleft","upperright"],"distance":12,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"},{"coords":{"x":5,"y":2},"linked":["lowerleft","lowerright"],"distance":11,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Inverted"},{"coords":{"x":6,"y":2},"linked":["upperleft","upperright","down"],"distance":10,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"},{"coords":{"x":7,"y":2},"linked":["up","lowerleft"],"distance":9,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Inverted"}],[{"coords":{"x":0,"y":3},"linked":["up","lowerright"],"distance":5,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":1,"y":3},"linked":["upperleft","upperright"],"distance":6,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":2,"y":3},"linked":["lowerleft","lowerright"],"distance":7,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":3,"y":3},"linked":["upperleft","upperright"],"distance":8,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":4,"y":3},"linked":["lowerleft","lowerright"],"distance":9,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":5,"y":3},"linked":["upperleft","down"],"distance":10,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":6,"y":3},"linked":["up","lowerright"],"distance":11,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":7,"y":3},"linked":["upperleft","down"],"distance":12,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"}],[{"coords":{"x":0,"y":4},"linked":["upperright","down"],"distance":20,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":1,"y":4},"linked":["lowerleft","lowerright"],"distance":19,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":2,"y":4},"linked":["upperleft","upperright"],"distance":18,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":3,"y":4},"linked":["lowerleft","lowerright"],"distance":17,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":4,"y":4},"linked":["upperleft","down"],"distance":16,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":5,"y":4},"linked":["up","lowerright"],"distance":11,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":6,"y":4},"linked":["upperleft","down"],"distance":12,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":7,"y":4},"linked":["up"],"distance":13,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"}],[{"coords":{"x":0,"y":5},"linked":["up","lowerright"],"distance":21,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":1,"y":5},"linked":["upperleft","upperright"],"distance":22,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":2,"y":5},"linked":["lowerleft"],"distance":23,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":3,"y":5},"linked":["upperright"],"distance":16,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":4,"y":5},"linked":["up","lowerleft","lowerright"],"distance":15,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":5,"y":5},"linked":["upperleft","upperright"],"distance":14,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":6,"y":5},"linked":["up","lowerleft","lowerright"],"distance":13,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":7,"y":5},"linked":["upperleft"],"distance":14,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"}]]};
-
-      const svg = document.querySelector("svg");
       
-      data.rows.forEach((row, rowIndex) => {
-        row.forEach((cell) => {
-          const { x, y } = cell.coords;
-          const isInverted = cell.orientation === "Inverted";
-          
-          // Define vertices for normal and inverted triangles
-          const trianglePoints = isInverted
-            ? `${x * 50},${y * 50} ${(x + 1) * 50},${y * 50} ${x * 50 + 25},${y * 50 + 43.3}` // inverted points 
-            : `${x * 50 + 25},${y * 50} ${x * 50},${y * 50 + 43.3} ${(x + 1) * 50},${y * 50 + 43.3}`; // upwards triangle points
-  
-          // Create SVG polygon element
-          const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-          polygon.setAttribute("points", trianglePoints);
-          polygon.classList.add("triangle-cell");
-  
-          // Apply additional classes or styles for solution path, start, goal
-          if (cell.isStart) polygon.classList.add("start");
-          if (cell.isGoal) polygon.classList.add("goal");
-          if (cell.onSolutionPath) polygon.classList.add("solution-path");
-          
-          svg.appendChild(polygon);
+
+      function renderTriangle(cell, rowIndex, colIndex) {
+        const { orientation, linked } = cell;
+        const size = 50; // Side length of the triangle
+        const h = Math.sqrt(3) / 2 * size; // Height of the triangle
+    
+        // Offsets to ensure the grid starts within the canvas boundaries
+        const xOffset = 100; // Adjust based on the canvas width
+        const yOffset = 100 + rowIndex * h; // staggered rows
+    
+        // Convert grid coordinates to SVG pixel coordinates
+        const x = xOffset + colIndex * size + (rowIndex % 2 === 0 ? 0 : size / 2);
+        let y = yOffset + rowIndex * h * 2; // Vertical position
+    
+        // Adjust for inverted triangles (staggered rows)
+        if (orientation === "Inverted") {
+            y += h;
+        }
+    
+        // Define triangle vertices
+        let vertices;
+        if (orientation === "Normal") {
+          // Normal (upward-facing) triangle
+          vertices = [
+              { x: x, y: y }, // Top
+              { x: x - size / 2, y: y + h }, // Bottom-left
+              { x: x + size / 2, y: y + h }, // Bottom-right
+          ];
+          // Define walls for Normal triangle
+          walls = {
+            upperright: [vertices[0], vertices[2]], // Top-right wall
+            down: [vertices[2], vertices[1]],       // Bottom wall
+            upperleft: [vertices[1], vertices[0]],  // Top-left wall
+          };
+        } else {
+            // Inverted (downward-facing) triangle
+            vertices = [
+              { x: x, y: y + h }, // Bottom
+              { x: x - size / 2, y: y }, // Top-left
+              { x: x + size / 2, y: y }, // Top-right
+            ];
+            // Define walls for Inverted triangle
+          walls = {
+            upperright: [vertices[2], vertices[0]], // Bottom-right wall
+            down: [vertices[0], vertices[1]],      // Top wall
+            upperleft: [vertices[1], vertices[2]], // Bottom-left wall
+          };
+        }
+    
+        // Render walls based on "linked" array
+        const svg = document.querySelector("svg");
+        Object.keys(walls).forEach((key) => {
+            if (!linked.includes(key)) {
+                const [start, end] = walls[key];
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", start.x);
+                line.setAttribute("y1", start.y);
+                line.setAttribute("x2", end.x);
+                line.setAttribute("y2", end.y);
+                line.setAttribute("stroke", "black");
+                line.setAttribute("stroke-width", "2");
+                svg.appendChild(line);
+            }
         });
-      });
-    </script>
-  
-    <style>
-      .triangle-cell { stroke: black; stroke-width: 1; fill: none; }
-      .solution-path { fill: lightblue; }
-      .start { fill: green; }
-      .goal { fill: red; }
-    </style>
-  </svg> -->
-
-  <svg width="800" height="600">
-    <script>
+    }
+    
       const data = {"rows":[[{"coords":{"x":0,"y":0},"linked":["upperright","down"],"distance":0,"isStart":true,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"},{"coords":{"x":1,"y":0},"linked":["lowerleft","lowerright"],"distance":1,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Inverted"},{"coords":{"x":2,"y":0},"linked":["upperleft","upperright"],"distance":2,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"},{"coords":{"x":3,"y":0},"linked":["lowerleft","lowerright"],"distance":3,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Inverted"},{"coords":{"x":4,"y":0},"linked":["upperleft","upperright"],"distance":4,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"},{"coords":{"x":5,"y":0},"linked":["lowerleft","lowerright"],"distance":5,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Inverted"},{"coords":{"x":6,"y":0},"linked":["upperleft","upperright","down"],"distance":6,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"},{"coords":{"x":7,"y":0},"linked":["lowerleft"],"distance":7,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"}],[{"coords":{"x":0,"y":1},"linked":["up","lowerright"],"distance":1,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":1,"y":1},"linked":["upperleft","down"],"distance":2,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":2,"y":1},"linked":["lowerright"],"distance":15,"isStart":false,"isGoal":true,"onSolutionPath":true,"orientation":"Inverted"},{"coords":{"x":3,"y":1},"linked":["upperleft","upperright","down"],"distance":14,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"},{"coords":{"x":4,"y":1},"linked":["lowerleft","lowerright"],"distance":15,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":5,"y":1},"linked":["upperleft"],"distance":16,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":6,"y":1},"linked":["up","lowerright"],"distance":7,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Inverted"},{"coords":{"x":7,"y":1},"linked":["upperleft","down"],"distance":8,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"}],[{"coords":{"x":0,"y":2},"linked":["upperright","down"],"distance":4,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":1,"y":2},"linked":["up","lowerleft"],"distance":3,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":2,"y":2},"linked":["upperright"],"distance":14,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":3,"y":2},"linked":["up","lowerleft","lowerright"],"distance":13,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Inverted"},{"coords":{"x":4,"y":2},"linked":["upperleft","upperright"],"distance":12,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"},{"coords":{"x":5,"y":2},"linked":["lowerleft","lowerright"],"distance":11,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Inverted"},{"coords":{"x":6,"y":2},"linked":["upperleft","upperright","down"],"distance":10,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Normal"},{"coords":{"x":7,"y":2},"linked":["up","lowerleft"],"distance":9,"isStart":false,"isGoal":false,"onSolutionPath":true,"orientation":"Inverted"}],[{"coords":{"x":0,"y":3},"linked":["up","lowerright"],"distance":5,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":1,"y":3},"linked":["upperleft","upperright"],"distance":6,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":2,"y":3},"linked":["lowerleft","lowerright"],"distance":7,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":3,"y":3},"linked":["upperleft","upperright"],"distance":8,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":4,"y":3},"linked":["lowerleft","lowerright"],"distance":9,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":5,"y":3},"linked":["upperleft","down"],"distance":10,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":6,"y":3},"linked":["up","lowerright"],"distance":11,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":7,"y":3},"linked":["upperleft","down"],"distance":12,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"}],[{"coords":{"x":0,"y":4},"linked":["upperright","down"],"distance":20,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":1,"y":4},"linked":["lowerleft","lowerright"],"distance":19,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":2,"y":4},"linked":["upperleft","upperright"],"distance":18,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":3,"y":4},"linked":["lowerleft","lowerright"],"distance":17,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":4,"y":4},"linked":["upperleft","down"],"distance":16,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":5,"y":4},"linked":["up","lowerright"],"distance":11,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":6,"y":4},"linked":["upperleft","down"],"distance":12,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":7,"y":4},"linked":["up"],"distance":13,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"}],[{"coords":{"x":0,"y":5},"linked":["up","lowerright"],"distance":21,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":1,"y":5},"linked":["upperleft","upperright"],"distance":22,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":2,"y":5},"linked":["lowerleft"],"distance":23,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":3,"y":5},"linked":["upperright"],"distance":16,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":4,"y":5},"linked":["up","lowerleft","lowerright"],"distance":15,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":5,"y":5},"linked":["upperleft","upperright"],"distance":14,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"},{"coords":{"x":6,"y":5},"linked":["up","lowerleft","lowerright"],"distance":13,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Inverted"},{"coords":{"x":7,"y":5},"linked":["upperleft"],"distance":14,"isStart":false,"isGoal":false,"onSolutionPath":false,"orientation":"Normal"}]]};
-      
+      <!-- const data = {
+        rows: [
+          [
+            { coords: { x: 0, y: 0 }, linked: ["top"], orientation: "Normal" },
+            { coords: { x: 1, y: 0 }, linked: ["bottomLeft"], orientation: "Inverted" },
+          ],
+          [
+            { coords: { x: 0, y: 1 }, linked: ["bottomRight"], orientation: "Normal" },
+            { coords: { x: 1, y: 1 }, linked: ["top"], orientation: "Inverted" },
+          ],
+        ],
+      };       -->
       const svg = document.querySelector("svg");
       const size = 50; // Side length of the triangle
       const height = size * Math.sqrt(3) / 2;
   
+      // Render all cells
       data.rows.forEach((row, rowIndex) => {
-        row.forEach((cell) => {
-          const { x, y } = cell.coords;
-          const isNormal = cell.orientation === "Normal"; // Corrected orientation
-          const cx = x * size / 2; // Calculate x position with overlap
-          const cy = y * height; // Calculate y position to eliminate gaps
-  
-          // Define triangle points for Normal and Inverted orientations
-          const points = isNormal
-            ? `${cx},${cy + height} ${cx + size / 2},${cy} ${cx + size},${cy + height}`
-            : `${cx},${cy} ${cx + size / 2},${cy + height} ${cx + size},${cy}`;
-  
-          // Determine which sides to render based on links
-          let linkedSides = {
-            top: false,
-            left: false,
-            right: false
-          };
-          
-          cell.linked.forEach(link => {
-            if (isNormal) {
-              if (link === "upperright") linkedSides.right = true;
-              if (link === "down") linkedSides.top = true;
-              if (link === "upperleft") linkedSides.left = true;
-            } else {
-              if (link === "lowerleft") linkedSides.left = true;
-              if (link === "up") linkedSides.top = true;
-              if (link === "lowerright") linkedSides.right = true;
-            }
-          });
-  
-          // Create polygon with only required borders
-          const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-          polygon.setAttribute("points", points);
-          polygon.classList.add("triangle-cell");
-  
-          // Apply conditional classes for walls
-          if (linkedSides.top) polygon.classList.add("top-wall");
-          if (linkedSides.left) polygon.classList.add("left-wall");
-          if (linkedSides.right) polygon.classList.add("right-wall");
-  
-          // Add special classes for start, goal, or solution path
-          if (cell.isStart) polygon.classList.add("start");
-          if (cell.isGoal) polygon.classList.add("goal");
-          if (cell.onSolutionPath) polygon.classList.add("solution-path");
-  
-          svg.appendChild(polygon);
+        row.forEach((cell, colIndex) => {
+          console.log("RENDERING " + cell.coords.x + "," + cell.coords.y)
+          renderTriangle(cell, rowIndex, colIndex);
         });
       });
+
     </script>
   
     <style>
